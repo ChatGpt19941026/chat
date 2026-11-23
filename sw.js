@@ -1,10 +1,10 @@
-const CACHE = "couple-chat-v2";
+const CACHE = "couple-chat-v3";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
     caches.open(CACHE)
-      .then(c => Promise.allSettled(SHELL.map(u => c.add(u))))
+      .then(c => Promise.allSettled(SHELL.map(u => c.add(new Request(u, { cache: "reload" })))))
       .then(() => self.skipWaiting())
   );
 });
@@ -17,13 +17,13 @@ self.addEventListener("activate", e => {
   );
 });
 
-// নিজের ফাইলের জন্য network-first, অফলাইনে ক্যাশ। Firebase-এর রিকোয়েস্টে হাত দেয় না।
+// নিজের ফাইলের জন্য সবসময় আগে নেটওয়ার্ক থেকে সর্বশেষ কপি আনে; অফলাইনে ক্যাশ। Firebase-এর রিকোয়েস্টে হাত দেয় না।
 self.addEventListener("fetch", e => {
   const req = e.request;
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: "no-cache" })
       .then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy));
