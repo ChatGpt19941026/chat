@@ -1,6 +1,6 @@
 {
-  "name": "আমাদের চ্যাট",
-  "short_name": "চ্যাট",
+  "name": "Chat Gpt 2.0",
+  "short_name": "Chat Gpt 2.0",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
