@@ -47,6 +47,7 @@ header .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:el
 header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px}
 #adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
 #adBar span{flex:1}
+#adBar small{opacity:.7;font-size:11px}
 #adBar button{border:0;border-radius:14px;padding:5px 12px;background:#fff;color:#075E54;font-size:13px;font-weight:600}
 #list{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column}
 .day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:#e1f2fb;font-size:12px;color:#555}
@@ -59,6 +60,7 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 .tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
 .meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
 .tick.seen{color:#34B7F1}
+.cd{color:#c62828;font-weight:600}
 .empty{margin:auto;color:#777;font-size:14px}
 .bar{display:flex;align-items:flex-end;gap:8px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#ECE5DD}
 .bar textarea{flex:1;max-height:120px;padding:11px 16px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:#fff}
@@ -136,7 +138,7 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
     <button id="lockBtn" title="লক">🔒</button>
     <button id="logoutBtn" title="লগআউট">⎋</button>
   </header>
-  <div id="adBar"><span id="adText"></span><button id="adBtn" type="button"></button></div>
+  <div id="adBar"><span id="adText"></span><small id="ver">v4</small><button id="adBtn" type="button"></button></div>
   <div id="list"></div>
   <div class="bar">
     <textarea id="msg" rows="1" placeholder="মেসেজ লিখুন"></textarea>
@@ -191,7 +193,7 @@ const firebaseConfig = {
 const ALLOWED = ["sumonlovemandira@gmail.com", "mandiralovesumon@gmail.com"];
 const CHAT_ID = "couple_chat";
 const RELOCK_MS = 30000;          // এতক্ষণের বেশি ব্যাকগ্রাউন্ডে থাকলে আবার লক
-const AUTO_DELETE_MS = 60000;     // সিন হওয়ার কতক্ষণ পর মেসেজ মুছবে (১ মিনিট)
+const AUTO_DELETE_MS = 30000;     // সিন হওয়ার কতক্ষণ পর মেসেজ মুছবে (৩০ সেকেন্ড)
 const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until";
 
 const app = initializeApp(firebaseConfig);
@@ -209,7 +211,16 @@ function show(id) {
 let toastTimer;
 function toast(t) {
   const el = $("toast"); el.textContent = t; el.style.display = "block";
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", 3200);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", 3800);
+}
+// একই এরর বারবার দেখাবে না (১০ সেকেন্ডে একবার)
+let lastErrAt = 0;
+function errOnce(prefix, e) {
+  const now = Date.now();
+  if (now - lastErrAt < 10000) return;
+  lastErrAt = now;
+  const code = e && e.code ? e.code : String(e);
+  toast(prefix + ": " + code + (code.includes("permission-denied") ? " — Firebase Rules Publish করুন" : ""));
 }
 let modalOpen = false;
 function confirmBox(text, yesLabel = "হ্যাঁ") {
@@ -353,7 +364,7 @@ function startChat() {
   if (unsub) return;
   const q = query(col(), orderBy("createdAt", "asc"), limitToLast(300));
   unsub = onSnapshot(q, snap => { lastDocs = snap.docs; render(false); markIncoming(); sweep(); },
-    err => toast("ত্রুটি: " + err.code));
+    err => errOnce("মেসেজ লোড ব্যর্থ", err));
   startSettings();
 }
 function stopChat() {
@@ -362,7 +373,7 @@ function stopChat() {
   lastDocs = []; $("list").innerHTML = "";
 }
 
-/* প্রাপক মেসেজ দেখলে "সিন" চিহ্ন (স্বয়ংক্রিয় মোছা চালু থাকলে সিন-এর সময়ও বসে) */
+/* প্রাপক মেসেজ দেখলে "সিন" চিহ্ন ও সিন-এর সময় (seenAt) বসে — সবসময়, সেটিং যা-ই হোক */
 function markIncoming() {
   if (!me) return;
   const visible = unlocked && document.visibilityState === "visible";
@@ -370,59 +381,74 @@ function markIncoming() {
     const m = d.data();
     if (m.senderId === me.uid) return;
     if (visible && m.status !== "seen") {
-      const upd = { status: "seen" };
-      if (autoDelete) upd.seenAt = serverTimestamp();
-      updateDoc(d.ref, upd).catch(() => {});
+      updateDoc(d.ref, { status: "seen", seenAt: serverTimestamp() })
+        .catch(e => errOnce("সিন আপডেট ব্যর্থ", e));
     } else if (!visible && m.status === "sent") {
       updateDoc(d.ref, { status: "delivered" }).catch(() => {});
     }
   });
 }
 
-/* ---------- স্বয়ংক্রিয় মোছা (সিন হওয়ার ১ মিনিট পর) ---------- */
+/* ---------- স্বয়ংক্রিয় মোছা (সিন হওয়ার ৩০ সেকেন্ড পর) ---------- */
 const settingsRef = () => doc(db, "chats", CHAT_ID, "meta", "settings");
-let autoDelete = false, settingsUnsub = null, sweepTimer = null;
+let autoDelete = false, enabledAtMs = 0, settingsUnsub = null, sweepTimer = null;
 const deleting = new Set();
 
 function startSettings() {
   if (settingsUnsub) return;
   settingsUnsub = onSnapshot(settingsRef(), s => {
-    autoDelete = !!(s.exists() && s.data().autoDelete);
+    const data = s.exists() ? s.data({ serverTimestamps: "estimate" }) : {};
+    autoDelete = !!data.autoDelete;
+    enabledAtMs = data.enabledAt ? data.enabledAt.toMillis() : (autoDelete ? Date.now() : 0);
+    // পুরনো সেটিংয়ে চালুর সময় না থাকলে এখনই বসিয়ে দিই
+    if (autoDelete && !data.enabledAt) {
+      setDoc(settingsRef(), { enabledAt: serverTimestamp() }, { merge: true }).catch(() => {});
+    }
     renderAd(); sweep();
-  }, () => {});
-  if (!sweepTimer) sweepTimer = setInterval(sweep, 5000);
+  }, e => errOnce("সেটিংস পড়া যায়নি", e));
+  if (!sweepTimer) sweepTimer = setInterval(sweep, 1000);
 }
 function stopSettings() {
   if (settingsUnsub) { settingsUnsub(); settingsUnsub = null; }
   clearInterval(sweepTimer); sweepTimer = null;
-  autoDelete = false;
+  autoDelete = false; enabledAtMs = 0;
 }
 function renderAd() {
   $("adText").textContent = autoDelete
-    ? "⏱️ সিন হওয়ার ১ মিনিট পর মেসেজ মুছে যাবে"
+    ? "⏱️ সিন হওয়ার ৩০ সেকেন্ড পর মেসেজ মুছে যাবে"
     : "⏱️ স্বয়ংক্রিয় মোছা বন্ধ আছে";
   $("adBtn").textContent = autoDelete ? "বন্ধ করুন" : "চালু করুন";
   if (me) render(false);
 }
+// চালু করার পর সিন হওয়া মেসেজই শুধু মুছবে; আগের মেসেজে হাত দেবে না
+function eligible(m) { return autoDelete && m.seenAt && m.seenAt.toMillis() >= enabledAtMs; }
+const leftSec = seenMs => Math.max(0, Math.ceil((seenMs + AUTO_DELETE_MS - Date.now()) / 1000));
+
 function sweep() {
-  if (!autoDelete || !me) return;
+  if (!me || !autoDelete) return;
   const now = Date.now();
   lastDocs.forEach(d => {
     if (deleting.has(d.id)) return;
     const m = d.data({ serverTimestamps: "estimate" });
-    if (m.seenAt && now - m.seenAt.toMillis() >= AUTO_DELETE_MS) {
+    if (eligible(m) && now - m.seenAt.toMillis() >= AUTO_DELETE_MS) {
       deleting.add(d.id);
-      deleteDoc(d.ref).catch(() => {}).finally(() => deleting.delete(d.id));
+      deleteDoc(d.ref)
+        .then(() => deleting.delete(d.id))
+        .catch(e => { errOnce("মোছা ব্যর্থ", e); setTimeout(() => deleting.delete(d.id), 15000); });
     }
+  });
+  document.querySelectorAll(".cd").forEach(el => {
+    el.textContent = "⏱ " + leftSec(Number(el.dataset.seen)) + "s";
   });
 }
 $("adBtn").onclick = () => {
   const next = !autoDelete;
-  setDoc(settingsRef(), { autoDelete: next }, { merge: true })
+  const data = next ? { autoDelete: true, enabledAt: serverTimestamp() } : { autoDelete: false };
+  setDoc(settingsRef(), data, { merge: true })
     .then(() => toast(next
-      ? "চালু হয়েছে: এখন থেকে সিন হওয়া মেসেজ ১ মিনিট পর মুছবে"
+      ? "চালু: এখন থেকে সিন হওয়া মেসেজ ৩০ সেকেন্ড পর মুছবে"
       : "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে"))
-    .catch(e => toast("সেটিং বদলানো যায়নি: " + e.code));
+    .catch(e => errOnce("সেটিং বদলানো যায়নি", e));
 };
 
 const fmtTime = d => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -455,8 +481,11 @@ function render(forceBottom) {
     const b = document.createElement("div"); b.className = "b";
     const tx = document.createElement("div"); tx.className = "tx"; tx.textContent = m.text || "";
     const meta = document.createElement("div"); meta.className = "meta";
-    if (autoDelete && m.seenAt) {
-      const w = document.createElement("span"); w.textContent = "⏱"; meta.appendChild(w);
+    if (eligible(m)) {
+      const w = document.createElement("span");
+      w.className = "cd"; w.dataset.seen = String(m.seenAt.toMillis());
+      w.textContent = "⏱ " + leftSec(m.seenAt.toMillis()) + "s";
+      meta.appendChild(w);
     }
     const time = document.createElement("span"); time.textContent = fmtTime(when); meta.appendChild(time);
     if (mine) {
@@ -483,7 +512,7 @@ function attachLongPress(el, id) {
 async function askDelete(id) {
   if (modalOpen) return;
   if (await confirmBox("এই মেসেজ ডিলিট করবেন? দুজনের চ্যাট থেকেই মুছে যাবে।", "ডিলিট")) {
-    deleteDoc(doc(db, "chats", CHAT_ID, "messages", id)).catch(e => toast("ডিলিট ব্যর্থ: " + e.code));
+    deleteDoc(doc(db, "chats", CHAT_ID, "messages", id)).catch(e => errOnce("ডিলিট ব্যর্থ", e));
   }
 }
 
@@ -502,7 +531,7 @@ async function clearAll() {
     }
     toast("সব মেসেজ মুছে গেছে");
   } catch (e) {
-    toast("মোছা ব্যর্থ: " + e.code);
+    errOnce("মোছা ব্যর্থ", e);
   }
   clearing = false;
 }
@@ -517,7 +546,7 @@ function send() {
   if (!text || !me) return;
   msg.value = ""; grow(); msg.focus();
   addDoc(col(), { type: "text", text, senderId: me.uid, createdAt: serverTimestamp(), status: "sent" })
-    .catch(e => toast("পাঠানো ব্যর্থ: " + e.code));
+    .catch(e => errOnce("পাঠানো ব্যর্থ", e));
   setTimeout(() => { $("list").scrollTop = $("list").scrollHeight; }, 50);
 }
 $("sendBtn").onclick = send;
