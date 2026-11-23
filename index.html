@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>আমাদের চ্যাট</title>
+<title>Chat Gpt 2.0</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overscroll-behavior:none;
@@ -80,7 +80,7 @@ header button{background:none;border:0;color:#fff;font-size:20px;padding:6px 8px
 <section id="login" class="screen">
   <form class="card" id="loginForm">
     <div class="logo">💬</div>
-    <h1>আমাদের চ্যাট</h1>
+    <h1>Chat Gpt 2.0</h1>
     <input class="f" id="email" type="email" placeholder="ইমেইল" autocomplete="username" required>
     <input class="f" id="password" type="password" placeholder="পাসওয়ার্ড" autocomplete="current-password" required>
     <div class="err" id="loginErr"></div>
@@ -103,7 +103,8 @@ header button{background:none;border:0;color:#fff;font-size:20px;padding:6px 8px
 <section id="chat" class="screen">
   <header>
     <div class="av">❤️</div>
-    <div class="t">আমাদের চ্যাট</div>
+    <div class="t">Chat Gpt 2.0</div>
+    <button id="clearBtn" title="সব মুছুন" style="margin-right:16px">🗑️</button>
     <button id="lockBtn" title="লক">🔒</button>
     <button id="logoutBtn" title="লগআউট">⎋</button>
   </header>
@@ -123,7 +124,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, query, orderBy, limitToLast, onSnapshot,
-  addDoc, updateDoc, deleteDoc, doc, serverTimestamp }
+  addDoc, updateDoc, deleteDoc, doc, serverTimestamp, getDocs, writeBatch, limit }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -370,6 +371,27 @@ async function askDelete(id) {
     deleteDoc(doc(db, "chats", CHAT_ID, "messages", id)).catch(e => toast("ডিলিট ব্যর্থ: " + e.code));
   }
 }
+
+/* ---------- সব মেসেজ মোছা (কনফার্মেশন ছাড়া) ---------- */
+let clearing = false;
+async function clearAll() {
+  if (clearing || !me) return;
+  clearing = true;
+  try {
+    while (true) {
+      const snap = await getDocs(query(col(), limit(400)));
+      if (snap.empty) break;
+      const batch = writeBatch(db);
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+    }
+    toast("সব মেসেজ মুছে গেছে");
+  } catch (e) {
+    toast("মোছা ব্যর্থ: " + e.code);
+  }
+  clearing = false;
+}
+$("clearBtn").onclick = clearAll;
 
 /* ---------- মেসেজ পাঠানো ---------- */
 const msg = $("msg");
