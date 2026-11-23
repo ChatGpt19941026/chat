@@ -46,6 +46,7 @@ header{display:flex;align-items:center;gap:4px;padding:8px 10px;padding-top:calc
 header .t{flex:1;min-width:0;padding-left:4px}
 header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #presence{display:flex;align-items:center;font-size:11.5px;opacity:.92;white-space:nowrap;overflow:hidden}
+#presence.typing #pText{color:#9dffb8;font-style:italic;font-weight:600}
 #pText{overflow:hidden;text-overflow:ellipsis}
 .pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
 #presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
@@ -57,20 +58,49 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 #adBar button{border:0;border-radius:14px;padding:5px 12px;background:#fff;color:#075E54;font-size:13px;font-weight:600}
 #list{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column}
 .day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:#e1f2fb;font-size:12px;color:#555}
+.older{align-self:center;margin:6px;padding:6px 14px;border:0;border-radius:14px;background:#fff;color:#075E54;font-size:13px}
+.callLog{align-self:center;margin:6px 0;padding:5px 12px;border-radius:12px;background:#fff;font-size:13px;color:#444;
+  box-shadow:0 1px 1px rgba(0,0,0,.1);display:flex;gap:8px;align-items:center}
+.callLog small{color:#777;font-size:11px}
 .row{display:flex;padding:2px 8px}
 .row.me{justify-content:flex-end}
 .b{max-width:80%;padding:6px 10px 4px;border-radius:12px;background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.12);
   user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .me .b{background:#DCF8C6;border-bottom-right-radius:2px}
 .row:not(.me) .b{border-bottom-left-radius:2px}
+.hl .b{animation:hl 1.4s}
+@keyframes hl{0%,60%{background:#fff3b0}}
+.q{border-left:3px solid #075E54;background:rgba(0,0,0,.06);border-radius:6px;padding:3px 8px;margin-bottom:4px;
+  font-size:13px;cursor:pointer;overflow:hidden}
+.q b{display:block;color:#075E54;font-size:12px}
+.q span{display:block;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
 .meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
 .tick.seen{color:#34B7F1}
 .cd{color:#c62828;font-weight:600}
+.rxs{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.rp{background:rgba(0,0,0,.07);border-radius:10px;padding:1px 6px;font-size:13px}
+.rp small{font-size:11px;margin-left:2px}
 .empty{margin:auto;color:#777;font-size:14px}
+#replyBar{display:none;align-items:center;gap:8px;padding:6px 10px;background:#e9e4dc;border-top:1px solid #d6d0c6}
+#replyBar.show{display:flex}
+#replyBar .rbBody{flex:1;min-width:0;border-left:3px solid #075E54;padding-left:8px;font-size:13px}
+#replyBar b{display:block;color:#075E54;font-size:12px}
+#rbText{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+#rbClose{border:0;background:none;font-size:18px;padding:4px 8px}
 .bar{display:flex;align-items:flex-end;gap:8px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#ECE5DD}
 .bar textarea{flex:1;max-height:120px;padding:11px 16px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:#fff}
 .send{width:46px;height:46px;border:0;border-radius:50%;background:#075E54;color:#fff;font-size:20px;flex:none}
+
+/* মেসেজ মেনু (আঙুল চেপে ধরলে) */
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:45}
+#sheet.show{display:flex}
+.sheetBox{width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
+#rxRow{display:flex;justify-content:space-around;margin-bottom:10px}
+#rxRow button{border:0;background:none;font-size:30px;padding:4px 6px;border-radius:50%}
+#rxRow button.sel{background:#dff3e4}
+.sheetBox>button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 8px;font-size:16px}
+.sheetBox>button.danger{color:#c62828}
 
 /* ডায়ালগ ও টোস্ট */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
@@ -90,6 +120,8 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 #localV{position:absolute;right:12px;top:calc(12px + env(safe-area-inset-top));width:96px;height:128px;object-fit:cover;
   border-radius:12px;background:#000;transform:scaleX(-1);z-index:3;display:none;border:2px solid rgba(255,255,255,.5)}
 #call.vid #localV{display:block}
+#minBtn{position:absolute;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:4;width:42px;height:42px;border:0;
+  border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:22px}
 .callTop{position:relative;z-index:3;margin-top:calc(40px + env(safe-area-inset-top));text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .callTop .nm{font-size:24px;font-weight:600}
 #callStatus{margin-top:6px;font-size:16px;opacity:.9;min-height:22px}
@@ -101,6 +133,16 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 .cb.end{background:#e53935}
 .cb.ok{background:#25D366}
 #call:not(.vid) #camBtn{display:none}
+.miniBar{display:none}
+/* ছোট (মিনিমাইজ) অবস্থা */
+#call.mini{inset:auto;right:10px;bottom:96px;width:116px;height:164px;border-radius:14px;overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.35);touch-action:none}
+#call.mini:not(.vid){width:158px;height:60px}
+#call.mini .callTop,#call.mini .ctrls,#call.mini .voiceAv,#call.mini #localV,#call.mini #minBtn{display:none!important}
+#call.mini .miniBar{display:flex;position:absolute;left:0;right:0;bottom:0;z-index:5;align-items:center;
+  justify-content:space-between;padding:4px 6px;background:rgba(0,0,0,.55);font-size:12px}
+#call.mini:not(.vid) .miniBar{top:0;padding:0 10px;font-size:14px}
+.miniBar button{border:0;background:#e53935;color:#fff;border-radius:50%;width:30px;height:30px;font-size:14px}
 #incoming{position:fixed;inset:0;z-index:40;background:#075E54;color:#fff;display:none;flex-direction:column;
   align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px}
 #incoming.show{display:flex}
@@ -147,18 +189,30 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
     <button id="lockBtn" title="লক">🔒</button>
     <button id="logoutBtn" title="লগআউট">⎋</button>
   </header>
-  <div id="adBar"><span id="adText"></span><small id="ver">v6</small><button id="adBtn" type="button"></button></div>
+  <div id="adBar"><span id="adText"></span><small id="ver">v7</small><button id="adBtn" type="button"></button></div>
   <div id="list"></div>
+  <div id="replyBar">
+    <div class="rbBody"><b id="rbWho"></b><span id="rbText"></span></div>
+    <button id="rbClose" aria-label="রিপ্লাই বাতিল">✕</button>
+  </div>
   <div class="bar">
     <textarea id="msg" rows="1" placeholder="মেসেজ লিখুন"></textarea>
     <button class="send" id="sendBtn" aria-label="পাঠান">➤</button>
   </div>
 </section>
 
+<!-- মেসেজ মেনু -->
+<div id="sheet"><div class="sheetBox">
+  <div id="rxRow"></div>
+  <button id="shReply">↩️ রিপ্লাই</button>
+  <button id="shDel" class="danger">🗑️ ডিলিট</button>
+</div></div>
+
 <!-- কল স্ক্রিন -->
 <div id="call">
   <video id="remoteV" autoplay playsinline></video>
   <video id="localV" autoplay playsinline muted></video>
+  <button id="minBtn" aria-label="ছোট করুন">⌄</button>
   <div class="callTop"><div class="nm">Chat Gpt 2.0</div><div id="callStatus"></div></div>
   <div class="voiceAv">❤️</div>
   <div class="ctrls">
@@ -166,6 +220,7 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
     <button class="cb" id="camBtn" aria-label="ক্যামেরা">📷</button>
     <button class="cb end" id="hangBtn" aria-label="কল কাটুন">📵</button>
   </div>
+  <div class="miniBar"><span id="miniTime">📞</span><button id="miniHang" aria-label="কল কাটুন">📵</button></div>
 </div>
 
 <!-- ইনকামিং কল -->
@@ -188,7 +243,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, query, orderBy, limitToLast, onSnapshot,
-  addDoc, updateDoc, deleteDoc, doc, serverTimestamp, getDocs, getDoc, setDoc, writeBatch, limit, where }
+  addDoc, updateDoc, deleteDoc, deleteField, doc, serverTimestamp, getDocs, getDoc, setDoc, writeBatch, limit, where }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -205,6 +260,9 @@ const RELOCK_MS = 30000;          // এতক্ষণের বেশি ব�
 const AUTO_DELETE_MS = 30000;     // সিন হওয়ার কতক্ষণ পর মেসেজ মুছবে (৩০ সেকেন্ড)
 const HEARTBEAT_MS = 25000;       // অনলাইন থাকার সংকেত পাঠানোর বিরতি
 const ONLINE_WINDOW_MS = 70000;   // এর মধ্যে সংকেত এলে অনলাইন ধরা হবে
+const TYPING_MS = 6000;           // এর মধ্যে টাইপিং সংকেত এলে "টাইপ করছে" দেখাবে
+const MSG_PAGE = 300;             // একবারে কতগুলো মেসেজ দেখাবে
+const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
 const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until";
 
 const app = initializeApp(firebaseConfig);
@@ -213,6 +271,7 @@ const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
 let me = null, unlocked = false, unsub = null, lastDocs = [], hiddenAt = 0;
+let msgLimit = MSG_PAGE, keepAnchor = false;
 
 /* ---------- ছোট সহায়ক ---------- */
 function show(id) {
@@ -245,6 +304,7 @@ function confirmBox(text, yesLabel = "হ্যাঁ") {
     $("modalNo").onclick = () => done(false);
   });
 }
+const fmtDur = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
 
 /* ---------- লগইন ---------- */
 $("loginForm").addEventListener("submit", async e => {
@@ -281,7 +341,7 @@ async function doLogout() {
   localStorage.removeItem(PIN_KEY);
   unlocked = false;
   if (me) {
-    try { await setDoc(doc(db, "users", me.uid), { online: false, lastActive: serverTimestamp() }, { merge: true }); }
+    try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
     catch (e) {}
   }
   await signOut(auth);
@@ -359,12 +419,12 @@ async function pressKey(k) {
 }
 function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
 function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
-function lockNow() { if (!me) return; unlocked = false; startPin(); renderIncoming(); }
+function lockNow() { if (!me) return; closeSheet(); unlocked = false; startPin(); renderIncoming(); }
 $("lockBtn").onclick = lockNow;
 buildPad();
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); }
+  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); setTyping(false); }
   else {
     beat(true);
     if (me && unlocked && !call && hiddenAt && Date.now() - hiddenAt > RELOCK_MS) lockNow();
@@ -373,8 +433,9 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", () => beat(false));
 
-/* ---------- অনলাইন অবস্থা (সবুজ বিন্দু ও সর্বশেষ অনলাইনে) ---------- */
+/* ---------- অনলাইন অবস্থা ও টাইপিং ---------- */
 let hbTimer = null, presTimer = null, usersUnsub = null, partner = null;
+let lastTypingWrite = 0, typingStop = null;
 
 // নিজের অবস্থা লিখে রাখা: users/{আমার uid}
 function beat(online) {
@@ -383,11 +444,17 @@ function beat(online) {
     { email: (me.email || "").toLowerCase(), online, lastActive: serverTimestamp() },
     { merge: true }).catch(() => {});
 }
+function setTyping(on) {
+  if (!me) return;
+  if (!on && !lastTypingWrite) return;       // আগে থেকেই বন্ধ থাকলে লিখব না
+  lastTypingWrite = on ? Date.now() : 0;
+  setDoc(doc(db, "users", me.uid), { typingAt: on ? serverTimestamp() : null }, { merge: true }).catch(() => {});
+}
 function startPresence() {
   if (hbTimer) return;
   beat(document.visibilityState === "visible");
   hbTimer = setInterval(() => { if (document.visibilityState === "visible") beat(true); }, HEARTBEAT_MS);
-  presTimer = setInterval(renderPresence, 5000);
+  presTimer = setInterval(renderPresence, 1000);
   usersUnsub = onSnapshot(collection(db, "users"), snap => {
     partner = null;
     snap.docs.forEach(d => {
@@ -405,12 +472,16 @@ function stopPresence() {
 function renderPresence() {
   const box = $("presence"), txt = $("pText");
   if (!partner || !partner.lastActive) {
-    box.classList.remove("on"); txt.textContent = "এখনও অনলাইনে আসেননি"; return;
+    box.classList.remove("on", "typing"); txt.textContent = "এখনও অনলাইনে আসেননি"; return;
   }
   const ms = partner.lastActive.toMillis();
   const on = partner.online === true && Date.now() - ms < ONLINE_WINDOW_MS;
+  const tAt = partner.typingAt && partner.typingAt.toMillis ? partner.typingAt.toMillis() : 0;
+  const typing = on && tAt && Date.now() - tAt < TYPING_MS;
   box.classList.toggle("on", on);
-  if (on) txt.textContent = "অনলাইন";
+  box.classList.toggle("typing", !!typing);
+  if (typing) txt.textContent = "টাইপ করছে…";
+  else if (on) txt.textContent = "অনলাইন";
   else {
     const d = new Date(ms);
     txt.textContent = "সর্বশেষ অনলাইনে: " + dayLabel(d) + " " + fmtTime(d);
@@ -424,7 +495,7 @@ function enterChat() { show("chat"); startChat(); render(true); markIncoming(); 
 
 function startChat() {
   if (unsub) return;
-  const q = query(col(), orderBy("createdAt", "asc"), limitToLast(300));
+  const q = query(col(), orderBy("createdAt", "asc"), limitToLast(msgLimit));
   unsub = onSnapshot(q, snap => { lastDocs = snap.docs; render(false); markIncoming(); sweep(); },
     err => errOnce("মেসেজ লোড ব্যর্থ", err));
   startSettings();
@@ -432,10 +503,16 @@ function startChat() {
 function stopChat() {
   if (unsub) { unsub(); unsub = null; }
   stopSettings();
+  msgLimit = MSG_PAGE;
   lastDocs = []; $("list").innerHTML = "";
 }
+function loadOlder() {
+  msgLimit += MSG_PAGE; keepAnchor = true;
+  if (unsub) { unsub(); unsub = null; }
+  startChat();
+}
 
-/* প্রাপক মেসেজ দেখলে "সিন" চিহ্ন ও সিন-এর সময় (seenAt) বসে — সবসময়, সেটিং যা-ই হোক */
+/* প্রাপক মেসেজ দেখলে "সিন" চিহ্ন ও সিন-এর সময় (seenAt) বসে */
 function markIncoming() {
   if (!me) return;
   const visible = unlocked && document.visibilityState === "visible";
@@ -463,7 +540,6 @@ function startSettings() {
     const data = s.exists() ? s.data({ serverTimestamps: "estimate" }) : {};
     autoDelete = !!data.autoDelete;
     enabledAtMs = data.enabledAt ? data.enabledAt.toMillis() : (autoDelete ? Date.now() : 0);
-    // পুরনো সেটিংয়ে চালুর সময় না থাকলে এখনই বসিয়ে দিই
     if (autoDelete && !data.enabledAt) {
       setDoc(settingsRef(), { enabledAt: serverTimestamp() }, { merge: true }).catch(() => {});
     }
@@ -483,7 +559,6 @@ function renderAd() {
   $("adBtn").textContent = autoDelete ? "বন্ধ করুন" : "চালু করুন";
   if (me) render(false);
 }
-// চালু করার পর সিন হওয়া মেসেজই শুধু মুছবে; আগের মেসেজে হাত দেবে না
 function eligible(m) { return autoDelete && m.seenAt && m.seenAt.toMillis() >= enabledAtMs; }
 const leftSec = seenMs => Math.max(0, Math.ceil((seenMs + AUTO_DELETE_MS - Date.now()) / 1000));
 
@@ -493,8 +568,7 @@ function sweep() {
   lastDocs.forEach(d => {
     const m = d.data({ serverTimestamps: "estimate" });
 
-    // নিরাপত্তা-ব্যবস্থা: প্রাপকের ফোন পুরনো সংস্করণে থাকলে "সিন" হয় কিন্তু সময় বসে না।
-    // তখন প্রেরক (আমি) নিজেই সিন-এর সময় বসিয়ে দিই। শুধু চালুর পরে পাঠানো মেসেজে।
+    // প্রাপকের ফোন পুরনো সংস্করণে থাকলে সিন-এর সময় বসে না; তখন প্রেরক নিজেই বসিয়ে দেয়
     if (m.senderId === me.uid && m.status === "seen" && !m.seenAt && !stamping.has(d.id)
         && m.createdAt && m.createdAt.toMillis() >= enabledAtMs) {
       stamping.add(d.id);
@@ -542,15 +616,44 @@ function dayLabel(d) {
   return d.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" });
 }
 
+/* ---------- মেসেজ দেখানো ---------- */
+function callText(m) {
+  const mineCall = m.senderId === me.uid;
+  const kind = m.callType === "video" ? "ভিডিও কল" : "ভয়েস কল";
+  const icon = m.callType === "video" ? "🎥" : "📞";
+  const dur = m.duration ? " · " + fmtDur(m.duration) : "";
+  switch (m.result) {
+    case "ended": return icon + " " + kind + dur;
+    case "missed": return mineCall ? icon + " " + kind + " · কেউ ধরেননি" : "📵 মিসড " + kind;
+    case "cancelled": return mineCall ? icon + " " + kind + " · কেটে দিয়েছেন" : "📵 মিসড " + kind;
+    case "declined": return mineCall ? icon + " " + kind + " · প্রত্যাখ্যাত" : icon + " " + kind + " · আপনি কেটে দিয়েছেন";
+    default: return icon + " " + kind + " · সংযোগ হয়নি";
+  }
+}
+function cdSpan(m) {
+  const w = document.createElement("span");
+  w.className = "cd"; w.dataset.seen = String(m.seenAt.toMillis());
+  w.textContent = "⏱ " + leftSec(m.seenAt.toMillis()) + "s";
+  return w;
+}
+
 function render(forceBottom) {
   const list = $("list");
-  const nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 140;
+  const prevH = list.scrollHeight, prevTop = list.scrollTop;
+  const nearBottom = prevH - prevTop - list.clientHeight < 140;
   const frag = document.createDocumentFragment();
   let lastDay = "";
+
+  if (lastDocs.length >= msgLimit) {
+    const ob = document.createElement("button");
+    ob.className = "older"; ob.textContent = "⬆️ আরও পুরনো মেসেজ দেখুন"; ob.onclick = loadOlder;
+    frag.appendChild(ob);
+  }
   if (!lastDocs.length) {
     const e = document.createElement("div"); e.className = "empty";
     e.textContent = "এখনও কোনো মেসেজ নেই। প্রথম মেসেজটি পাঠান ❤️"; frag.appendChild(e);
   }
+
   lastDocs.forEach(d => {
     const m = d.data({ serverTimestamps: "estimate" });
     const when = m.createdAt ? m.createdAt.toDate() : new Date();
@@ -559,17 +662,35 @@ function render(forceBottom) {
       lastDay = key;
       const s = document.createElement("div"); s.className = "day"; s.textContent = dayLabel(when); frag.appendChild(s);
     }
+
+    // কলের লগ
+    if (m.type === "call") {
+      const r = document.createElement("div"); r.className = "callLog"; r.dataset.mid = d.id;
+      const t = document.createElement("span"); t.textContent = callText(m);
+      const tm = document.createElement("small"); tm.textContent = fmtTime(when);
+      r.append(t, tm);
+      if (eligible(m)) r.appendChild(cdSpan(m));
+      frag.appendChild(r);
+      return;
+    }
+
+    // সাধারণ মেসেজ
     const mine = m.senderId === me.uid;
-    const row = document.createElement("div"); row.className = "row" + (mine ? " me" : "");
+    const row = document.createElement("div"); row.className = "row" + (mine ? " me" : ""); row.dataset.mid = d.id;
     const b = document.createElement("div"); b.className = "b";
+
+    if (m.replyTo) {
+      const q = document.createElement("div"); q.className = "q";
+      const who = document.createElement("b"); who.textContent = m.replyTo.from === me.uid ? "আপনি" : "সঙ্গী";
+      const sp = document.createElement("span"); sp.textContent = m.replyTo.text || "";
+      q.append(who, sp);
+      q.onclick = e => { e.stopPropagation(); jumpTo(m.replyTo.id); };
+      b.appendChild(q);
+    }
+
     const tx = document.createElement("div"); tx.className = "tx"; tx.textContent = m.text || "";
     const meta = document.createElement("div"); meta.className = "meta";
-    if (eligible(m)) {
-      const w = document.createElement("span");
-      w.className = "cd"; w.dataset.seen = String(m.seenAt.toMillis());
-      w.textContent = "⏱ " + leftSec(m.seenAt.toMillis()) + "s";
-      meta.appendChild(w);
-    }
+    if (eligible(m)) meta.appendChild(cdSpan(m));
     const time = document.createElement("span"); time.textContent = fmtTime(when); meta.appendChild(time);
     if (mine) {
       const t = document.createElement("span");
@@ -577,27 +698,94 @@ function render(forceBottom) {
       t.className = "tick" + (st === "seen" ? " seen" : "");
       t.textContent = st === "sent" ? "✓" : "✓✓";
       meta.appendChild(t);
-      attachLongPress(b, d.id);
     }
-    b.append(tx, meta); row.appendChild(b); frag.appendChild(row);
+    b.append(tx, meta);
+
+    const vals = Object.values(m.reactions || {});
+    if (vals.length) {
+      const wrap = document.createElement("div"); wrap.className = "rxs";
+      const counts = {};
+      vals.forEach(e => counts[e] = (counts[e] || 0) + 1);
+      Object.entries(counts).forEach(([e, n]) => {
+        const s = document.createElement("span"); s.className = "rp"; s.textContent = e;
+        if (n > 1) { const sm = document.createElement("small"); sm.textContent = n; s.appendChild(sm); }
+        wrap.appendChild(s);
+      });
+      b.appendChild(wrap);
+    }
+
+    attachLongPress(b, d.id);
+    row.appendChild(b); frag.appendChild(row);
   });
+
   list.replaceChildren(frag);
-  if (forceBottom || nearBottom) list.scrollTop = list.scrollHeight;
+  if (keepAnchor) { keepAnchor = false; list.scrollTop = prevTop + (list.scrollHeight - prevH); }
+  else if (forceBottom || nearBottom) list.scrollTop = list.scrollHeight;
 }
+
+function jumpTo(id) {
+  const el = $("list").querySelector('[data-mid="' + id + '"]');
+  if (!el) { toast("মূল মেসেজটি আর নেই"); return; }
+  el.scrollIntoView({ block: "center", behavior: "smooth" });
+  el.classList.add("hl"); setTimeout(() => el.classList.remove("hl"), 1500);
+}
+
+/* ---------- মেসেজ মেনু: রিঅ্যাকশন, রিপ্লাই, ডিলিট ---------- */
+let sheetFor = null, replyTo = null;
 
 function attachLongPress(el, id) {
   let timer;
-  el.addEventListener("touchstart", () => { timer = setTimeout(() => askDelete(id), 550); }, { passive: true });
+  el.addEventListener("touchstart", () => { timer = setTimeout(() => openSheet(id), 500); }, { passive: true });
   ["touchend", "touchmove", "touchcancel"].forEach(ev =>
     el.addEventListener(ev, () => clearTimeout(timer), { passive: true }));
-  el.addEventListener("contextmenu", e => { e.preventDefault(); askDelete(id); });
+  el.addEventListener("contextmenu", e => { e.preventDefault(); openSheet(id); });
 }
-async function askDelete(id) {
-  if (modalOpen) return;
+function openSheet(id) {
+  if (modalOpen || $("sheet").classList.contains("show")) return;
+  const d = lastDocs.find(x => x.id === id); if (!d) return;
+  const m = d.data();
+  sheetFor = { id, ref: d.ref, m };
+  const mineReact = (m.reactions || {})[me.uid];
+  const row = $("rxRow"); row.innerHTML = "";
+  REACTIONS.forEach(em => {
+    const b = document.createElement("button");
+    b.textContent = em; if (mineReact === em) b.className = "sel";
+    b.onclick = () => { closeSheet(); toggleReaction(d.ref, mineReact, em); };
+    row.appendChild(b);
+  });
+  $("shDel").style.display = m.senderId === me.uid ? "" : "none";
+  $("sheet").classList.add("show");
+}
+function closeSheet() { $("sheet").classList.remove("show"); }
+$("sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
+
+function toggleReaction(ref, current, em) {
+  const key = "reactions." + me.uid;
+  updateDoc(ref, current === em ? { [key]: deleteField() } : { [key]: em })
+    .catch(e => errOnce("রিঅ্যাকশন ব্যর্থ", e));
+}
+$("shReply").onclick = () => {
+  if (!sheetFor) return;
+  const m = sheetFor.m;
+  replyTo = { id: sheetFor.id, text: (m.text || "").slice(0, 80), from: m.senderId };
+  closeSheet(); showReplyBar(); msg.focus();
+};
+$("shDel").onclick = async () => {
+  const s = sheetFor; closeSheet();
+  if (!s) return;
   if (await confirmBox("এই মেসেজ ডিলিট করবেন? দুজনের চ্যাট থেকেই মুছে যাবে।", "ডিলিট")) {
-    deleteDoc(doc(db, "chats", CHAT_ID, "messages", id)).catch(e => errOnce("ডিলিট ব্যর্থ", e));
+    deleteDoc(s.ref).catch(e => errOnce("ডিলিট ব্যর্থ", e));
   }
+};
+function showReplyBar() {
+  const bar = $("replyBar");
+  if (!replyTo) { bar.classList.remove("show"); return; }
+  $("rbWho").textContent = replyTo.from === me.uid ? "আপনি" : "সঙ্গী";
+  $("rbText").textContent = replyTo.text;
+  bar.classList.add("show");
+  $("list").scrollTop = $("list").scrollHeight;
 }
+$("rbClose").onclick = () => { replyTo = null; showReplyBar(); };
 
 /* ---------- সব মেসেজ মোছা (কনফার্মেশন ছাড়া) ---------- */
 let clearing = false;
@@ -623,13 +811,27 @@ $("clearBtn").onclick = clearAll;
 /* ---------- মেসেজ পাঠানো ---------- */
 const msg = $("msg");
 function grow() { msg.style.height = "auto"; msg.style.height = Math.min(msg.scrollHeight, 120) + "px"; }
-msg.addEventListener("input", grow);
+msg.addEventListener("input", () => {
+  grow();
+  if (msg.value.trim()) {
+    const now = Date.now();
+    if (now - lastTypingWrite > 2500) setTyping(true);
+    clearTimeout(typingStop);
+    typingStop = setTimeout(() => setTyping(false), 4000);
+  } else {
+    clearTimeout(typingStop); setTyping(false);
+  }
+});
+msg.addEventListener("blur", () => { clearTimeout(typingStop); setTyping(false); });
+
 function send() {
   const text = msg.value.trim();
   if (!text || !me) return;
   msg.value = ""; grow(); msg.focus();
-  addDoc(col(), { type: "text", text, senderId: me.uid, createdAt: serverTimestamp(), status: "sent" })
-    .catch(e => errOnce("পাঠানো ব্যর্থ", e));
+  clearTimeout(typingStop); setTyping(false);
+  const payload = { type: "text", text, senderId: me.uid, createdAt: serverTimestamp(), status: "sent" };
+  if (replyTo) { payload.replyTo = replyTo; replyTo = null; showReplyBar(); }
+  addDoc(col(), payload).catch(e => errOnce("পাঠানো ব্যর্থ", e));
   setTimeout(() => { $("list").scrollTop = $("list").scrollHeight; }, 50);
 }
 $("sendBtn").onclick = send;
@@ -719,13 +921,71 @@ function renderIncoming() {
   if (showIt) startRing(); else stopRing();
 }
 
-function setCallStatus(t) { $("callStatus").textContent = t; }
+function setCallStatus(t) {
+  $("callStatus").textContent = t;
+  $("miniTime").textContent = "📞 " + (t || "");
+}
+
+/* কল ছোট/বড় করা এবং Back বাটনের আচরণ */
+let histDepth = 0;
+function pushCallState() { try { history.pushState({ ccCall: 1 }, ""); histDepth++; } catch (e) {} }
+function unwindHistory() {
+  if (histDepth > 0) {
+    const n = histDepth; histDepth = 0;
+    try { history.go(-n); } catch (e) {}
+  }
+}
+function setMini(on) {
+  if (!call) return;
+  call.mini = on;
+  const el = $("call");
+  el.classList.toggle("mini", on);
+  if (!on) el.style.left = el.style.top = el.style.right = el.style.bottom = "";
+}
+window.addEventListener("popstate", () => {
+  if (!call) return;
+  if (histDepth > 0) histDepth--;
+  if (!call.mini) setMini(true);   // Back চাপলে কল ছোট হয়ে যায়
+  pushCallState();                  // কল চলাকালীন Back-এ যেন অ্যাপ বন্ধ না হয়
+});
+$("minBtn").onclick = () => setMini(true);
+
+// ছোট জানালা: ট্যাপ করলে বড় হয়, টেনে সরানো যায়
+(function () {
+  const el = $("call");
+  let down = false, moving = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  el.addEventListener("pointerdown", e => {
+    if (!call || !call.mini || e.target.closest("#miniHang")) return;
+    down = true; moving = false; sx = e.clientX; sy = e.clientY;
+    const r = el.getBoundingClientRect(); ox = r.left; oy = r.top;
+    try { el.setPointerCapture(e.pointerId); } catch (x) {}
+  });
+  el.addEventListener("pointermove", e => {
+    if (!down) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (!moving && Math.hypot(dx, dy) < 8) return;
+    moving = true;
+    const x = Math.min(Math.max(0, ox + dx), window.innerWidth - el.offsetWidth);
+    const y = Math.min(Math.max(0, oy + dy), window.innerHeight - el.offsetHeight);
+    el.style.left = x + "px"; el.style.top = y + "px";
+    el.style.right = "auto"; el.style.bottom = "auto";
+  });
+  el.addEventListener("pointerup", () => {
+    if (!down) return;
+    down = false;
+    if (!moving) setMini(false);
+  });
+  el.addEventListener("pointercancel", () => { down = false; });
+})();
+
 async function openCallUI(type, status) {
   $("call").classList.toggle("vid", type === "video");
+  $("call").classList.remove("mini");
   $("call").classList.add("show");
   $("muteBtn").classList.remove("off"); $("muteBtn").textContent = "🎤";
   $("camBtn").classList.remove("off"); $("camBtn").textContent = "📷";
   setCallStatus(status);
+  pushCallState();
   if (type === "video" && call) {
     $("localV").srcObject = new MediaStream(call.stream.getVideoTracks());
     $("localV").play().catch(() => {});
@@ -743,7 +1003,7 @@ async function applyRemote(c, desc) {
 async function setupPeer(callRef, type, stream, role) {
   const pc = new RTCPeerConnection({ iceServers: await getIceServers() });
   const c = { ref: callRef, pc, stream, type, role, unsubs: [], pending: [],
-              remoteSet: false, gotAnswer: false, docSeen: false,
+              remoteSet: false, gotAnswer: false, docSeen: false, mini: false, logged: false, result: null,
               timer: null, ringTimeout: null, startedAt: 0, wake: null };
   call = c;
   stream.getTracks().forEach(t => pc.addTrack(t, stream));
@@ -764,6 +1024,7 @@ async function setupPeer(callRef, type, stream, role) {
     else if (s === "disconnected") setCallStatus("সংযোগ দুর্বল…");
     else if (s === "failed") {
       toast("সংযোগ ব্যর্থ হয়েছে। মোবাইল ডাটায় হলে TURN সেটআপ লাগতে পারে।");
+      c.result = "failed";
       endCall(true);
     }
   };
@@ -784,8 +1045,12 @@ async function setupPeer(callRef, type, stream, role) {
     if (!snap.exists()) { if (c.docSeen) endCall(false); return; }
     c.docSeen = true;
     const m = snap.data();
-    if (m.status === "declined") { toast("কল প্রত্যাখ্যান করা হয়েছে"); endCall(false); }
-    else if (m.status === "ended" || m.status === "missed") { toast("কল শেষ হয়েছে"); endCall(false); }
+    if (m.status === "declined") { toast("কল প্রত্যাখ্যান করা হয়েছে"); c.result = "declined"; endCall(false); }
+    else if (m.status === "ended" || m.status === "missed") {
+      toast("কল শেষ হয়েছে");
+      if (m.status === "missed") c.result = "missed";
+      endCall(false);
+    }
     else if (c.role === "caller" && m.answer && !c.gotAnswer) {
       c.gotAnswer = true;
       setCallStatus("সংযোগ হচ্ছে…");
@@ -797,10 +1062,7 @@ async function setupPeer(callRef, type, stream, role) {
 
 function startTimer(c) {
   clearInterval(c.timer);
-  const tick = () => {
-    const s = Math.floor((Date.now() - c.startedAt) / 1000);
-    setCallStatus(String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"));
-  };
+  const tick = () => setCallStatus(fmtDur(Math.floor((Date.now() - c.startedAt) / 1000)));
   tick(); c.timer = setInterval(tick, 1000);
 }
 
@@ -822,13 +1084,15 @@ async function startCall(type) {
     c.ringTimeout = setTimeout(() => {
       if (call === c && !c.remoteSet) {
         toast("কেউ ধরেননি");
+        c.result = "missed";
         updateDoc(ref, { status: "missed" }).catch(() => {});
         endCall(false);
       }
     }, 45000);
   } catch (e) {
     toast("কল শুরু করা যায়নি: " + (e.code || e.message));
-    if (call) endCall(false); else if (stream) stream.getTracks().forEach(t => t.stop());
+    if (call) { call.result = "failed"; endCall(false); }
+    else if (stream) stream.getTracks().forEach(t => t.stop());
   } finally { busy = false; }
 }
 
@@ -864,6 +1128,16 @@ function declineCall() {
   setTimeout(() => cleanupCall(r), 4000);
 }
 
+// কলের লগ চ্যাটে যোগ করা (শুধু যিনি কল করেছেন তিনি লেখেন, যাতে দুবার না হয়)
+function writeCallLog(c) {
+  if (!me || c.logged) return;
+  c.logged = true;
+  const duration = c.startedAt ? Math.round((Date.now() - c.startedAt) / 1000) : 0;
+  const result = c.result || (c.startedAt ? "ended" : "cancelled");
+  addDoc(col(), { type: "call", callType: c.type, result, duration, senderId: me.uid,
+                  createdAt: serverTimestamp(), status: "sent" }).catch(() => {});
+}
+
 async function endCall(notify) {
   const c = call; if (!c) return;
   call = null;
@@ -872,10 +1146,14 @@ async function endCall(notify) {
   try { c.pc.close(); } catch (e) {}
   c.stream.getTracks().forEach(t => t.stop());
   if (c.wake) { try { c.wake.release(); } catch (e) {} }
+  if (c.role === "caller") writeCallLog(c);
   $("remoteV").srcObject = null; $("localV").srcObject = null;
-  $("call").classList.remove("show");
+  const el = $("call");
+  el.classList.remove("show", "mini");
+  el.style.left = el.style.top = el.style.right = el.style.bottom = "";
   if (notify) updateDoc(c.ref, { status: "ended" }).catch(() => {});
   setTimeout(() => cleanupCall(c.ref), 4000);
+  unwindHistory();
   renderIncoming();
 }
 
@@ -894,6 +1172,7 @@ $("callVid").onclick = () => startCall("video");
 $("acceptBtn").onclick = acceptCall;
 $("declineBtn").onclick = declineCall;
 $("hangBtn").onclick = () => endCall(true);
+$("miniHang").onclick = e => { e.stopPropagation(); endCall(true); };
 $("muteBtn").onclick = () => {
   if (!call) return;
   const t = call.stream.getAudioTracks()[0]; if (!t) return;
