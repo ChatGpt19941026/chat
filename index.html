@@ -41,13 +41,19 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid #ccc;border-
 @keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
 /* চ্যাট */
-header{display:flex;align-items:center;gap:4px;padding:10px 10px;padding-top:calc(10px + env(safe-area-inset-top));
+header{display:flex;align-items:center;gap:4px;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));
   background:#075E54;color:#fff}
-header .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:600;padding-left:4px}
+header .t{flex:1;min-width:0;padding-left:4px}
+header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#presence{display:flex;align-items:center;font-size:11.5px;opacity:.92;white-space:nowrap;overflow:hidden}
+#pText{overflow:hidden;text-overflow:ellipsis}
+.pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
+#presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px}
 #adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
 #adBar span{flex:1}
-#adBar small{opacity:.7;font-size:11px}
+#adBar small{opacity:.8;font-size:12px;text-decoration:underline;padding:4px}
 #adBar button{border:0;border-radius:14px;padding:5px 12px;background:#fff;color:#075E54;font-size:13px;font-weight:600}
 #list{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column}
 .day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:#e1f2fb;font-size:12px;color:#555}
@@ -131,14 +137,17 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 <!-- চ্যাট -->
 <section id="chat" class="screen">
   <header>
-    <div class="t">Chat Gpt 2.0</div>
+    <div class="t">
+      <div class="nm">Chat Gpt 2.0</div>
+      <div id="presence"><span class="pd"></span><span id="pText"></span></div>
+    </div>
     <button id="callV" title="ভয়েস কল">📞</button>
     <button id="callVid" title="ভিডিও কল">🎥</button>
     <button id="clearBtn" title="সব মুছুন" style="margin-right:14px">🗑️</button>
     <button id="lockBtn" title="লক">🔒</button>
     <button id="logoutBtn" title="লগআউট">⎋</button>
   </header>
-  <div id="adBar"><span id="adText"></span><small id="ver">v4</small><button id="adBtn" type="button"></button></div>
+  <div id="adBar"><span id="adText"></span><small id="ver">v6</small><button id="adBtn" type="button"></button></div>
   <div id="list"></div>
   <div class="bar">
     <textarea id="msg" rows="1" placeholder="মেসেজ লিখুন"></textarea>
@@ -194,6 +203,8 @@ const ALLOWED = ["sumonlovemandira@gmail.com", "mandiralovesumon@gmail.com"];
 const CHAT_ID = "couple_chat";
 const RELOCK_MS = 30000;          // এতক্ষণের বেশি ব্যাকগ্রাউন্ডে থাকলে আবার লক
 const AUTO_DELETE_MS = 30000;     // সিন হওয়ার কতক্ষণ পর মেসেজ মুছবে (৩০ সেকেন্ড)
+const HEARTBEAT_MS = 25000;       // অনলাইন থাকার সংকেত পাঠানোর বিরতি
+const ONLINE_WINDOW_MS = 70000;   // এর মধ্যে সংকেত এলে অনলাইন ধরা হবে
 const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until";
 
 const app = initializeApp(firebaseConfig);
@@ -209,9 +220,9 @@ function show(id) {
   $(id).classList.add("active");
 }
 let toastTimer;
-function toast(t) {
+function toast(t, ms = 3800) {
   const el = $("toast"); el.textContent = t; el.style.display = "block";
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", 3800);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
 }
 // একই এরর বারবার দেখাবে না (১০ সেকেন্ডে একবার)
 let lastErrAt = 0;
@@ -258,16 +269,21 @@ $("loginForm").addEventListener("submit", async e => {
 });
 
 onAuthStateChanged(auth, user => {
-  if (!user) { me = null; unlocked = false; stopChat(); stopCalls(); show("login"); return; }
+  if (!user) { me = null; unlocked = false; stopChat(); stopCalls(); stopPresence(); show("login"); return; }
   if (!ALLOWED.includes((user.email || "").toLowerCase())) { signOut(auth); return; }
   me = user;
   startRingListener();
+  startPresence();
   if (unlocked) enterChat(); else startPin();
 });
 
 async function doLogout() {
   localStorage.removeItem(PIN_KEY);
   unlocked = false;
+  if (me) {
+    try { await setDoc(doc(db, "users", me.uid), { online: false, lastActive: serverTimestamp() }, { merge: true }); }
+    catch (e) {}
+  }
   await signOut(auth);
 }
 $("logoutBtn").onclick = async () => {
@@ -348,17 +364,63 @@ $("lockBtn").onclick = lockNow;
 buildPad();
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); }
+  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); }
   else {
+    beat(true);
     if (me && unlocked && !call && hiddenAt && Date.now() - hiddenAt > RELOCK_MS) lockNow();
     hiddenAt = 0; markIncoming(); sweep();
   }
 });
+window.addEventListener("pagehide", () => beat(false));
+
+/* ---------- অনলাইন অবস্থা (সবুজ বিন্দু ও সর্বশেষ অনলাইনে) ---------- */
+let hbTimer = null, presTimer = null, usersUnsub = null, partner = null;
+
+// নিজের অবস্থা লিখে রাখা: users/{আমার uid}
+function beat(online) {
+  if (!me) return;
+  setDoc(doc(db, "users", me.uid),
+    { email: (me.email || "").toLowerCase(), online, lastActive: serverTimestamp() },
+    { merge: true }).catch(() => {});
+}
+function startPresence() {
+  if (hbTimer) return;
+  beat(document.visibilityState === "visible");
+  hbTimer = setInterval(() => { if (document.visibilityState === "visible") beat(true); }, HEARTBEAT_MS);
+  presTimer = setInterval(renderPresence, 5000);
+  usersUnsub = onSnapshot(collection(db, "users"), snap => {
+    partner = null;
+    snap.docs.forEach(d => {
+      if (d.id !== me.uid) partner = d.data({ serverTimestamps: "estimate" });
+    });
+    renderPresence();
+  }, () => {});
+}
+function stopPresence() {
+  clearInterval(hbTimer); hbTimer = null;
+  clearInterval(presTimer); presTimer = null;
+  if (usersUnsub) { usersUnsub(); usersUnsub = null; }
+  partner = null;
+}
+function renderPresence() {
+  const box = $("presence"), txt = $("pText");
+  if (!partner || !partner.lastActive) {
+    box.classList.remove("on"); txt.textContent = "এখনও অনলাইনে আসেননি"; return;
+  }
+  const ms = partner.lastActive.toMillis();
+  const on = partner.online === true && Date.now() - ms < ONLINE_WINDOW_MS;
+  box.classList.toggle("on", on);
+  if (on) txt.textContent = "অনলাইন";
+  else {
+    const d = new Date(ms);
+    txt.textContent = "সর্বশেষ অনলাইনে: " + dayLabel(d) + " " + fmtTime(d);
+  }
+}
 
 /* ---------- চ্যাট ---------- */
 const col = () => collection(db, "chats", CHAT_ID, "messages");
 
-function enterChat() { show("chat"); startChat(); render(true); markIncoming(); }
+function enterChat() { show("chat"); startChat(); render(true); markIncoming(); renderPresence(); }
 
 function startChat() {
   if (unsub) return;
@@ -393,6 +455,7 @@ function markIncoming() {
 const settingsRef = () => doc(db, "chats", CHAT_ID, "meta", "settings");
 let autoDelete = false, enabledAtMs = 0, settingsUnsub = null, sweepTimer = null;
 const deleting = new Set();
+const stamping = new Set();
 
 function startSettings() {
   if (settingsUnsub) return;
@@ -428,8 +491,19 @@ function sweep() {
   if (!me || !autoDelete) return;
   const now = Date.now();
   lastDocs.forEach(d => {
-    if (deleting.has(d.id)) return;
     const m = d.data({ serverTimestamps: "estimate" });
+
+    // নিরাপত্তা-ব্যবস্থা: প্রাপকের ফোন পুরনো সংস্করণে থাকলে "সিন" হয় কিন্তু সময় বসে না।
+    // তখন প্রেরক (আমি) নিজেই সিন-এর সময় বসিয়ে দিই। শুধু চালুর পরে পাঠানো মেসেজে।
+    if (m.senderId === me.uid && m.status === "seen" && !m.seenAt && !stamping.has(d.id)
+        && m.createdAt && m.createdAt.toMillis() >= enabledAtMs) {
+      stamping.add(d.id);
+      updateDoc(d.ref, { seenAt: serverTimestamp() })
+        .catch(e => { errOnce("সিনের সময় বসানো ব্যর্থ", e); setTimeout(() => stamping.delete(d.id), 15000); });
+      return;
+    }
+
+    if (deleting.has(d.id)) return;
     if (eligible(m) && now - m.seenAt.toMillis() >= AUTO_DELETE_MS) {
       deleting.add(d.id);
       deleteDoc(d.ref)
@@ -449,6 +523,15 @@ $("adBtn").onclick = () => {
       ? "চালু: এখন থেকে সিন হওয়া মেসেজ ৩০ সেকেন্ড পর মুছবে"
       : "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে"))
     .catch(e => errOnce("সেটিং বদলানো যায়নি", e));
+};
+// ভার্সন লেখায় ট্যাপ করলে অবস্থা দেখায় (সমস্যা ধরার জন্য)
+$("ver").onclick = () => {
+  const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
+  const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
+  toast("অটো-মোছা: " + (autoDelete ? "চালু" : "বন্ধ")
+    + " | চালুর সময়: " + f(enabledAtMs)
+    + " | শেষ মেসেজ: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "নেই") : "—")
+    + " | এখন: " + f(Date.now()), 9000);
 };
 
 const fmtTime = d => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
