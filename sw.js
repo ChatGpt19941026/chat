@@ -1,4 +1,4 @@
-const CACHE = "couple-chat-v1";
+const CACHE = "couple-chat-v2";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
@@ -17,7 +17,7 @@ self.addEventListener("activate", e => {
   );
 });
 
-// নিজের ফাইলের জন্য network-first (আপডেট সঙ্গে সঙ্গে আসবে), অফলাইনে ক্যাশ। Firebase-এর রিকোয়েস্টে হাত দেয় না।
+// নিজের ফাইলের জন্য network-first, অফলাইনে ক্যাশ। Firebase-এর রিকোয়েস্টে হাত দেয় না।
 self.addEventListener("fetch", e => {
   const req = e.request;
   const url = new URL(req.url);
