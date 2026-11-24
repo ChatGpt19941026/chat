@@ -17,7 +17,7 @@ html,body{height:100%;margin:0;overscroll-behavior:none;
 .screen.active{display:flex}
 button{font:inherit;cursor:pointer}
 
-/* লগইন */
+/* লগইন ও PIN */
 #login,#pin{align-items:center;justify-content:center;padding:24px;background:#fff}
 .card{width:100%;max-width:360px;text-align:center}
 .logo{font-size:56px}
@@ -26,9 +26,9 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid #ccc;border-
 .btn{width:100%;padding:14px;border:0;border-radius:10px;background:#075E54;color:#fff;font-size:16px}
 .btn:disabled{opacity:.6}
 .err{color:#c62828;min-height:20px;margin:6px 0 12px;font-size:14px}
-.link{background:none;border:0;color:#075E54;margin-top:18px;font-size:14px;text-decoration:underline}
+.link{background:none;border:0;color:#075E54;margin-top:14px;font-size:14px;text-decoration:underline;display:inline-block}
+.bioBtn{margin-top:14px;padding:10px 16px;border-radius:20px;border:1px solid #075E54;background:#f2fbf9;color:#075E54;font-size:14px}
 
-/* PIN */
 #pinMsg{font-size:18px;margin:12px 0 20px}
 .dots{display:flex;justify-content:center;gap:14px;margin-bottom:24px}
 .dot{width:16px;height:16px;border-radius:50%;background:#ddd}
@@ -41,7 +41,7 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid #ccc;border-
 @keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
 /* চ্যাট */
-header{display:flex;align-items:center;gap:4px;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));
+header{display:flex;align-items:center;gap:3px;padding:8px 8px;padding-top:calc(8px + env(safe-area-inset-top));
   background:#075E54;color:#fff}
 header .t{flex:1;min-width:0;padding-left:4px}
 header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -51,11 +51,13 @@ header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;
 .pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
 #presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
 @keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
-header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px}
+header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
+
 #adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
-#adBar span{flex:1}
-#adBar small{opacity:.8;font-size:12px;text-decoration:underline;padding:4px}
-#adBar button{border:0;border-radius:14px;padding:5px 12px;background:#fff;color:#075E54;font-size:13px;font-weight:600}
+#adBar .spacer{flex:1}
+#adBar small{opacity:.85;font-size:12px;text-decoration:underline;padding:2px 6px}
+#adBar button{border:0;border-radius:14px;padding:4px 12px;background:#fff;color:#075E54;font-size:12.5px;font-weight:600}
+
 #list{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column}
 .day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:#e1f2fb;font-size:12px;color:#555}
 .older{align-self:center;margin:6px;padding:6px 14px;border:0;border-radius:14px;background:#fff;color:#075E54;font-size:13px}
@@ -75,32 +77,56 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 .q b{display:block;color:#075E54;font-size:12px}
 .q span{display:block;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
+.mediaImg{display:block;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000}
+.mediaVid{display:block;max-width:100%;max-height:260px;border-radius:8px;margin-bottom:4px;background:#000}
+.mediaAud{display:block;max-width:240px;height:36px;margin-bottom:4px}
+.mediaPending{font-size:13px;color:#555;padding:6px 0}
 .meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
 .tick.seen{color:#34B7F1}
 .cd{color:#c62828;font-weight:600}
 .rxs{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
 .rp{background:rgba(0,0,0,.07);border-radius:10px;padding:1px 6px;font-size:13px}
 .rp small{font-size:11px;margin-left:2px}
-.empty{margin:auto;color:#777;font-size:14px}
+.empty{margin:auto;padding:16px;text-align:center;white-space:pre-line;color:#555;font-size:15px;line-height:1.5}
+
 #replyBar{display:none;align-items:center;gap:8px;padding:6px 10px;background:#e9e4dc;border-top:1px solid #d6d0c6}
 #replyBar.show{display:flex}
 #replyBar .rbBody{flex:1;min-width:0;border-left:3px solid #075E54;padding-left:8px;font-size:13px}
 #replyBar b{display:block;color:#075E54;font-size:12px}
 #rbText{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
 #rbClose{border:0;background:none;font-size:18px;padding:4px 8px}
-.bar{display:flex;align-items:flex-end;gap:8px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#ECE5DD}
-.bar textarea{flex:1;max-height:120px;padding:11px 16px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:#fff}
+
+#recBar{display:none;align-items:center;gap:8px;padding:8px 12px;background:#fff3e0;border-top:1px solid #ffcc80;font-size:14px}
+#recBar.show{display:flex}
+#recTimer{font-weight:700;color:#c62828;min-width:52px}
+#recSend{border:0;border-radius:16px;padding:6px 12px;background:#075E54;color:#fff;font-size:13px}
+#recCancel{border:0;border-radius:16px;padding:6px 12px;background:#ddd;color:#111;font-size:13px}
+
+.bar{display:flex;align-items:flex-end;gap:6px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#ECE5DD}
+.ibtn{width:40px;height:40px;border:0;border-radius:50%;background:#fff;color:#075E54;font-size:18px;flex:none}
+.bar textarea{flex:1;max-height:120px;padding:10px 14px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:#fff}
 .send{width:46px;height:46px;border:0;border-radius:50%;background:#075E54;color:#fff;font-size:20px;flex:none}
 
-/* মেসেজ মেনু (আঙুল চেপে ধরলে) */
-#sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:45}
-#sheet.show{display:flex}
+/* মেসেজ মেনু ও ডিলিট মেনু */
+#sheet,#delSheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:45}
+#sheet.show,#delSheet.show{display:flex}
 .sheetBox{width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
 #rxRow{display:flex;justify-content:space-around;margin-bottom:10px}
 #rxRow button{border:0;background:none;font-size:30px;padding:4px 6px;border-radius:50%}
 #rxRow button.sel{background:#dff3e4}
 .sheetBox>button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 8px;font-size:16px}
 .sheetBox>button.danger{color:#c62828}
+
+/* ভিডিও রেকর্ডার মোডাল */
+#vidRecModal{position:fixed;inset:0;background:#000;z-index:55;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:24px;color:#fff}
+#vidRecModal.show{display:flex}
+#vidPreview{width:100%;max-width:420px;max-height:65vh;border-radius:14px;background:#111;transform:scaleX(-1);object-fit:cover}
+.vrActs{display:flex;gap:16px;align-items:center}
+.vrActs button{border:0;border-radius:24px;padding:12px 18px;font-size:15px}
+#vrStart{background:#e53935;color:#fff}
+#vrStop{background:#ff9800;color:#000;display:none}
+#vrSend{background:#25D366;color:#fff;display:none}
+#vrClose{background:#444;color:#fff}
 
 /* ডায়ালগ ও টোস্ট */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
@@ -134,7 +160,6 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
 .cb.ok{background:#25D366}
 #call:not(.vid) #camBtn{display:none}
 .miniBar{display:none}
-/* ছোট (মিনিমাইজ) অবস্থা */
 #call.mini{inset:auto;right:10px;bottom:96px;width:116px;height:164px;border-radius:14px;overflow:hidden;
   box-shadow:0 4px 16px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.35);touch-action:none}
 #call.mini:not(.vid){width:158px;height:60px}
@@ -158,21 +183,22 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
   <form class="card" id="loginForm">
     <div class="logo">💬</div>
     <h1>Chat Gpt 2.0</h1>
-    <input class="f" id="email" type="email" placeholder="ইমেইল" autocomplete="username" required>
-    <input class="f" id="password" type="password" placeholder="পাসওয়ার্ড" autocomplete="current-password" required>
+    <input class="f" id="email" type="email" autocomplete="username" required>
+    <input class="f" id="password" type="password" autocomplete="current-password" required>
     <div class="err" id="loginErr"></div>
-    <button class="btn" id="loginBtn" type="submit">লগইন</button>
+    <button class="btn" id="loginBtn" type="submit"></button>
   </form>
 </section>
 
-<!-- PIN -->
+<!-- PIN / বায়োমেট্রিক -->
 <section id="pin" class="screen">
   <div class="card">
     <div class="logo">🔒</div>
     <div id="pinMsg"></div>
     <div class="dots" id="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     <div class="pad" id="pad"></div>
-    <button class="link" id="forgot">PIN ভুলে গেছেন? লগআউট করুন</button>
+    <button class="bioBtn" id="bioBtn" type="button" style="display:none"></button><br>
+    <button class="link" id="forgot" type="button"></button>
   </div>
 </section>
 
@@ -183,44 +209,80 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
       <div class="nm">Chat Gpt 2.0</div>
       <div id="presence"><span class="pd"></span><span id="pText"></span></div>
     </div>
-    <button id="callV" title="ভয়েস কল">📞</button>
-    <button id="callVid" title="ভিডিও কল">🎥</button>
-    <button id="clearBtn" title="সব মুছুন" style="margin-right:14px">🗑️</button>
-    <button id="lockBtn" title="লক">🔒</button>
-    <button id="logoutBtn" title="লগআউট">⎋</button>
+    <button id="langBtn" type="button" title="Language">🌐</button>
+    <button id="callV" type="button" title="Voice Call">📞</button>
+    <button id="callVid" type="button" title="Video Call">🎥</button>
+    <button id="clearBtn" type="button" title="Clear All" style="margin-right:10px">🗑️</button>
+    <button id="lockBtn" type="button" title="Lock">🔒</button>
+    <button id="logoutBtn" type="button" title="Logout">⎋</button>
   </header>
-  <div id="adBar"><span id="adText"></span><small id="ver">v7</small><button id="adBtn" type="button"></button></div>
+  <div id="adBar">
+    <span>⏱️</span>
+    <span class="spacer"></span>
+    <small id="ver">v8</small>
+    <button id="adBtn" type="button"></button>
+  </div>
   <div id="list"></div>
   <div id="replyBar">
     <div class="rbBody"><b id="rbWho"></b><span id="rbText"></span></div>
-    <button id="rbClose" aria-label="রিপ্লাই বাতিল">✕</button>
+    <button id="rbClose" type="button">✕</button>
+  </div>
+  <div id="recBar">
+    <span>🎙️</span>
+    <span id="recTimer">00:00</span>
+    <span style="flex:1"></span>
+    <button id="recSend" type="button"></button>
+    <button id="recCancel" type="button"></button>
   </div>
   <div class="bar">
-    <textarea id="msg" rows="1" placeholder="মেসেজ লিখুন"></textarea>
-    <button class="send" id="sendBtn" aria-label="পাঠান">➤</button>
+    <input type="file" id="imgInput" accept="image/*" hidden>
+    <button class="ibtn" id="imgBtn" type="button">📷</button>
+    <button class="ibtn" id="vidRecBtn" type="button">🎬</button>
+    <button class="ibtn" id="micBtn" type="button">🎙️</button>
+    <textarea id="msg" rows="1"></textarea>
+    <button class="send" id="sendBtn" type="button">➤</button>
   </div>
 </section>
 
 <!-- মেসেজ মেনু -->
 <div id="sheet"><div class="sheetBox">
   <div id="rxRow"></div>
-  <button id="shReply">↩️ রিপ্লাই</button>
-  <button id="shDel" class="danger">🗑️ ডিলিট</button>
+  <button id="shReply" type="button"></button>
+  <button id="shDel" type="button" class="danger"></button>
 </div></div>
+
+<!-- ডিলিট অপশন মেনু -->
+<div id="delSheet"><div class="sheetBox">
+  <button id="delMe" type="button" class="danger"></button>
+  <button id="delBoth" type="button" class="danger"></button>
+  <button id="delCancel" type="button"></button>
+</div></div>
+
+<!-- ভিডিও রেকর্ডার (সর্বোচ্চ ১৫ সেকেন্ড, সরাসরি ক্যামেরা) -->
+<div id="vidRecModal">
+  <div id="vrStatus">00:00 / 00:15</div>
+  <video id="vidPreview" autoplay playsinline muted></video>
+  <div class="vrActs">
+    <button id="vrStart" type="button"></button>
+    <button id="vrStop" type="button"></button>
+    <button id="vrSend" type="button"></button>
+    <button id="vrClose" type="button"></button>
+  </div>
+</div>
 
 <!-- কল স্ক্রিন -->
 <div id="call">
   <video id="remoteV" autoplay playsinline></video>
   <video id="localV" autoplay playsinline muted></video>
-  <button id="minBtn" aria-label="ছোট করুন">⌄</button>
+  <button id="minBtn" type="button">⌄</button>
   <div class="callTop"><div class="nm">Chat Gpt 2.0</div><div id="callStatus"></div></div>
   <div class="voiceAv">❤️</div>
   <div class="ctrls">
-    <button class="cb" id="muteBtn" aria-label="মাইক">🎤</button>
-    <button class="cb" id="camBtn" aria-label="ক্যামেরা">📷</button>
-    <button class="cb end" id="hangBtn" aria-label="কল কাটুন">📵</button>
+    <button class="cb" id="muteBtn" type="button">🎤</button>
+    <button class="cb" id="camBtn" type="button">📷</button>
+    <button class="cb end" id="hangBtn" type="button">📵</button>
   </div>
-  <div class="miniBar"><span id="miniTime">📞</span><button id="miniHang" aria-label="কল কাটুন">📵</button></div>
+  <div class="miniBar"><span id="miniTime">📞</span><button id="miniHang" type="button">📵</button></div>
 </div>
 
 <!-- ইনকামিং কল -->
@@ -229,13 +291,13 @@ header button{background:none;border:0;color:#fff;font-size:19px;padding:6px 5px
   <div class="nm">Chat Gpt 2.0</div>
   <div id="incType"></div>
   <div class="inActs">
-    <button class="cb end" id="declineBtn" aria-label="কেটে দিন">📵</button>
-    <button class="cb ok" id="acceptBtn" aria-label="ধরুন">📞</button>
+    <button class="cb end" id="declineBtn" type="button">📵</button>
+    <button class="cb ok" id="acceptBtn" type="button">📞</button>
   </div>
 </div>
 
 <div id="modal"><div class="dlg"><p id="modalText"></p><div class="acts">
-  <button id="modalNo">না</button><button class="danger" id="modalYes">হ্যাঁ</button></div></div></div>
+  <button id="modalNo" type="button"></button><button id="modalYes" type="button" class="danger"></button></div></div></div>
 <div id="toast"></div>
 
 <script type="module">
@@ -254,16 +316,92 @@ const firebaseConfig = {
   messagingSenderId: "1040131212910",
   appId: "1:1040131212910:web:26949df7ca0234fdb4087f"
 };
-const ALLOWED = ["sumonlovemandira@gmail.com", "mandiralovesumon@gmail.com"];
 const CHAT_ID = "couple_chat";
-const RELOCK_MS = 30000;          // এতক্ষণের বেশি ব্যাকগ্রাউন্ডে থাকলে আবার লক
-const AUTO_DELETE_MS = 30000;     // সিন হওয়ার কতক্ষণ পর মেসেজ মুছবে (৩০ সেকেন্ড)
-const HEARTBEAT_MS = 25000;       // অনলাইন থাকার সংকেত পাঠানোর বিরতি
-const ONLINE_WINDOW_MS = 70000;   // এর মধ্যে সংকেত এলে অনলাইন ধরা হবে
-const TYPING_MS = 6000;           // এর মধ্যে টাইপিং সংকেত এলে "টাইপ করছে" দেখাবে
-const MSG_PAGE = 300;             // একবারে কতগুলো মেসেজ দেখাবে
+const RELOCK_MS = 30000;
+const AUTO_DELETE_MS = 30000;
+const HEARTBEAT_MS = 25000;
+const ONLINE_WINDOW_MS = 70000;
+const TYPING_MS = 6000;
+const MSG_PAGE = 300;
+const CHUNK_CHARS = 700000; // Firestore ১ MiB সীমার নিচে নিরাপদ চাঙ্ক সাইজ (~৫২৫ KB raw)
+const MAX_VOICE_SEC = 120;  // ভয়েস সর্বোচ্চ ২ মিনিট
+const MAX_VIDEO_SEC = 15;   // ভিডিও সর্বোচ্চ ১৫ সেকেন্ড
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
-const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until";
+const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", BIO_KEY = "cc_bio_cred", LANG_KEY = "cc_lang";
+
+const I18N = {
+  bn: {
+    emailPh: "ইমেইল", passPh: "পাসওয়ার্ড", login: "লগইন",
+    invCred: "ইমেইল বা পাসওয়ার্ড ভুল", netErr: "ইন্টারনেট সংযোগ নেই",
+    manyReq: "অনেকবার ভুল হয়েছে, একটু পরে চেষ্টা করুন", unauthDom: "Authorized domains-এ যোগ করা হয়নি",
+    loginFail: "লগইন ব্যর্থ: ",
+    enterPin: "PIN দিন", setPin: "নতুন ৪ সংখ্যার PIN দিন", confirmPin: "আবার একই PIN দিন",
+    mismatchPin: "মেলেনি, নতুন করে PIN দিন", waitSec: s => `অপেক্ষা করুন ${s} সেকেন্ড`,
+    fiveWrong: "৫ বার ভুল, ৩০ সেকেন্ড অপেক্ষা করুন", wrongPin: "ভুল PIN, আবার চেষ্টা করুন",
+    forgot: "PIN ভুলে গেছেন? লগআউট করুন",
+    logoutMsg: "লগআউট করবেন? এই ফোনের PIN ও ফিঙ্গারপ্রিন্ট মুছে যাবে।", logoutBtn: "লগআউট",
+    bioUse: "👆 ফিঙ্গারপ্রিন্ট দিয়ে আনলক করুন", bioSetupQ: "পরের বার ফিঙ্গারপ্রিন্ট দিয়ে দ্রুত আনলক করতে চান?",
+    bioDone: "ফিঙ্গারপ্রিন্ট যুক্ত হয়েছে", bioFail: "ফিঙ্গারপ্রিন্ট যাচাই করা যায়নি, PIN দিন",
+    turnOn: "চালু করুন", turnOff: "বন্ধ করুন",
+    adOnToast: "চালু: সিন হওয়া মেসেজ ও মিডিয়া ৩০ সেকেন্ড পর মুছবে", adOffToast: "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে",
+    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today",
+    olderBtn: "⬆️ আরও পুরনো মেসেজ দেখুন", msgPh: "মেসেজ লিখুন",
+    reply: "↩️ রিপ্লাই", del: "🗑️ ডিলিট",
+    delForMe: "আমার থেকে মুছুন", delForBoth: "দুজনের থেকে মুছুন", cancel: "বাতিল",
+    you: "আপনি", partner: "সঙ্গী", noOrig: "মূল মেসেজটি আর নেই",
+    allCleared: "সব মেসেজ মুছে গেছে",
+    today: "আজ", yesterday: "গতকাল",
+    neverOnline: "এখনও অনলাইনে আসেননি", typing: "টাইপ করছে…", online: "অনলাইন", lastSeen: "সর্বশেষ অনলাইনে: ",
+    voiceCall: "ভয়েস কল", videoCall: "ভিডিও কল", missed: "মিসড", noAnswer: "কেউ ধরেননি",
+    cancelledByMe: "কেটে দিয়েছেন", declined: "প্রত্যাখ্যাত", declinedByMe: "আপনি কেটে দিয়েছেন", failedConn: "সংযোগ হয়নি",
+    inVoice: "ভয়েস কল আসছে…", inVideo: "ভিডিও কল আসছে…",
+    calling: "কল করা হচ্ছে…", connecting: "সংযোগ হচ্ছে…", weakConn: "সংযোগ দুর্বল…",
+    callEnded: "কল শেষ হয়েছে", callDeclined: "কল প্রত্যাখ্যাত হয়েছে",
+    permMedia: "মাইক্রোফোন/ক্যামেরার অনুমতি দিন", noCallSup: "এই ব্রাউজারে কল সমর্থিত নয়",
+    turnHint: "সংযোগ ব্যর্থ হয়েছে। মোবাইল ডাটায় TURN সেটআপ লাগতে পারে।",
+    recSend: "পাঠান", recCancel: "বাতিল", vrStart: "রেকর্ড শুরু", vrStop: "থামুন", vrSend: "পাঠান", vrClose: "বন্ধ",
+    imgBig: "ছবি অনেক বড়, অন্য ছবি বেছে নিন", audBig: "ভয়েস ২ মিনিটের বেশি হতে পারবে না", vidBig: "ভিডিও অনেক বড় (১৫ সেকেন্ডের মধ্যে রাখুন)",
+    uploading: "পাঠানো হচ্ছে…", mediaDelErr: "মিডিয়া মোছা ব্যর্থ", yes: "হ্যাঁ", no: "না",
+    langSwitched: "ভাষা: বাংলা"
+  },
+  en: {
+    emailPh: "Email", passPh: "Password", login: "Login",
+    invCred: "Invalid email or password", netErr: "No internet connection",
+    manyReq: "Too many attempts, try again later", unauthDom: "Domain not in Authorized domains",
+    loginFail: "Login failed: ",
+    enterPin: "Enter PIN", setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
+    mismatchPin: "PIN did not match, try again", waitSec: s => `Wait ${s}s`,
+    fiveWrong: "5 wrong attempts, wait 30s", wrongPin: "Wrong PIN, try again",
+    forgot: "Forgot PIN? Logout",
+    logoutMsg: "Logout? PIN and fingerprint on this phone will be removed.", logoutBtn: "Logout",
+    bioUse: "👆 Unlock with Fingerprint", bioSetupQ: "Enable fingerprint unlock for faster access next time?",
+    bioDone: "Fingerprint enabled", bioFail: "Fingerprint failed, use PIN",
+    turnOn: "Turn On", turnOff: "Turn Off",
+    adOnToast: "On: seen messages & media delete in 30s", adOffToast: "Auto-delete turned off",
+    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today",
+    olderBtn: "⬆️ Load older messages", msgPh: "Type a message",
+    reply: "↩️ Reply", del: "🗑️ Delete",
+    delForMe: "Delete for me", delForBoth: "Delete for everyone", cancel: "Cancel",
+    you: "You", partner: "Partner", noOrig: "Original message not found",
+    allCleared: "All messages cleared",
+    today: "Today", yesterday: "Yesterday",
+    neverOnline: "Not online yet", typing: "typing…", online: "Online", lastSeen: "Last seen: ",
+    voiceCall: "Voice call", videoCall: "Video call", missed: "Missed", noAnswer: "No answer",
+    cancelledByMe: "Cancelled", declined: "Declined", declinedByMe: "You declined", failedConn: "Connection failed",
+    inVoice: "Incoming voice call…", inVideo: "Incoming video call…",
+    calling: "Calling…", connecting: "Connecting…", weakConn: "Weak connection…",
+    callEnded: "Call ended", callDeclined: "Call declined",
+    permMedia: "Please allow microphone/camera permission", noCallSup: "Calls not supported in this browser",
+    turnHint: "Connection failed. TURN server may be needed on mobile data.",
+    recSend: "Send", recCancel: "Cancel", vrStart: "Start Record", vrStop: "Stop", vrSend: "Send", vrClose: "Close",
+    imgBig: "Image too large, pick another", audBig: "Voice note max 2 minutes", vidBig: "Video too large (keep within 15s)",
+    uploading: "Sending…", mediaDelErr: "Failed to delete media", yes: "Yes", no: "No",
+    langSwitched: "Language: English"
+  }
+};
+
+let lang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "bn";
+const T = k => I18N[lang][k];
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -272,8 +410,40 @@ const $ = id => document.getElementById(id);
 
 let me = null, unlocked = false, unsub = null, lastDocs = [], hiddenAt = 0;
 let msgLimit = MSG_PAGE, keepAnchor = false;
+const mediaCache = new Map();
 
-/* ---------- ছোট সহায়ক ---------- */
+function applyLang() {
+  document.documentElement.lang = lang;
+  $("email").placeholder = T("emailPh");
+  $("password").placeholder = T("passPh");
+  $("loginBtn").textContent = T("login");
+  $("forgot").textContent = T("forgot");
+  $("bioBtn").textContent = T("bioUse");
+  $("msg").placeholder = T("msgPh");
+  $("shReply").textContent = T("reply");
+  $("shDel").textContent = T("del");
+  $("delMe").textContent = T("delForMe");
+  $("delBoth").textContent = T("delForBoth");
+  $("delCancel").textContent = T("cancel");
+  $("recSend").textContent = T("recSend");
+  $("recCancel").textContent = T("recCancel");
+  $("vrStart").textContent = T("vrStart");
+  $("vrStop").textContent = T("vrStop");
+  $("vrSend").textContent = T("vrSend");
+  $("vrClose").textContent = T("vrClose");
+  if ($("pin").classList.contains("active")) startPin();
+  renderAd();
+  renderPresence();
+  renderIncoming();
+  if (me && unlocked) render(false);
+}
+$("langBtn").onclick = () => {
+  lang = lang === "bn" ? "en" : "bn";
+  localStorage.setItem(LANG_KEY, lang);
+  applyLang();
+  toast(T("langSwitched"));
+};
+
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   $(id).classList.add("active");
@@ -283,20 +453,21 @@ function toast(t, ms = 3800) {
   const el = $("toast"); el.textContent = t; el.style.display = "block";
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
 }
-// একই এরর বারবার দেখাবে না (১০ সেকেন্ডে একবার)
 let lastErrAt = 0;
 function errOnce(prefix, e) {
   const now = Date.now();
   if (now - lastErrAt < 10000) return;
   lastErrAt = now;
   const code = e && e.code ? e.code : String(e);
-  toast(prefix + ": " + code + (code.includes("permission-denied") ? " — Firebase Rules Publish করুন" : ""));
+  toast(prefix + ": " + code + (code.includes("permission-denied") ? " — Rules Publish?" : ""));
 }
 let modalOpen = false;
-function confirmBox(text, yesLabel = "হ্যাঁ") {
+function confirmBox(text, yesLabel = T("yes"), noLabel = T("no")) {
   return new Promise(res => {
     modalOpen = true;
-    $("modalText").textContent = text; $("modalYes").textContent = yesLabel;
+    $("modalText").textContent = text;
+    $("modalYes").textContent = yesLabel;
+    $("modalNo").textContent = noLabel;
     $("modal").classList.add("show");
     const done = v => { $("modal").classList.remove("show"); modalOpen = false;
       $("modalYes").onclick = $("modalNo").onclick = null; res(v); };
@@ -311,26 +482,24 @@ $("loginForm").addEventListener("submit", async e => {
   e.preventDefault();
   const email = $("email").value.trim().toLowerCase();
   $("loginErr").textContent = "";
-  if (!ALLOWED.includes(email)) { $("loginErr").textContent = "এই ইমেইল অনুমোদিত নয়"; return; }
   $("loginBtn").disabled = true;
   try {
     await signInWithEmailAndPassword(auth, email, $("password").value);
   } catch (err) {
     const m = {
-      "auth/invalid-credential": "ইমেইল বা পাসওয়ার্ড ভুল",
-      "auth/wrong-password": "পাসওয়ার্ড ভুল",
-      "auth/network-request-failed": "ইন্টারনেট সংযোগ নেই",
-      "auth/too-many-requests": "অনেকবার ভুল হয়েছে, একটু পরে চেষ্টা করুন",
-      "auth/unauthorized-domain": "এই ওয়েবসাইট Firebase-এর Authorized domains-এ যোগ করা হয়নি"
+      "auth/invalid-credential": T("invCred"),
+      "auth/wrong-password": T("invCred"),
+      "auth/network-request-failed": T("netErr"),
+      "auth/too-many-requests": T("manyReq"),
+      "auth/unauthorized-domain": T("unauthDom")
     };
-    $("loginErr").textContent = m[err.code] || ("লগইন ব্যর্থ: " + err.code);
+    $("loginErr").textContent = m[err.code] || (T("loginFail") + err.code);
   }
   $("loginBtn").disabled = false;
 });
 
 onAuthStateChanged(auth, user => {
   if (!user) { me = null; unlocked = false; stopChat(); stopCalls(); stopPresence(); show("login"); return; }
-  if (!ALLOWED.includes((user.email || "").toLowerCase())) { signOut(auth); return; }
   me = user;
   startRingListener();
   startPresence();
@@ -339,6 +508,7 @@ onAuthStateChanged(auth, user => {
 
 async function doLogout() {
   localStorage.removeItem(PIN_KEY);
+  localStorage.removeItem(BIO_KEY);
   unlocked = false;
   if (me) {
     try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
@@ -347,13 +517,13 @@ async function doLogout() {
   await signOut(auth);
 }
 $("logoutBtn").onclick = async () => {
-  if (await confirmBox("লগআউট করবেন? এই ফোনের PIN-ও মুছে যাবে।", "লগআউট")) doLogout();
+  if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
 };
 $("forgot").onclick = async () => {
-  if (await confirmBox("লগআউট করলে PIN মুছে যাবে। আবার ইমেইল-পাসওয়ার্ড দিয়ে ঢুকে নতুন PIN দিতে হবে।", "লগআউট")) doLogout();
+  if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
 };
 
-/* ---------- PIN লক ---------- */
+/* ---------- PIN + ফিঙ্গারপ্রিন্ট (WebAuthn) ---------- */
 let pinBuf = "", pinFirst = null, pinMode = "unlock", fails = 0;
 
 async function hashPin(p) {
@@ -375,18 +545,21 @@ function buildPad() {
 function renderDots() {
   [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
 }
+function bioSupported() {
+  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
+}
 function startPin() {
   pinBuf = ""; pinFirst = null; renderDots();
   const has = !!localStorage.getItem(PIN_KEY);
   pinMode = has ? "unlock" : "setup";
-  $("pinMsg").textContent = has ? "PIN দিন" : "নতুন ৪ সংখ্যার PIN দিন";
-  $("forgot").style.display = "";
+  $("pinMsg").textContent = has ? T("enterPin") : T("setPin");
+  $("bioBtn").style.display = (has && bioSupported() && localStorage.getItem(BIO_KEY)) ? "inline-block" : "none";
   show("pin");
 }
 async function pressKey(k) {
   const until = Number(localStorage.getItem(LOCK_KEY) || 0);
   if (Date.now() < until) {
-    $("pinMsg").textContent = "অপেক্ষা করুন " + Math.ceil((until - Date.now()) / 1000) + " সেকেন্ড"; return;
+    $("pinMsg").textContent = I18N[lang].waitSec(Math.ceil((until - Date.now()) / 1000)); return;
   }
   if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
   if (pinBuf.length >= 4) return;
@@ -397,34 +570,81 @@ async function pressKey(k) {
   if (pinMode === "setup") {
     if (pinFirst === null) {
       pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = "আবার একই PIN দিন";
+      $("pinMsg").textContent = T("confirmPin");
     } else if (pinFirst === entered) {
       localStorage.setItem(PIN_KEY, await hashPin(entered));
+      await maybeEnrollBio();
       unlock();
     } else {
       pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = "মেলেনি, নতুন করে PIN দিন"; shake();
+      $("pinMsg").textContent = T("mismatchPin"); shake();
     }
   } else {
     if ((await hashPin(entered)) === localStorage.getItem(PIN_KEY)) {
-      fails = 0; unlock();
+      fails = 0;
+      if (bioSupported() && !localStorage.getItem(BIO_KEY)) await maybeEnrollBio();
+      unlock();
     } else {
       fails++; pinBuf = ""; setTimeout(renderDots, 120); shake();
       if (fails >= 5) {
         localStorage.setItem(LOCK_KEY, String(Date.now() + 30000)); fails = 0;
-        $("pinMsg").textContent = "৫ বার ভুল, ৩০ সেকেন্ড অপেক্ষা করুন";
-      } else $("pinMsg").textContent = "ভুল PIN, আবার চেষ্টা করুন";
+        $("pinMsg").textContent = T("fiveWrong");
+      } else $("pinMsg").textContent = T("wrongPin");
     }
   }
 }
+async function maybeEnrollBio() {
+  if (!bioSupported() || !me) return;
+  if (!(await confirmBox(T("bioSetupQ"), T("yes"), T("no")))) return;
+  try {
+    const chal = crypto.getRandomValues(new Uint8Array(16));
+    const uidBytes = new TextEncoder().encode(me.uid);
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: chal,
+        rp: { name: "Chat Gpt 2.0", id: location.hostname },
+        user: { id: uidBytes, name: me.email || "user", displayName: "User" },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+        timeout: 60000
+      }
+    });
+    if (cred) {
+      const rawId = [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem(BIO_KEY, rawId);
+      toast(T("bioDone"));
+    }
+  } catch (e) {
+    toast(T("bioFail"));
+  }
+}
+$("bioBtn").onclick = async () => {
+  const hexId = localStorage.getItem(BIO_KEY);
+  if (!hexId || !bioSupported()) return;
+  try {
+    const rawId = new Uint8Array(hexId.match(/.{1,2}/g).map(h => parseInt(h, 16)));
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(16)),
+        rpId: location.hostname,
+        allowCredentials: [{ type: "public-key", id: rawId, transports: ["internal"] }],
+        userVerification: "required",
+        timeout: 60000
+      }
+    });
+    if (assertion) { fails = 0; unlock(); }
+  } catch (e) {
+    toast(T("bioFail"));
+  }
+};
 function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
 function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
-function lockNow() { if (!me) return; closeSheet(); unlocked = false; startPin(); renderIncoming(); }
+function lockNow() { if (!me) return; closeSheet(); closeDelSheet(); unlocked = false; startPin(); renderIncoming(); }
 $("lockBtn").onclick = lockNow;
 buildPad();
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); setTyping(false); }
+  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); setTyping(false); stopVoiceRec(true); }
   else {
     beat(true);
     if (me && unlocked && !call && hiddenAt && Date.now() - hiddenAt > RELOCK_MS) lockNow();
@@ -437,7 +657,6 @@ window.addEventListener("pagehide", () => beat(false));
 let hbTimer = null, presTimer = null, usersUnsub = null, partner = null;
 let lastTypingWrite = 0, typingStop = null;
 
-// নিজের অবস্থা লিখে রাখা: users/{আমার uid}
 function beat(online) {
   if (!me) return;
   setDoc(doc(db, "users", me.uid),
@@ -446,7 +665,7 @@ function beat(online) {
 }
 function setTyping(on) {
   if (!me) return;
-  if (!on && !lastTypingWrite) return;       // আগে থেকেই বন্ধ থাকলে লিখব না
+  if (!on && !lastTypingWrite) return;
   lastTypingWrite = on ? Date.now() : 0;
   setDoc(doc(db, "users", me.uid), { typingAt: on ? serverTimestamp() : null }, { merge: true }).catch(() => {});
 }
@@ -472,7 +691,7 @@ function stopPresence() {
 function renderPresence() {
   const box = $("presence"), txt = $("pText");
   if (!partner || !partner.lastActive) {
-    box.classList.remove("on", "typing"); txt.textContent = "এখনও অনলাইনে আসেননি"; return;
+    box.classList.remove("on", "typing"); txt.textContent = T("neverOnline"); return;
   }
   const ms = partner.lastActive.toMillis();
   const on = partner.online === true && Date.now() - ms < ONLINE_WINDOW_MS;
@@ -480,24 +699,243 @@ function renderPresence() {
   const typing = on && tAt && Date.now() - tAt < TYPING_MS;
   box.classList.toggle("on", on);
   box.classList.toggle("typing", !!typing);
-  if (typing) txt.textContent = "টাইপ করছে…";
-  else if (on) txt.textContent = "অনলাইন";
+  if (typing) txt.textContent = T("typing");
+  else if (on) txt.textContent = T("online");
   else {
     const d = new Date(ms);
-    txt.textContent = "সর্বশেষ অনলাইনে: " + dayLabel(d) + " " + fmtTime(d);
+    txt.textContent = T("lastSeen") + dayLabel(d) + " " + fmtTime(d);
   }
 }
+
+/* ---------- মিডিয়া সংরক্ষণ ও মোছা (Firestore chunks) ---------- */
+const mediaCol = () => collection(db, "chats", CHAT_ID, "media");
+
+async function saveMediaChunks(base64DataUrl) {
+  const mediaRef = doc(mediaCol());
+  const chunks = [];
+  for (let i = 0; i < base64DataUrl.length; i += CHUNK_CHARS) {
+    chunks.push(base64DataUrl.slice(i, i + CHUNK_CHARS));
+  }
+  await setDoc(mediaRef, { ownerId: me.uid, total: chunks.length, createdAt: serverTimestamp() });
+  for (let i = 0; i < chunks.length; i++) {
+    await setDoc(doc(collection(mediaRef, "chunks"), String(i)), { idx: i, data: chunks[i] });
+  }
+  return mediaRef.id;
+}
+
+async function loadMediaDataUrl(mediaId) {
+  if (!mediaId) return "";
+  if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+  const cSnap = await getDocs(collection(mediaCol(), mediaId, "chunks"));
+  const parts = cSnap.docs.map(d => d.data()).sort((a, b) => a.idx - b.idx).map(x => x.data);
+  const full = parts.join("");
+  if (full) mediaCache.set(mediaId, full);
+  return full;
+}
+
+async function deleteMediaById(mediaId) {
+  if (!mediaId) return;
+  mediaCache.delete(mediaId);
+  try {
+    const mRef = doc(mediaCol(), mediaId);
+    const cSnap = await getDocs(collection(mRef, "chunks"));
+    const batch = writeBatch(db);
+    cSnap.docs.forEach(d => batch.delete(d.ref));
+    batch.delete(mRef);
+    await batch.commit();
+  } catch (e) {
+    toast(T("mediaDelErr"));
+  }
+}
+
+async function compressImage(file) {
+  const bmp = await createImageBitmap(file);
+  const maxDim = 1280;
+  let { width: w, height: h } = bmp;
+  if (w > maxDim || h > maxDim) {
+    const ratio = Math.min(maxDim / w, maxDim / h);
+    w = Math.round(w * ratio);
+    h = Math.round(h * ratio);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(bmp, 0, 0, w, h);
+  bmp.close();
+  let q = 0.72;
+  let dataUrl = canvas.toDataURL("image/jpeg", q);
+  while (dataUrl.length * 0.75 > 420000 && q > 0.35) {
+    q -= 0.1;
+    dataUrl = canvas.toDataURL("image/jpeg", q);
+  }
+  return dataUrl;
+}
+
+$("imgBtn").onclick = () => $("imgInput").click();
+$("imgInput").addEventListener("change", async () => {
+  const file = $("imgInput").files && $("imgInput").files[0];
+  $("imgInput").value = "";
+  if (!file || !me) return;
+  if (file.size > 12 * 1024 * 1024) { toast(T("imgBig")); return; }
+  toast(T("uploading"));
+  try {
+    const dataUrl = await compressImage(file);
+    if (dataUrl.length * 0.75 > 700000) { toast(T("imgBig")); return; }
+    const mediaId = await saveMediaChunks(dataUrl);
+    await addDoc(col(), {
+      type: "image", mediaId, text: "", senderId: me.uid,
+      createdAt: serverTimestamp(), status: "sent", hiddenFor: []
+    });
+  } catch (e) {
+    errOnce("Image send failed", e);
+  }
+});
+
+/* ভয়েস নোট (সর্বোচ্চ ২ মিনিট) */
+let mr = null, recChunks = [], recSec = 0, recTicker = null, discardRec = false;
+
+$("micBtn").onclick = async () => {
+  if (mr || !me) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
+    toast(T("noCallSup")); return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recChunks = []; recSec = 0; discardRec = false;
+    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "";
+    mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    mr.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+    mr.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(recTicker); recTicker = null;
+      $("recBar").classList.remove("show");
+      const currentMr = mr; mr = null;
+      if (discardRec || !recChunks.length || !me) return;
+      const blob = new Blob(recChunks, { type: currentMr.mimeType || "audio/webm" });
+      if (blob.size > 700000) { toast(T("audBig")); return; }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const mediaId = await saveMediaChunks(String(reader.result));
+          await addDoc(col(), {
+            type: "audio", mediaId, duration: recSec, text: "", senderId: me.uid,
+            createdAt: serverTimestamp(), status: "sent", hiddenFor: []
+          });
+        } catch (e) { errOnce("Voice send failed", e); }
+      };
+      reader.readAsDataURL(blob);
+    };
+    mr.start(500);
+    $("recTimer").textContent = "00:00";
+    $("recBar").classList.add("show");
+    recTicker = setInterval(() => {
+      recSec++;
+      $("recTimer").textContent = fmtDur(recSec);
+      if (recSec >= MAX_VOICE_SEC) stopVoiceRec(false);
+    }, 1000);
+  } catch (e) {
+    toast(T("permMedia"));
+  }
+};
+function stopVoiceRec(discard) {
+  discardRec = !!discard;
+  if (mr && mr.state !== "inactive") mr.stop();
+}
+$("recSend").onclick = () => stopVoiceRec(false);
+$("recCancel").onclick = () => stopVoiceRec(true);
+
+/* ভিডিও রেকর্ডার (শুধু ক্যামেরা থেকে, সর্বোচ্চ ১৫ সেকেন্ড) */
+let vrStream = null, vrRec = null, vrChunks = [], vrSec = 0, vrTicker = null, vrBlob = null;
+
+$("vidRecBtn").onclick = async () => {
+  if (!me || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
+    toast(T("noCallSup")); return;
+  }
+  try {
+    vrStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 480 }, height: { ideal: 360 } },
+      audio: true
+    });
+    vrBlob = null; vrSec = 0;
+    $("vidPreview").srcObject = vrStream;
+    $("vrStatus").textContent = "00:00 / 00:15";
+    $("vrStart").style.display = "inline-block";
+    $("vrStop").style.display = "none";
+    $("vrSend").style.display = "none";
+    $("vidRecModal").classList.add("show");
+  } catch (e) {
+    toast(T("permMedia"));
+  }
+};
+$("vrStart").onclick = () => {
+  if (!vrStream || vrRec) return;
+  vrChunks = []; vrSec = 0; vrBlob = null;
+  const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus") ? "video/webm;codecs=vp8,opus"
+    : (MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "");
+  vrRec = mime ? new MediaRecorder(vrStream, { mimeType: mime, videoBitsPerSecond: 450000 })
+               : new MediaRecorder(vrStream, { videoBitsPerSecond: 450000 });
+  vrRec.ondataavailable = e => { if (e.data && e.data.size > 0) vrChunks.push(e.data); };
+  vrRec.onstop = () => {
+    clearInterval(vrTicker); vrTicker = null;
+    vrBlob = new Blob(vrChunks, { type: vrRec.mimeType || "video/webm" });
+    vrRec = null;
+    $("vrStop").style.display = "none";
+    $("vrStart").style.display = "inline-block";
+    if (vrBlob.size > 1100000) {
+      toast(T("vidBig")); vrBlob = null;
+    } else if (vrBlob.size > 0) {
+      $("vrSend").style.display = "inline-block";
+    }
+  };
+  vrRec.start(400);
+  $("vrStart").style.display = "none";
+  $("vrStop").style.display = "inline-block";
+  $("vrSend").style.display = "none";
+  vrTicker = setInterval(() => {
+    vrSec++;
+    $("vrStatus").textContent = `${fmtDur(vrSec)} / 00:15`;
+    if (vrSec >= MAX_VIDEO_SEC && vrRec && vrRec.state !== "inactive") vrRec.stop();
+  }, 1000);
+};
+$("vrStop").onclick = () => {
+  if (vrRec && vrRec.state !== "inactive") vrRec.stop();
+};
+$("vrSend").onclick = async () => {
+  if (!vrBlob || !me) return;
+  const blob = vrBlob;
+  closeVidRecModal();
+  toast(T("uploading"));
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const mediaId = await saveMediaChunks(String(reader.result));
+      await addDoc(col(), {
+        type: "video", mediaId, duration: vrSec || 1, text: "", senderId: me.uid,
+        createdAt: serverTimestamp(), status: "sent", hiddenFor: []
+      });
+    } catch (e) { errOnce("Video send failed", e); }
+  };
+  reader.readAsDataURL(blob);
+};
+function closeVidRecModal() {
+  clearInterval(vrTicker); vrTicker = null;
+  if (vrRec && vrRec.state !== "inactive") { try { vrRec.stop(); } catch (e) {} }
+  if (vrStream) { vrStream.getTracks().forEach(t => t.stop()); vrStream = null; }
+  $("vidPreview").srcObject = null;
+  $("vidRecModal").classList.remove("show");
+}
+$("vrClose").onclick = closeVidRecModal;
 
 /* ---------- চ্যাট ---------- */
 const col = () => collection(db, "chats", CHAT_ID, "messages");
 
-function enterChat() { show("chat"); startChat(); render(true); markIncoming(); renderPresence(); }
+function enterChat() { show("chat"); applyLang(); startChat(); render(true); markIncoming(); renderPresence(); }
 
 function startChat() {
   if (unsub) return;
   const q = query(col(), orderBy("createdAt", "asc"), limitToLast(msgLimit));
   unsub = onSnapshot(q, snap => { lastDocs = snap.docs; render(false); markIncoming(); sweep(); },
-    err => errOnce("মেসেজ লোড ব্যর্থ", err));
+    err => errOnce("Load failed", err));
   startSettings();
 }
 function stopChat() {
@@ -512,7 +950,6 @@ function loadOlder() {
   startChat();
 }
 
-/* প্রাপক মেসেজ দেখলে "সিন" চিহ্ন ও সিন-এর সময় (seenAt) বসে */
 function markIncoming() {
   if (!me) return;
   const visible = unlocked && document.visibilityState === "visible";
@@ -521,14 +958,14 @@ function markIncoming() {
     if (m.senderId === me.uid) return;
     if (visible && m.status !== "seen") {
       updateDoc(d.ref, { status: "seen", seenAt: serverTimestamp() })
-        .catch(e => errOnce("সিন আপডেট ব্যর্থ", e));
+        .catch(e => errOnce("Seen failed", e));
     } else if (!visible && m.status === "sent") {
       updateDoc(d.ref, { status: "delivered" }).catch(() => {});
     }
   });
 }
 
-/* ---------- স্বয়ংক্রিয় মোছা (সিন হওয়ার ৩০ সেকেন্ড পর) ---------- */
+/* ---------- স্বয়ংক্রিয় মোছা ---------- */
 const settingsRef = () => doc(db, "chats", CHAT_ID, "meta", "settings");
 let autoDelete = false, enabledAtMs = 0, settingsUnsub = null, sweepTimer = null;
 const deleting = new Set();
@@ -544,7 +981,7 @@ function startSettings() {
       setDoc(settingsRef(), { enabledAt: serverTimestamp() }, { merge: true }).catch(() => {});
     }
     renderAd(); sweep();
-  }, e => errOnce("সেটিংস পড়া যায়নি", e));
+  }, e => errOnce("Settings failed", e));
   if (!sweepTimer) sweepTimer = setInterval(sweep, 1000);
 }
 function stopSettings() {
@@ -553,10 +990,7 @@ function stopSettings() {
   autoDelete = false; enabledAtMs = 0;
 }
 function renderAd() {
-  $("adText").textContent = autoDelete
-    ? "⏱️ সিন হওয়ার ৩০ সেকেন্ড পর মেসেজ মুছে যাবে"
-    : "⏱️ স্বয়ংক্রিয় মোছা বন্ধ আছে";
-  $("adBtn").textContent = autoDelete ? "বন্ধ করুন" : "চালু করুন";
+  $("adBtn").textContent = autoDelete ? T("turnOff") : T("turnOn");
   if (me) render(false);
 }
 function eligible(m) { return autoDelete && m.seenAt && m.seenAt.toMillis() >= enabledAtMs; }
@@ -567,22 +1001,20 @@ function sweep() {
   const now = Date.now();
   lastDocs.forEach(d => {
     const m = d.data({ serverTimestamps: "estimate" });
-
-    // প্রাপকের ফোন পুরনো সংস্করণে থাকলে সিন-এর সময় বসে না; তখন প্রেরক নিজেই বসিয়ে দেয়
     if (m.senderId === me.uid && m.status === "seen" && !m.seenAt && !stamping.has(d.id)
         && m.createdAt && m.createdAt.toMillis() >= enabledAtMs) {
       stamping.add(d.id);
       updateDoc(d.ref, { seenAt: serverTimestamp() })
-        .catch(e => { errOnce("সিনের সময় বসানো ব্যর্থ", e); setTimeout(() => stamping.delete(d.id), 15000); });
+        .catch(e => { errOnce("seenAt failed", e); setTimeout(() => stamping.delete(d.id), 15000); });
       return;
     }
-
     if (deleting.has(d.id)) return;
     if (eligible(m) && now - m.seenAt.toMillis() >= AUTO_DELETE_MS) {
       deleting.add(d.id);
+      const mid = m.mediaId;
       deleteDoc(d.ref)
-        .then(() => deleting.delete(d.id))
-        .catch(e => { errOnce("মোছা ব্যর্থ", e); setTimeout(() => deleting.delete(d.id), 15000); });
+        .then(async () => { if (mid) await deleteMediaById(mid); deleting.delete(d.id); })
+        .catch(e => { errOnce("Delete failed", e); setTimeout(() => deleting.delete(d.id), 15000); });
     }
   });
   document.querySelectorAll(".cd").forEach(el => {
@@ -593,41 +1025,38 @@ $("adBtn").onclick = () => {
   const next = !autoDelete;
   const data = next ? { autoDelete: true, enabledAt: serverTimestamp() } : { autoDelete: false };
   setDoc(settingsRef(), data, { merge: true })
-    .then(() => toast(next
-      ? "চালু: এখন থেকে সিন হওয়া মেসেজ ৩০ সেকেন্ড পর মুছবে"
-      : "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে"))
-    .catch(e => errOnce("সেটিং বদলানো যায়নি", e));
+    .then(() => toast(next ? T("adOnToast") : T("adOffToast")))
+    .catch(e => errOnce("Toggle failed", e));
 };
-// ভার্সন লেখায় ট্যাপ করলে অবস্থা দেখায় (সমস্যা ধরার জন্য)
 $("ver").onclick = () => {
   const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
   const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
-  toast("অটো-মোছা: " + (autoDelete ? "চালু" : "বন্ধ")
-    + " | চালুর সময়: " + f(enabledAtMs)
-    + " | শেষ মেসেজ: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "নেই") : "—")
-    + " | এখন: " + f(Date.now()), 9000);
+  toast("v8 | Auto: " + (autoDelete ? "ON" : "OFF")
+    + " | Since: " + f(enabledAtMs)
+    + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
+    + " | Now: " + f(Date.now()), 9000);
 };
 
 const fmtTime = d => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 function dayLabel(d) {
   const t = new Date(), y = new Date(); y.setDate(t.getDate() - 1);
-  if (d.toDateString() === t.toDateString()) return "আজ";
-  if (d.toDateString() === y.toDateString()) return "গতকাল";
-  return d.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" });
+  if (d.toDateString() === t.toDateString()) return T("today");
+  if (d.toDateString() === y.toDateString()) return T("yesterday");
+  return d.toLocaleDateString(lang === "bn" ? "bn-BD" : "en-US", { day: "numeric", month: "long", year: "numeric" });
 }
 
 /* ---------- মেসেজ দেখানো ---------- */
 function callText(m) {
   const mineCall = m.senderId === me.uid;
-  const kind = m.callType === "video" ? "ভিডিও কল" : "ভয়েস কল";
+  const kind = m.callType === "video" ? T("videoCall") : T("voiceCall");
   const icon = m.callType === "video" ? "🎥" : "📞";
   const dur = m.duration ? " · " + fmtDur(m.duration) : "";
   switch (m.result) {
     case "ended": return icon + " " + kind + dur;
-    case "missed": return mineCall ? icon + " " + kind + " · কেউ ধরেননি" : "📵 মিসড " + kind;
-    case "cancelled": return mineCall ? icon + " " + kind + " · কেটে দিয়েছেন" : "📵 মিসড " + kind;
-    case "declined": return mineCall ? icon + " " + kind + " · প্রত্যাখ্যাত" : icon + " " + kind + " · আপনি কেটে দিয়েছেন";
-    default: return icon + " " + kind + " · সংযোগ হয়নি";
+    case "missed": return mineCall ? icon + " " + kind + " · " + T("noAnswer") : "📵 " + T("missed") + " " + kind;
+    case "cancelled": return mineCall ? icon + " " + kind + " · " + T("cancelledByMe") : "📵 " + T("missed") + " " + kind;
+    case "declined": return mineCall ? icon + " " + kind + " · " + T("declined") : icon + " " + kind + " · " + T("declinedByMe");
+    default: return icon + " " + kind + " · " + T("failedConn");
   }
 }
 function cdSpan(m) {
@@ -644,17 +1073,22 @@ function render(forceBottom) {
   const frag = document.createDocumentFragment();
   let lastDay = "";
 
+  const visibleDocs = lastDocs.filter(d => {
+    const h = d.data().hiddenFor;
+    return !(Array.isArray(h) && h.includes(me.uid));
+  });
+
   if (lastDocs.length >= msgLimit) {
     const ob = document.createElement("button");
-    ob.className = "older"; ob.textContent = "⬆️ আরও পুরনো মেসেজ দেখুন"; ob.onclick = loadOlder;
+    ob.className = "older"; ob.textContent = T("olderBtn"); ob.onclick = loadOlder;
     frag.appendChild(ob);
   }
-  if (!lastDocs.length) {
+  if (!visibleDocs.length) {
     const e = document.createElement("div"); e.className = "empty";
-    e.textContent = "এখনও কোনো মেসেজ নেই। প্রথম মেসেজটি পাঠান ❤️"; frag.appendChild(e);
+    e.textContent = T("emptyChat"); frag.appendChild(e);
   }
 
-  lastDocs.forEach(d => {
+  visibleDocs.forEach(d => {
     const m = d.data({ serverTimestamps: "estimate" });
     const when = m.createdAt ? m.createdAt.toDate() : new Date();
     const key = when.toDateString();
@@ -663,7 +1097,6 @@ function render(forceBottom) {
       const s = document.createElement("div"); s.className = "day"; s.textContent = dayLabel(when); frag.appendChild(s);
     }
 
-    // কলের লগ
     if (m.type === "call") {
       const r = document.createElement("div"); r.className = "callLog"; r.dataset.mid = d.id;
       const t = document.createElement("span"); t.textContent = callText(m);
@@ -674,21 +1107,41 @@ function render(forceBottom) {
       return;
     }
 
-    // সাধারণ মেসেজ
     const mine = m.senderId === me.uid;
     const row = document.createElement("div"); row.className = "row" + (mine ? " me" : ""); row.dataset.mid = d.id;
     const b = document.createElement("div"); b.className = "b";
 
     if (m.replyTo) {
       const q = document.createElement("div"); q.className = "q";
-      const who = document.createElement("b"); who.textContent = m.replyTo.from === me.uid ? "আপনি" : "সঙ্গী";
+      const who = document.createElement("b"); who.textContent = m.replyTo.from === me.uid ? T("you") : T("partner");
       const sp = document.createElement("span"); sp.textContent = m.replyTo.text || "";
       q.append(who, sp);
       q.onclick = e => { e.stopPropagation(); jumpTo(m.replyTo.id); };
       b.appendChild(q);
     }
 
-    const tx = document.createElement("div"); tx.className = "tx"; tx.textContent = m.text || "";
+    if (m.type === "image" && m.mediaId) {
+      const img = document.createElement("img"); img.className = "mediaImg";
+      if (mediaCache.has(m.mediaId)) img.src = mediaCache.get(m.mediaId);
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) img.src = url; }).catch(() => {});
+      b.appendChild(img);
+    } else if (m.type === "audio" && m.mediaId) {
+      const aud = document.createElement("audio"); aud.className = "mediaAud"; aud.controls = true; aud.preload = "metadata";
+      if (mediaCache.has(m.mediaId)) aud.src = mediaCache.get(m.mediaId);
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) aud.src = url; }).catch(() => {});
+      b.appendChild(aud);
+    } else if (m.type === "video" && m.mediaId) {
+      const vid = document.createElement("video"); vid.className = "mediaVid"; vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
+      if (mediaCache.has(m.mediaId)) vid.src = mediaCache.get(m.mediaId);
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) vid.src = url; }).catch(() => {});
+      b.appendChild(vid);
+    }
+
+    if (m.text) {
+      const tx = document.createElement("div"); tx.className = "tx"; tx.textContent = m.text;
+      b.appendChild(tx);
+    }
+
     const meta = document.createElement("div"); meta.className = "meta";
     if (eligible(m)) meta.appendChild(cdSpan(m));
     const time = document.createElement("span"); time.textContent = fmtTime(when); meta.appendChild(time);
@@ -699,7 +1152,7 @@ function render(forceBottom) {
       t.textContent = st === "sent" ? "✓" : "✓✓";
       meta.appendChild(t);
     }
-    b.append(tx, meta);
+    b.appendChild(meta);
 
     const vals = Object.values(m.reactions || {});
     if (vals.length) {
@@ -725,12 +1178,12 @@ function render(forceBottom) {
 
 function jumpTo(id) {
   const el = $("list").querySelector('[data-mid="' + id + '"]');
-  if (!el) { toast("মূল মেসেজটি আর নেই"); return; }
+  if (!el) { toast(T("noOrig")); return; }
   el.scrollIntoView({ block: "center", behavior: "smooth" });
   el.classList.add("hl"); setTimeout(() => el.classList.remove("hl"), 1500);
 }
 
-/* ---------- মেসেজ মেনু: রিঅ্যাকশন, রিপ্লাই, ডিলিট ---------- */
+/* ---------- মেসেজ মেনু ও ডিলিট অপশন ---------- */
 let sheetFor = null, replyTo = null;
 
 function attachLongPress(el, id) {
@@ -749,45 +1202,67 @@ function openSheet(id) {
   const row = $("rxRow"); row.innerHTML = "";
   REACTIONS.forEach(em => {
     const b = document.createElement("button");
+    b.type = "button";
     b.textContent = em; if (mineReact === em) b.className = "sel";
     b.onclick = () => { closeSheet(); toggleReaction(d.ref, mineReact, em); };
     row.appendChild(b);
   });
-  $("shDel").style.display = m.senderId === me.uid ? "" : "none";
   $("sheet").classList.add("show");
 }
 function closeSheet() { $("sheet").classList.remove("show"); }
 $("sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
 
+function closeDelSheet() { $("delSheet").classList.remove("show"); }
+$("delSheet").addEventListener("click", e => { if (e.target.id === "delSheet") closeDelSheet(); });
+$("delCancel").onclick = closeDelSheet;
+
 function toggleReaction(ref, current, em) {
   const key = "reactions." + me.uid;
   updateDoc(ref, current === em ? { [key]: deleteField() } : { [key]: em })
-    .catch(e => errOnce("রিঅ্যাকশন ব্যর্থ", e));
+    .catch(e => errOnce("Reaction failed", e));
 }
 $("shReply").onclick = () => {
   if (!sheetFor) return;
   const m = sheetFor.m;
-  replyTo = { id: sheetFor.id, text: (m.text || "").slice(0, 80), from: m.senderId };
-  closeSheet(); showReplyBar(); msg.focus();
+  const preview = m.text || (m.type === "image" ? "📷" : m.type === "audio" ? "🎙️" : m.type === "video" ? "🎬" : "");
+  replyTo = { id: sheetFor.id, text: preview.slice(0, 80), from: m.senderId };
+  closeSheet(); showReplyBar(); $("msg").focus();
 };
-$("shDel").onclick = async () => {
-  const s = sheetFor; closeSheet();
+$("shDel").onclick = () => {
+  if (!sheetFor) return;
+  const isMine = sheetFor.m.senderId === me.uid;
+  closeSheet();
+  $("delBoth").style.display = isMine ? "block" : "none";
+  $("delSheet").classList.add("show");
+};
+$("delMe").onclick = async () => {
+  const s = sheetFor; closeDelSheet();
   if (!s) return;
-  if (await confirmBox("এই মেসেজ ডিলিট করবেন? দুজনের চ্যাট থেকেই মুছে যাবে।", "ডিলিট")) {
-    deleteDoc(s.ref).catch(e => errOnce("ডিলিট ব্যর্থ", e));
+  const cur = Array.isArray(s.m.hiddenFor) ? s.m.hiddenFor : [];
+  if (!cur.includes(me.uid)) {
+    updateDoc(s.ref, { hiddenFor: [...cur, me.uid] }).catch(e => errOnce("Delete for me failed", e));
   }
 };
+$("delBoth").onclick = async () => {
+  const s = sheetFor; closeDelSheet();
+  if (!s || s.m.senderId !== me.uid) return;
+  const mid = s.m.mediaId;
+  deleteDoc(s.ref)
+    .then(async () => { if (mid) await deleteMediaById(mid); })
+    .catch(e => errOnce("Delete failed", e));
+};
+
 function showReplyBar() {
   const bar = $("replyBar");
   if (!replyTo) { bar.classList.remove("show"); return; }
-  $("rbWho").textContent = replyTo.from === me.uid ? "আপনি" : "সঙ্গী";
+  $("rbWho").textContent = replyTo.from === me.uid ? T("you") : T("partner");
   $("rbText").textContent = replyTo.text;
   bar.classList.add("show");
   $("list").scrollTop = $("list").scrollHeight;
 }
 $("rbClose").onclick = () => { replyTo = null; showReplyBar(); };
 
-/* ---------- সব মেসেজ মোছা (কনফার্মেশন ছাড়া) ---------- */
+/* ---------- সব মেসেজ মোছা ---------- */
 let clearing = false;
 async function clearAll() {
   if (clearing || !me) return;
@@ -796,13 +1271,18 @@ async function clearAll() {
     while (true) {
       const snap = await getDocs(query(col(), limit(400)));
       if (snap.empty) break;
+      for (const d of snap.docs) {
+        const mid = d.data().mediaId;
+        if (mid) await deleteMediaById(mid);
+      }
       const batch = writeBatch(db);
       snap.docs.forEach(d => batch.delete(d.ref));
       await batch.commit();
     }
-    toast("সব মেসেজ মুছে গেছে");
+    mediaCache.clear();
+    toast(T("allCleared"));
   } catch (e) {
-    errOnce("মোছা ব্যর্থ", e);
+    errOnce("Clear failed", e);
   }
   clearing = false;
 }
@@ -829,15 +1309,14 @@ function send() {
   if (!text || !me) return;
   msg.value = ""; grow(); msg.focus();
   clearTimeout(typingStop); setTyping(false);
-  const payload = { type: "text", text, senderId: me.uid, createdAt: serverTimestamp(), status: "sent" };
+  const payload = { type: "text", text, senderId: me.uid, createdAt: serverTimestamp(), status: "sent", hiddenFor: [] };
   if (replyTo) { payload.replyTo = replyTo; replyTo = null; showReplyBar(); }
-  addDoc(col(), payload).catch(e => errOnce("পাঠানো ব্যর্থ", e));
+  addDoc(col(), payload).catch(e => errOnce("Send failed", e));
   setTimeout(() => { $("list").scrollTop = $("list").scrollHeight; }, 50);
 }
 $("sendBtn").onclick = send;
-$("sendBtn").addEventListener("mousedown", e => e.preventDefault()); // কীবোর্ড বন্ধ হবে না
+$("sendBtn").addEventListener("mousedown", e => e.preventDefault());
 
-/* কীবোর্ড খুললে ভিউপোর্ট ঠিক রাখা */
 if (window.visualViewport) {
   visualViewport.addEventListener("resize", () => {
     $("chat").style.height = visualViewport.height + "px";
@@ -845,15 +1324,10 @@ if (window.visualViewport) {
   });
 }
 
-/* =====================================================
-   ভয়েস / ভিডিও কল (WebRTC) — সংযোগের তথ্য Firestore দিয়ে আদান-প্রদান
-   ===================================================== */
+/* ---------- ভয়েস / ভিডিও কল (WebRTC) ---------- */
 const callsCol = () => collection(db, "chats", CHAT_ID, "calls");
-let call = null;        // চলমান কল
-let incoming = null;    // আসা কল (রিং হচ্ছে)
-let ringUnsub = null, busy = false;
+let call = null, incoming = null, ringUnsub = null, busy = false;
 
-// TURN/STUN তথ্য Firestore-এর config/ice ডকুমেন্ট থেকে আসে (কোডে গোপন তথ্য থাকে না)
 async function getIceServers() {
   try {
     const s = await getDoc(doc(db, "config", "ice"));
@@ -864,15 +1338,12 @@ async function getIceServers() {
   } catch (e) {}
   return [{ urls: "stun:stun.l.google.com:19302" }];
 }
-
 function getMedia(type) {
   return navigator.mediaDevices.getUserMedia({
     audio: { echoCancellation: true, noiseSuppression: true },
     video: type === "video" ? { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } } : false
   });
 }
-
-/* রিং শব্দ ও কম্পন */
 let ringTimer = null, actx = null;
 function startRing() {
   if (ringTimer) return;
@@ -890,7 +1361,6 @@ function startRing() {
 }
 function stopRing() { clearInterval(ringTimer); ringTimer = null; }
 
-/* আসা কলের শোনা */
 function startRingListener() {
   if (ringUnsub) return;
   const q = query(callsCol(), where("status", "==", "ringing"));
@@ -900,7 +1370,6 @@ function startRingListener() {
       const m = d.data({ serverTimestamps: "estimate" });
       const age = Date.now() - (m.createdAt ? m.createdAt.toMillis() : Date.now());
       if (m.from === me.uid) {
-        // নিজের পুরনো আটকে থাকা কল পরিষ্কার
         if (age > 90000 && !(call && call.ref.id === d.id)) updateDoc(d.ref, { status: "ended" }).catch(() => {});
         return;
       }
@@ -917,23 +1386,18 @@ function stopCalls() {
 function renderIncoming() {
   const showIt = !!(incoming && unlocked && !call);
   $("incoming").classList.toggle("show", showIt);
-  $("incType").textContent = incoming ? (incoming.type === "video" ? "ভিডিও কল আসছে…" : "ভয়েস কল আসছে…") : "";
+  $("incType").textContent = incoming ? (incoming.type === "video" ? T("inVideo") : T("inVoice")) : "";
   if (showIt) startRing(); else stopRing();
 }
-
 function setCallStatus(t) {
   $("callStatus").textContent = t;
   $("miniTime").textContent = "📞 " + (t || "");
 }
 
-/* কল ছোট/বড় করা এবং Back বাটনের আচরণ */
 let histDepth = 0;
 function pushCallState() { try { history.pushState({ ccCall: 1 }, ""); histDepth++; } catch (e) {} }
 function unwindHistory() {
-  if (histDepth > 0) {
-    const n = histDepth; histDepth = 0;
-    try { history.go(-n); } catch (e) {}
-  }
+  if (histDepth > 0) { const n = histDepth; histDepth = 0; try { history.go(-n); } catch (e) {} }
 }
 function setMini(on) {
   if (!call) return;
@@ -945,12 +1409,11 @@ function setMini(on) {
 window.addEventListener("popstate", () => {
   if (!call) return;
   if (histDepth > 0) histDepth--;
-  if (!call.mini) setMini(true);   // Back চাপলে কল ছোট হয়ে যায়
-  pushCallState();                  // কল চলাকালীন Back-এ যেন অ্যাপ বন্ধ না হয়
+  if (!call.mini) setMini(true);
+  pushCallState();
 });
 $("minBtn").onclick = () => setMini(true);
 
-// ছোট জানালা: ট্যাপ করলে বড় হয়, টেনে সরানো যায়
 (function () {
   const el = $("call");
   let down = false, moving = false, sx = 0, sy = 0, ox = 0, oy = 0;
@@ -971,9 +1434,7 @@ $("minBtn").onclick = () => setMini(true);
     el.style.right = "auto"; el.style.bottom = "auto";
   });
   el.addEventListener("pointerup", () => {
-    if (!down) return;
-    down = false;
-    if (!moving) setMini(false);
+    if (!down) return; down = false; if (!moving) setMini(false);
   });
   el.addEventListener("pointercancel", () => { down = false; });
 })();
@@ -992,14 +1453,12 @@ async function openCallUI(type, status) {
   }
   try { if (navigator.wakeLock && call) call.wake = await navigator.wakeLock.request("screen"); } catch (e) {}
 }
-
 async function applyRemote(c, desc) {
   await c.pc.setRemoteDescription(new RTCSessionDescription(desc));
   c.remoteSet = true;
   clearTimeout(c.ringTimeout);
   c.pending.splice(0).forEach(x => c.pc.addIceCandidate(new RTCIceCandidate(x)).catch(() => {}));
 }
-
 async function setupPeer(callRef, type, stream, role) {
   const pc = new RTCPeerConnection({ iceServers: await getIceServers() });
   const c = { ref: callRef, pc, stream, type, role, unsubs: [], pending: [],
@@ -1007,29 +1466,17 @@ async function setupPeer(callRef, type, stream, role) {
               timer: null, ringTimeout: null, startedAt: 0, wake: null };
   call = c;
   stream.getTracks().forEach(t => pc.addTrack(t, stream));
-
-  pc.ontrack = e => {
-    $("remoteV").srcObject = e.streams[0];
-    $("remoteV").play().catch(() => {});
-  };
+  pc.ontrack = e => { $("remoteV").srcObject = e.streams[0]; $("remoteV").play().catch(() => {}); };
   pc.onicecandidate = e => {
-    if (e.candidate) {
-      addDoc(collection(callRef, "candidates"), { from: me.uid, c: e.candidate.toJSON() }).catch(() => {});
-    }
+    if (e.candidate) addDoc(collection(callRef, "candidates"), { from: me.uid, c: e.candidate.toJSON() }).catch(() => {});
   };
   pc.onconnectionstatechange = () => {
     if (call !== c) return;
     const s = pc.connectionState;
     if (s === "connected") { c.startedAt = Date.now(); startTimer(c); }
-    else if (s === "disconnected") setCallStatus("সংযোগ দুর্বল…");
-    else if (s === "failed") {
-      toast("সংযোগ ব্যর্থ হয়েছে। মোবাইল ডাটায় হলে TURN সেটআপ লাগতে পারে।");
-      c.result = "failed";
-      endCall(true);
-    }
+    else if (s === "disconnected") setCallStatus(T("weakConn"));
+    else if (s === "failed") { toast(T("turnHint")); c.result = "failed"; endCall(true); }
   };
-
-  // অন্যপক্ষের ICE candidate
   c.unsubs.push(onSnapshot(collection(callRef, "candidates"), snap => {
     snap.docChanges().forEach(ch => {
       if (ch.type !== "added") return;
@@ -1039,63 +1486,56 @@ async function setupPeer(callRef, type, stream, role) {
       else c.pending.push(d.c);
     });
   }));
-
-  // কলের অবস্থা
   c.unsubs.push(onSnapshot(callRef, snap => {
     if (!snap.exists()) { if (c.docSeen) endCall(false); return; }
     c.docSeen = true;
     const m = snap.data();
-    if (m.status === "declined") { toast("কল প্রত্যাখ্যান করা হয়েছে"); c.result = "declined"; endCall(false); }
+    if (m.status === "declined") { toast(T("callDeclined")); c.result = "declined"; endCall(false); }
     else if (m.status === "ended" || m.status === "missed") {
-      toast("কল শেষ হয়েছে");
+      toast(T("callEnded"));
       if (m.status === "missed") c.result = "missed";
       endCall(false);
-    }
-    else if (c.role === "caller" && m.answer && !c.gotAnswer) {
+    } else if (c.role === "caller" && m.answer && !c.gotAnswer) {
       c.gotAnswer = true;
-      setCallStatus("সংযোগ হচ্ছে…");
+      setCallStatus(T("connecting"));
       applyRemote(c, m.answer).catch(() => {});
     }
   }));
   return c;
 }
-
 function startTimer(c) {
   clearInterval(c.timer);
   const tick = () => setCallStatus(fmtDur(Math.floor((Date.now() - c.startedAt) / 1000)));
   tick(); c.timer = setInterval(tick, 1000);
 }
-
 async function startCall(type) {
   if (call || busy || !me) return;
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast("এই ব্রাউজারে কল সমর্থিত নয়"); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast(T("noCallSup")); return; }
   busy = true;
   let stream = null;
   try {
     try { stream = await getMedia(type); }
-    catch (e) { toast("মাইক্রোফোন/ক্যামেরার অনুমতি দিন"); return; }
+    catch (e) { toast(T("permMedia")); return; }
     const ref = doc(callsCol());
     const c = await setupPeer(ref, type, stream, "caller");
-    openCallUI(type, "কল করা হচ্ছে…");
+    openCallUI(type, T("calling"));
     const offer = await c.pc.createOffer();
     await c.pc.setLocalDescription(offer);
     await setDoc(ref, { from: me.uid, type, status: "ringing", createdAt: serverTimestamp(),
                         offer: { type: offer.type, sdp: offer.sdp } });
     c.ringTimeout = setTimeout(() => {
       if (call === c && !c.remoteSet) {
-        toast("কেউ ধরেননি");
-        c.result = "missed";
+        toast(T("noAnswer")); c.result = "missed";
         updateDoc(ref, { status: "missed" }).catch(() => {});
         endCall(false);
       }
     }, 45000);
   } catch (e) {
-    toast("কল শুরু করা যায়নি: " + (e.code || e.message));
+    toast(T("failedConn"));
     if (call) { call.result = "failed"; endCall(false); }
     else if (stream) stream.getTracks().forEach(t => t.stop());
   } finally { busy = false; }
 }
-
 async function acceptCall() {
   if (!incoming || call || busy) return;
   const inc = incoming; incoming = null;
@@ -1104,40 +1544,36 @@ async function acceptCall() {
   try {
     try { stream = await getMedia(inc.type); }
     catch (e) {
-      toast("মাইক্রোফোন/ক্যামেরার অনুমতি দিন");
+      toast(T("permMedia"));
       updateDoc(inc.ref, { status: "declined" }).catch(() => {});
       renderIncoming(); return;
     }
     const c = await setupPeer(inc.ref, inc.type, stream, "callee");
     renderIncoming();
-    openCallUI(inc.type, "সংযোগ হচ্ছে…");
+    openCallUI(inc.type, T("connecting"));
     await applyRemote(c, inc.offer);
     const ans = await c.pc.createAnswer();
     await c.pc.setLocalDescription(ans);
     await updateDoc(inc.ref, { answer: { type: ans.type, sdp: ans.sdp }, status: "active" });
   } catch (e) {
-    toast("কল ধরা যায়নি: " + (e.code || e.message));
+    toast(T("failedConn"));
     if (call) endCall(true); else if (stream) stream.getTracks().forEach(t => t.stop());
   } finally { busy = false; }
 }
-
 function declineCall() {
   if (!incoming) return;
   const r = incoming.ref; incoming = null; renderIncoming();
   updateDoc(r, { status: "declined" }).catch(() => {});
   setTimeout(() => cleanupCall(r), 4000);
 }
-
-// কলের লগ চ্যাটে যোগ করা (শুধু যিনি কল করেছেন তিনি লেখেন, যাতে দুবার না হয়)
 function writeCallLog(c) {
   if (!me || c.logged) return;
   c.logged = true;
   const duration = c.startedAt ? Math.round((Date.now() - c.startedAt) / 1000) : 0;
   const result = c.result || (c.startedAt ? "ended" : "cancelled");
   addDoc(col(), { type: "call", callType: c.type, result, duration, senderId: me.uid,
-                  createdAt: serverTimestamp(), status: "sent" }).catch(() => {});
+                  createdAt: serverTimestamp(), status: "sent", hiddenFor: [] }).catch(() => {});
 }
-
 async function endCall(notify) {
   const c = call; if (!c) return;
   call = null;
@@ -1156,7 +1592,6 @@ async function endCall(notify) {
   unwindHistory();
   renderIncoming();
 }
-
 async function cleanupCall(ref) {
   try {
     const s = await getDocs(collection(ref, "candidates"));
@@ -1188,6 +1623,7 @@ $("camBtn").onclick = () => {
   $("camBtn").textContent = t.enabled ? "📷" : "🚫";
 };
 
+applyLang();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
