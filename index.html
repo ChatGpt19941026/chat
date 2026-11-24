@@ -1,2422 +1,1871 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>My Notes</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <style>
-    :root {
-      --bg: #0b1120;
-      --surface: #111827;
-      --surface-2: #1e293b;
-      --surface-3: #273549;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --border: rgba(148, 163, 184, 0.16);
-      --accent: #10b981;
-      --accent-dark: #059669;
-      --bubble-me: #065f46;
-      --bubble-other: #1e293b;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --seen: #38bdf8;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
-      overflow: hidden;
-      user-select: none;
-    }
-
-    button, input, textarea {
-      font-family: inherit;
-      color: inherit;
-    }
-
-    button {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-    }
-
-    .screen {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      height: 100dvh;
-      position: relative;
-      background: var(--bg);
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    /* Top bar */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(10px + var(--safe-top)) 12px 10px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      min-height: 58px;
-      z-index: 20;
-      gap: 8px;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .topbar-title {
-      font-size: 17px;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .topbar-sub {
-      font-size: 12px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 2px;
-    }
-
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: var(--text);
-      flex-shrink: 0;
-    }
-
-    .icon-btn:active {
-      background: var(--surface-2);
-    }
-
-    /* Notepad */
-    .note-editor-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 12px;
-      gap: 10px;
-      overflow: hidden;
-    }
-
-    .note-title-input {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 16px;
-      font-weight: 600;
-      outline: none;
-      user-select: text;
-    }
-
-    .note-body-input {
-      flex: 1;
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
-      line-height: 1.6;
-      resize: none;
-      outline: none;
-      user-select: text;
-    }
-
-    .note-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 4px calc(6px + var(--safe-bottom));
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #04130d;
-      font-weight: 700;
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-primary:active {
-      background: var(--accent-dark);
-    }
-
-    .btn-secondary {
-      background: var(--surface-2);
-      color: var(--text);
-      font-weight: 600;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.16);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      font-weight: 600;
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 13px;
-    }
-
-    /* Dropdown menu */
-    .menu-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 60;
-      display: none;
-    }
-
-    .menu-backdrop.open {
-      display: block;
-    }
-
-    .dropdown-menu {
-      position: fixed;
-      top: calc(56px + var(--safe-top));
-      right: 12px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      min-width: 210px;
-      padding: 6px;
-      box-shadow: 0 14px 34px rgba(0,0,0,0.55);
-      z-index: 65;
-      display: none;
-      flex-direction: column;
-    }
-
-    .dropdown-menu.open {
-      display: flex;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      text-align: left;
-      font-size: 14px;
-      width: 100%;
-    }
-
-    .menu-item:active {
-      background: var(--surface-3);
-    }
-
-    /* Saved Notes Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 80;
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal-card {
-      width: 100%;
-      max-width: 460px;
-      max-height: 82dvh;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      font-weight: 700;
-    }
-
-    .modal-body {
-      padding: 14px 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .saved-note-item {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .saved-note-title {
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    .saved-note-preview {
-      font-size: 13px;
-      color: var(--muted);
-      white-space: pre-wrap;
-      max-height: 76px;
-      overflow: hidden;
-    }
-
-    .saved-note-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    /* Auth & PIN screens */
-    .center-box {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 22px;
-      max-width: 420px;
-      width: 100%;
-      margin: 0 auto;
-      gap: 14px;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .field-input {
-      width: 100%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 15px;
-      outline: none;
-      user-select: text;
-    }
-
-    .pin-dots {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      margin: 8px 0;
-    }
-
-    .pin-dot {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      border: 2px solid var(--muted);
-      background: transparent;
-    }
-
-    .pin-dot.filled {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .key-btn {
-      height: 54px;
-      border-radius: 14px;
-      background: var(--surface-2);
-      font-size: 20px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .key-btn:active {
-      background: var(--surface-3);
-    }
-
-    /* Chat settings bar */
-    .chat-settings-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 7px 12px;
-      background: rgba(17, 24, 39, 0.94);
-      border-bottom: 1px solid var(--border);
-      font-size: 12px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .pill-btn {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill-btn.active-mode {
-      background: rgba(16, 185, 129, 0.18);
-      border-color: var(--accent);
-      color: #6ee7b7;
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #64748b;
-      display: inline-block;
-    }
-
-    .status-dot.online {
-      background: #22c55e;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
-    }
-
-    /* Messages area */
-    .messages-wrap {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      scroll-behavior: smooth;
-    }
-
-    .empty-chat-banner {
-      margin: auto;
-      text-align: center;
-      color: var(--muted);
-      white-space: pre-line;
-      font-size: 15px;
-      line-height: 1.65;
-      padding: 20px;
-    }
-
-    .date-divider {
-      align-self: center;
-      background: var(--surface-2);
-      color: var(--muted);
-      font-size: 11px;
-      padding: 4px 12px;
-      border-radius: 999px;
-      margin: 6px 0;
-    }
-
-    .msg-row {
-      display: flex;
-      flex-direction: column;
-      max-width: 82%;
-    }
-
-    .msg-row.me {
-      align-self: flex-end;
-      align-items: flex-end;
-    }
-
-    .msg-row.other {
-      align-self: flex-start;
-      align-items: flex-start;
-    }
-
-    .bubble {
-      padding: 10px 13px;
-      border-radius: 16px;
-      font-size: 15px;
-      line-height: 1.45;
-      word-break: break-word;
-      position: relative;
-      user-select: text;
-    }
-
-    .msg-row.me .bubble {
-      background: var(--bubble-me);
-      border-bottom-right-radius: 4px;
-    }
-
-    .msg-row.other .bubble {
-      background: var(--bubble-other);
-      border-bottom-left-radius: 4px;
-    }
-
-    .reply-quote {
-      background: rgba(0, 0, 0, 0.24);
-      border-left: 3px solid var(--accent);
-      padding: 5px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #e2e8f0;
-      margin-bottom: 6px;
-    }
-
-    .msg-meta {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 3px;
-      padding: 0 4px;
-    }
-
-    .ticks.seen {
-      color: var(--seen);
-      font-weight: 700;
-    }
-
-    .burn-timer {
-      color: #f87171;
-      font-weight: 700;
-    }
-
-    .reactions-row {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      margin-top: 3px;
-    }
-
-    .reaction-chip {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 1px 7px;
-      font-size: 12px;
-    }
-
-    .media-img {
-      max-width: 230px;
-      max-height: 260px;
-      border-radius: 12px;
-      display: block;
-      cursor: pointer;
-    }
-
-    .media-video {
-      max-width: 240px;
-      max-height: 260px;
-      border-radius: 12px;
-      display: block;
-      background: #000;
-    }
-
-    .media-open-btn {
-      margin-top: 6px;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* Reply & Composer */
-    .reply-bar {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: var(--surface-2);
-      border-top: 1px solid var(--border);
-      font-size: 13px;
-    }
-
-    .reply-bar.active {
-      display: flex;
-    }
-
-    .composer {
-      display: flex;
-      align-items: flex-end;
-      gap: 6px;
-      padding: 8px 10px calc(8px + var(--safe-bottom));
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-    }
-
-    .composer-input {
-      flex: 1;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 10px 14px;
-      font-size: 15px;
-      max-height: 110px;
-      resize: none;
-      outline: none;
-      user-select: text;
-    }
-
-    .send-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #04130d;
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* Call overlay */
-    .call-overlay {
-      position: fixed;
-      inset: 0;
-      background: #060a13;
-      z-index: 95;
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: calc(24px + var(--safe-top)) 20px calc(28px + var(--safe-bottom));
-    }
-
-    .call-overlay.active {
-      display: flex;
-    }
-
-    .call-overlay.minimized {
-      inset: auto 14px calc(74px + var(--safe-bottom)) auto;
-      width: 170px;
-      height: 110px;
-      padding: 8px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.65);
-    }
-
-    .video-grid {
-      position: relative;
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border-radius: 18px;
-      background: #0f172a;
-      margin: 14px 0;
-    }
-
-    video {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 12px;
-    }
-
-    .local-pip {
-      position: absolute;
-      width: 105px;
-      height: 145px;
-      right: 12px;
-      bottom: 12px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 2px solid rgba(255,255,255,0.35);
-      background: #000;
-    }
-
-    .call-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .call-circle-btn {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: var(--surface-2);
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .call-circle-btn.end {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .call-circle-btn.accept {
-      background: var(--accent);
-      color: #04130d;
-    }
-
-    /* Fullscreen media viewer */
-    .viewer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-    }
-
-    .viewer-overlay.open {
-      display: flex;
-    }
-
-    .viewer-content {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      overflow: auto;
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: calc(84px + var(--safe-bottom));
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.96);
-      color: #fff;
-      border: 1px solid var(--border);
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: 13px;
-      z-index: 120;
-      display: none;
-      max-width: 90%;
-      text-align: center;
-    }
-
-    .toast.show {
-      display: block;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#f59e0b">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>My Notes</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;overscroll-behavior:none;
+  font-family:system-ui,-apple-system,"Noto Sans Bengali",Roboto,sans-serif;background:#ECE5DD;color:#111}
+.screen{display:none;height:100dvh;flex-direction:column}
+.screen.active{display:flex}
+button{font:inherit;cursor:pointer}
+
+/* নোটপ্যাড (প্রাথমিক ছদ্মবেশী স্ক্রিন) */
+#notepad{background:#fffdf7}
+.npHead{display:flex;align-items:center;gap:8px;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top));
+  background:#f59e0b;color:#fff;position:relative}
+.npHead .npTitle{flex:1;font-size:19px;font-weight:700}
+.npSaveBtn{border:0;border-radius:16px;padding:6px 14px;background:#fff;color:#b45309;font-size:13.5px;font-weight:700}
+.npMenuBtn{border:0;background:none;color:#fff;font-size:24px;line-height:1;padding:4px 8px}
+.npMenu{position:absolute;right:12px;top:calc(52px + env(safe-area-inset-top));background:#fff;color:#111;
+  border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.22);min-width:190px;display:none;flex-direction:column;overflow:hidden;z-index:48}
+.npMenu.show{display:flex}
+.npMenu button{border:0;background:none;text-align:left;padding:13px 16px;font-size:15px;border-bottom:1px solid #f1f1f1}
+.npMenu button:last-child{border-bottom:0}
+.npMenu button:active{background:#fef3c7}
+.npBody{flex:1;display:flex;flex-direction:column;padding:14px}
+#noteTitleInput{border:0;border-bottom:1px solid #e5e7eb;padding:8px 4px;font-size:18px;font-weight:600;background:transparent;outline:none;margin-bottom:10px}
+#noteBodyInput{flex:1;border:0;resize:none;font:inherit;font-size:16px;line-height:1.6;background:transparent;outline:none}
+.npFoot{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;padding-bottom:calc(8px + env(safe-area-inset-bottom));
+  background:#fef3c7;color:#78350f;font-size:12.5px}
+
+/* পুরোনো নোট ও সেটিংস পপআপ */
+#npOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:49}
+#npOverlay.show{display:flex}
+.npModal{background:#fff;border-radius:14px;width:100%;max-width:380px;max-height:75dvh;display:flex;flex-direction:column;overflow:hidden}
+.npModalHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fef3c7;font-weight:700;color:#78350f}
+.npModalHead button{border:0;background:none;font-size:18px}
+.npModalList{padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.savedItem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid #eee;border-radius:10px;background:#fffdf7}
+.savedItem .siInfo{flex:1;min-width:0}
+.savedItem .siInfo b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.savedItem .siInfo small{color:#666;font-size:12px}
+.savedItem button{border:0;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:6px 10px;font-size:12.5px}
+
+/* লগইন ও PIN */
+#login,#pin{align-items:center;justify-content:center;padding:24px;background:#fff;position:relative}
+.backNoteBtn{position:absolute;left:14px;top:calc(14px + env(safe-area-inset-top));border:0;background:#f3f4f6;color:#333;
+  border-radius:16px;padding:6px 12px;font-size:13px}
+.card{width:100%;max-width:360px;text-align:center}
+.logo{font-size:56px}
+h1{margin:8px 0 24px;font-size:24px;color:#075E54}
+input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid #ccc;border-radius:10px;font-size:16px}
+.btn{width:100%;padding:14px;border:0;border-radius:10px;background:#075E54;color:#fff;font-size:16px}
+.btn:disabled{opacity:.6}
+.err{color:#c62828;min-height:20px;margin:6px 0 12px;font-size:14px}
+.link{background:none;border:0;color:#075E54;margin-top:14px;font-size:14px;text-decoration:underline;display:inline-block}
+.bioBtn{margin-top:14px;padding:10px 16px;border-radius:20px;border:1px solid #075E54;background:#f2fbf9;color:#075E54;font-size:14px}
+
+#pinMsg{font-size:18px;margin:12px 0 20px}
+.dots{display:flex;justify-content:center;gap:14px;margin-bottom:24px}
+.dot{width:16px;height:16px;border-radius:50%;background:#ddd}
+.dot.on{background:#075E54}
+.pad{display:grid;grid-template-columns:repeat(3,76px);gap:14px;justify-content:center}
+.pad button{height:76px;border-radius:50%;border:0;background:#f1f1f1;font-size:28px}
+.pad button:active{background:#ddd}
+.pad .ghost{background:none;pointer-events:none}
+.shake{animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* চ্যাট */
+header{display:flex;align-items:center;gap:3px;padding:8px 8px;padding-top:calc(8px + env(safe-area-inset-top));
+  background:#075E54;color:#fff}
+header .t{flex:1;min-width:0;padding-left:4px}
+header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#presence{display:flex;align-items:center;font-size:11.5px;opacity:.92;white-space:nowrap;overflow:hidden}
+#presence.typing #pText{color:#9dffb8;font-style:italic;font-weight:600}
+#pText{overflow:hidden;text-overflow:ellipsis}
+.pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
+#presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
+
+#adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
+#adBar .spacer{flex:1}
+#adBar small{opacity:.85;font-size:12px;text-decoration:underline;padding:2px 6px}
+#adBar button{border:0;border-radius:14px;padding:4px 12px;background:#fff;color:#075E54;font-size:12.5px;font-weight:600}
+
+#list{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column}
+.day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:#e1f2fb;font-size:12px;color:#555}
+.older{align-self:center;margin:6px;padding:6px 14px;border:0;border-radius:14px;background:#fff;color:#075E54;font-size:13px}
+.callLog{align-self:center;margin:6px 0;padding:5px 12px;border-radius:12px;background:#fff;font-size:13px;color:#444;
+  box-shadow:0 1px 1px rgba(0,0,0,.1);display:flex;gap:8px;align-items:center}
+.callLog small{color:#777;font-size:11px}
+.row{display:flex;padding:2px 8px}
+.row.me{justify-content:flex-end}
+.b{max-width:80%;padding:6px 10px 4px;border-radius:12px;background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.12);
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.me .b{background:#DCF8C6;border-bottom-right-radius:2px}
+.row:not(.me) .b{border-bottom-left-radius:2px}
+.hl .b{animation:hl 1.4s}
+@keyframes hl{0%,60%{background:#fff3b0}}
+.q{border-left:3px solid #075E54;background:rgba(0,0,0,.06);border-radius:6px;padding:3px 8px;margin-bottom:4px;
+  font-size:13px;cursor:pointer;overflow:hidden}
+.q b{display:block;color:#075E54;font-size:12px}
+.q span{display:block;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
+.mediaImg{display:block;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000;cursor:pointer}
+.mediaVid{display:block;max-width:100%;max-height:260px;border-radius:8px;margin-bottom:4px;background:#000}
+.mediaAud{display:block;max-width:240px;height:36px;margin-bottom:4px}
+.openMediaBtn{display:inline-block;margin-bottom:4px;padding:4px 10px;border:0;border-radius:12px;background:rgba(0,0,0,.08);color:#075E54;font-size:12px}
+.meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
+.tick.seen{color:#34B7F1}
+.cd{color:#c62828;font-weight:600}
+.rxs{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.rp{background:rgba(0,0,0,.07);border-radius:10px;padding:1px 6px;font-size:13px}
+.rp small{font-size:11px;margin-left:2px}
+.empty{margin:auto;padding:16px;text-align:center;white-space:pre-line;color:#555;font-size:15px;line-height:1.5}
+
+#replyBar{display:none;align-items:center;gap:8px;padding:6px 10px;background:#e9e4dc;border-top:1px solid #d6d0c6}
+#replyBar.show{display:flex}
+#replyBar .rbBody{flex:1;min-width:0;border-left:3px solid #075E54;padding-left:8px;font-size:13px}
+#replyBar b{display:block;color:#075E54;font-size:12px}
+#rbText{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+#rbClose{border:0;background:none;font-size:18px;padding:4px 8px}
+
+#recBar{display:none;align-items:center;gap:8px;padding:8px 12px;background:#fff3e0;border-top:1px solid #ffcc80;font-size:14px}
+#recBar.show{display:flex}
+#recTimer{font-weight:700;color:#c62828;min-width:52px}
+#recSend{border:0;border-radius:16px;padding:6px 12px;background:#075E54;color:#fff;font-size:13px}
+#recCancel{border:0;border-radius:16px;padding:6px 12px;background:#ddd;color:#111;font-size:13px}
+
+.bar{display:flex;align-items:flex-end;gap:6px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#ECE5DD}
+.ibtn{width:40px;height:40px;border:0;border-radius:50%;background:#fff;color:#075E54;font-size:18px;flex:none}
+.bar textarea{flex:1;max-height:120px;padding:10px 14px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:#fff}
+.send{width:46px;height:46px;border:0;border-radius:50%;background:#075E54;color:#fff;font-size:20px;flex:none}
+
+/* মেসেজ মেনু ও ডিলিট মেনু */
+#sheet,#delSheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:45}
+#sheet.show,#delSheet.show{display:flex}
+.sheetBox{width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
+#rxRow{display:flex;justify-content:space-around;margin-bottom:10px}
+#rxRow button{border:0;background:none;font-size:30px;padding:4px 6px;border-radius:50%}
+#rxRow button.sel{background:#dff3e4}
+.sheetBox>button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 8px;font-size:16px}
+.sheetBox>button.danger{color:#c62828}
+
+/* ফুল-স্ক্রিন মিডিয়া ভিউয়ার */
+#mediaViewer{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:58;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+#mediaViewer.show{display:flex}
+#mvClose{position:absolute;right:16px;top:calc(16px + env(safe-area-inset-top));border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:50%;width:40px;height:40px;font-size:20px}
+#mvImg{max-width:100%;max-height:85vh;object-fit:contain;display:none}
+#mvVid{max-width:100%;max-height:85vh;display:none}
+
+/* ভিডিও রেকর্ডার (সর্বোচ্চ ১৫ সেকেন্ড, সরাসরি ক্যামেরা) */
+#vidRecModal{position:fixed;inset:0;background:#000;z-index:55;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:24px;color:#fff}
+#vidRecModal.show{display:flex}
+#vidPreview{width:100%;max-width:420px;max-height:65vh;border-radius:14px;background:#111;transform:scaleX(-1);object-fit:cover}
+.vrActs{display:flex;gap:16px;align-items:center}
+.vrActs button{border:0;border-radius:24px;padding:12px 18px;font-size:15px}
+#vrStart{background:#e53935;color:#fff}
+#vrStop{background:#ff9800;color:#000;display:none}
+#vrSend{background:#25D366;color:#fff;display:none}
+#vrClose{background:#444;color:#fff}
+
+/* ডায়ালগ ও টোস্ট */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+#modal.show{display:flex}
+.dlg{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:320px}
+.dlg p{margin:0 0 16px;font-size:16px}
+.dlg .acts{display:flex;justify-content:flex-end;gap:8px}
+.dlg button{padding:10px 16px;border:0;border-radius:8px;background:#eee;font-size:15px}
+.dlg button.danger{background:#c62828;color:#fff}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;
+  border-radius:20px;font-size:14px;display:none;z-index:60;max-width:90%;text-align:center}
+
+/* কল */
+#call{position:fixed;inset:0;z-index:30;background:#101820;display:none;flex-direction:column;align-items:center;color:#fff}
+#call.show{display:flex}
+#remoteV{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#101820}
+#localV{position:absolute;right:12px;top:calc(12px + env(safe-area-inset-top));width:96px;height:128px;object-fit:cover;
+  border-radius:12px;background:#000;transform:scaleX(-1);z-index:3;display:none;border:2px solid rgba(255,255,255,.5)}
+#call.vid #localV{display:block}
+#minBtn{position:absolute;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:4;width:42px;height:42px;border:0;
+  border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:22px}
+.callTop{position:relative;z-index:3;margin-top:calc(40px + env(safe-area-inset-top));text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.callTop .nm{font-size:24px;font-weight:600}
+#callStatus{margin-top:6px;font-size:16px;opacity:.9;min-height:22px}
+.voiceAv{position:relative;z-index:2;margin:auto;font-size:96px}
+#call.vid .voiceAv{display:none}
+.ctrls{position:relative;z-index:3;display:flex;gap:22px;margin-top:auto;margin-bottom:calc(36px + env(safe-area-inset-bottom))}
+.cb{width:64px;height:64px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:26px}
+.cb.off{background:#fff;color:#000}
+.cb.end{background:#e53935}
+.cb.ok{background:#25D366}
+#call:not(.vid) #camBtn{display:none}
+.miniBar{display:none}
+#call.mini{inset:auto;right:10px;bottom:96px;width:116px;height:164px;border-radius:14px;overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.35);touch-action:none}
+#call.mini:not(.vid){width:158px;height:60px}
+#call.mini .callTop,#call.mini .ctrls,#call.mini .voiceAv,#call.mini #localV,#call.mini #minBtn{display:none!important}
+#call.mini .miniBar{display:flex;position:absolute;left:0;right:0;bottom:0;z-index:5;align-items:center;
+  justify-content:space-between;padding:4px 6px;background:rgba(0,0,0,.55);font-size:12px}
+#call.mini:not(.vid) .miniBar{top:0;padding:0 10px;font-size:14px}
+.miniBar button{border:0;background:#e53935;color:#fff;border-radius:50%;width:30px;height:30px;font-size:14px}
+#incoming{position:fixed;inset:0;z-index:40;background:#075E54;color:#fff;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px}
+#incoming.show{display:flex}
+#incoming .big{font-size:72px}
+#incoming .nm{font-size:26px;font-weight:600}
+.inActs{display:flex;gap:56px;margin-top:40px}
+</style>
 </head>
 <body>
 
-  <!-- 1. NOTEPAD SCREEN (Default entry) -->
-  <section id="notepadScreen" class="screen active">
-    <header class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div id="noteAppTitle" class="topbar-title">My Notes</div>
-          <div id="noteSubStatus" class="topbar-sub">লোকাল নোটপ্যাড</div>
-        </div>
-      </div>
-      <button id="noteMenuBtn" class="icon-btn" aria-label="Menu">⋮</button>
-    </header>
-
-    <div class="note-editor-wrap">
-      <input id="noteTitleInput" class="note-title-input" type="text" placeholder="নোটের শিরোনাম..." />
-      <textarea id="noteBodyInput" class="note-body-input" placeholder="এখানে আপনার নোট লিখুন..."></textarea>
-      <div class="note-footer">
-        <span id="noteSaveHint">অটো-সেভ প্রস্তুত</span>
-        <button id="saveNoteBtn" class="btn-primary">সেভ করুন</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Dropdown Menu -->
-  <div id="menuBackdrop" class="menu-backdrop"></div>
-  <div id="dropdownMenu" class="dropdown-menu">
-    <button id="menuNewNote" class="menu-item">📝 নতুন নোট</button>
-    <button id="menuOldNotes" class="menu-item">📚 পুরোনো নোট দেখুন</button>
-    <button id="menuSettings" class="menu-item">⚙️ সেটিংস</button>
-    <button id="menuToolbox" class="menu-item">🧰 টুলবক্স</button>
-  </div>
-
-  <!-- 2. LOGIN SCREEN -->
-  <section id="loginScreen" class="screen">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button id="loginBackToNotesBtn" class="icon-btn">←</button>
-        <div class="topbar-title">অ্যাকাউন্ট লগইন</div>
-      </div>
-    </header>
-    <div class="center-box">
-      <div class="card">
-        <div style="font-weight:700;font-size:17px;">প্রাইভেট সাইন-ইন</div>
-        <div style="font-size:13px;color:var(--muted);">অনুমোদিত ইমেইল ও পাসওয়ার্ড দিয়ে প্রবেশ করুন।</div>
-        <input id="loginEmailInput" class="field-input" type="email" autocomplete="username" placeholder="ইমেইল ঠিকানা" />
-        <input id="loginPasswordInput" class="field-input" type="password" autocomplete="current-password" placeholder="পাসওয়ার্ড" />
-        <button id="loginSubmitBtn" class="btn-primary">লগইন করুন</button>
-        <div id="loginErrorMsg" style="color:#fca5a5;font-size:13px;min-height:18px;"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. PIN / BIOMETRIC LOCK SCREEN -->
-  <section id="pinScreen" class="screen">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button id="pinBackToNotesBtn" class="icon-btn">←</button>
-        <div id="pinHeaderTitle" class="topbar-title">৪-সংখ্যার PIN</div>
-      </div>
-    </header>
-    <div class="center-box">
-      <div class="card">
-        <div id="pinInstruction" style="text-align:center;font-weight:600;font-size:15px;">PIN দিন</div>
-        <div id="pinDots" class="pin-dots">
-          <span class="pin-dot"></span>
-          <span class="pin-dot"></span>
-          <span class="pin-dot"></span>
-          <span class="pin-dot"></span>
-        </div>
-        <div id="pinStatusText" style="text-align:center;font-size:13px;color:var(--muted);min-height:18px;"></div>
-
-        <div class="keypad">
-          <button class="key-btn" data-key="1">1</button>
-          <button class="key-btn" data-key="2">2</button>
-          <button class="key-btn" data-key="3">3</button>
-          <button class="key-btn" data-key="4">4</button>
-          <button class="key-btn" data-key="5">5</button>
-          <button class="key-btn" data-key="6">6</button>
-          <button class="key-btn" data-key="7">7</button>
-          <button class="key-btn" data-key="8">8</button>
-          <button class="key-btn" data-key="9">9</button>
-          <button id="biometricUnlockBtn" class="key-btn" style="font-size:15px;">👆</button>
-          <button class="key-btn" data-key="0">0</button>
-          <button id="pinBackspaceBtn" class="key-btn">⌫</button>
-        </div>
-
-        <button id="setupBiometricBtn" class="btn-secondary" style="display:none;margin-top:6px;">
-          👆 ফিঙ্গারপ্রিন্ট চালু করুন
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. CHAT SCREEN -->
-  <section id="chatScreen" class="screen">
-    <header class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="topbar-title">Chat Gpt 2.0</span>
-            <span id="peerOnlineDot" class="status-dot"></span>
-          </div>
-          <div id="peerPresenceText" class="topbar-sub">অফলাইন</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:2px;">
-        <button id="voiceCallBtn" class="icon-btn" title="ভয়েস কল">📞</button>
-        <button id="videoCallBtn" class="icon-btn" title="ভিডিও কল">🎥</button>
-        <button id="langToggleBtn" class="icon-btn" title="ভাষা">🌐</button>
-        <button id="chatLogoutBtn" class="icon-btn" title="নোটপ্যাডে ফিরুন">⎋</button>
-      </div>
-    </header>
-
-    <div class="chat-settings-bar">
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-        <span id="autoDeleteClock">⏱️</span>
-        <button id="enableAutoDeleteBtn" class="pill-btn">চালু করুন</button>
-        <button id="disableAutoDeleteBtn" class="pill-btn">বন্ধ করুন</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <button id="clearAllChatBtn" class="pill-btn" style="color:#fca5a5;">সব মুছুন 🗑️</button>
-        <span id="versionBadge" class="pill-btn" style="cursor:pointer;">v9</span>
-      </div>
-    </div>
-
-    <div id="messagesWrap" class="messages-wrap">
-      <div id="loadOlderWrap" style="text-align:center;display:none;">
-        <button id="loadOlderBtn" class="btn-secondary" style="font-size:12px;padding:6px 12px;">
-          আরও পুরনো মেসেজ
-        </button>
-      </div>
-      <div id="emptyChatBanner" class="empty-chat-banner">Hi!
-I'm Chat Gpt 2.0
-How can i help you today</div>
-      <div id="messagesList" style="display:flex;flex-direction:column;gap:8px;"></div>
-    </div>
-
-    <div id="replyBar" class="reply-bar">
-      <div id="replyPreviewText" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;"></div>
-      <button id="cancelReplyBtn" class="icon-btn" style="width:28px;height:28px;">✕</button>
-    </div>
-
-    <div class="composer">
-      <button id="pickImageBtn" class="icon-btn" title="ছবি">🖼️</button>
-      <button id="recordAudioBtn" class="icon-btn" title="ভয়েস নোট">🎙️</button>
-      <button id="recordVideoBtn" class="icon-btn" title="ভিডিও">🎬</button>
-      <textarea id="msgInput" class="composer-input" rows="1" placeholder="মেসেজ লিখুন..."></textarea>
-      <button id="sendMsgBtn" class="send-btn" aria-label="Send">➤</button>
-    </div>
-
-    <!-- Hidden pickers -->
-    <input id="imageFileInput" type="file" accept="image/*" style="display:none;" />
-    <input id="videoFileInput" type="file" accept="video/*" capture="environment" style="display:none;" />
-  </section>
-
-  <!-- Saved Notes / Settings Modal -->
-  <div id="modalOverlay" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span id="modalTitle">নোটসমূহ</span>
-        <button id="closeModalBtn" class="icon-btn" style="width:32px;height:32px;">✕</button>
-      </div>
-      <div id="modalBody" class="modal-body"></div>
+<!-- নোটপ্যাড (প্রাথমিক স্ক্রিন) -->
+<section id="notepad" class="screen active">
+  <div class="npHead">
+    <div class="npTitle">📝 নোটপ্যাড</div>
+    <button class="npSaveBtn" id="npSaveBtn" type="button">সেভ</button>
+    <button class="npMenuBtn" id="npMenuBtn" type="button" aria-label="Menu">⋮</button>
+    <div class="npMenu" id="npMenu">
+      <button id="mNewNote" type="button">নতুন নোট</button>
+      <button id="mOldNotes" type="button">পুরোনো নোট দেখুন</button>
+      <button id="mNpSettings" type="button">সেটিংস</button>
+      <button id="mToolbox" type="button">টুলবক্স</button>
     </div>
   </div>
-
-  <!-- Call Overlay -->
-  <div id="callOverlay" class="call-overlay">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div id="callPeerLabel" style="font-size:18px;font-weight:700;">কল</div>
-        <div id="callStatusLabel" style="font-size:13px;color:var(--muted);">সংযোগ হচ্ছে...</div>
-      </div>
-      <button id="minimizeCallBtn" class="btn-secondary" style="padding:6px 10px;font-size:12px;">ছোট করুন</button>
-    </div>
-
-    <div class="video-grid">
-      <video id="remoteVideo" autoplay playsinline></video>
-      <video id="localVideo" class="local-pip" autoplay playsinline muted></video>
-    </div>
-
-    <div id="incomingCallBar" class="call-controls" style="display:none;margin-bottom:12px;">
-      <button id="acceptCallBtn" class="call-circle-btn accept" title="রিসিভ">✓</button>
-      <button id="rejectCallBtn" class="call-circle-btn end" title="বাতিল">✕</button>
-    </div>
-
-    <div class="call-controls">
-      <button id="toggleMuteBtn" class="call-circle-btn" title="মিউট">🎤</button>
-      <button id="toggleCamBtn" class="call-circle-btn" title="ক্যামেরা">📷</button>
-      <button id="hangupCallBtn" class="call-circle-btn end" title="কল শেষ">📞</button>
-    </div>
+  <div class="npBody">
+    <input id="noteTitleInput" type="text" placeholder="নোটের শিরোনাম লিখুন...">
+    <textarea id="noteBodyInput" placeholder="এখানে আপনার নোট লিখুন..."></textarea>
   </div>
-
-  <!-- Fullscreen Media Viewer -->
-  <div id="viewerOverlay" class="viewer-overlay">
-    <header class="topbar">
-      <div class="topbar-left">
-        <div id="viewerTitle" class="topbar-title">মিডিয়া ভিউয়ার</div>
-      </div>
-      <button id="closeViewerBtn" class="icon-btn">✕</button>
-    </header>
-    <div id="viewerContent" class="viewer-content"></div>
+  <div class="npFoot">
+    <span id="npStatus">স্বয়ংক্রিয়ভাবে এই ফোনে সেভ থাকে</span>
+    <span id="npCharCount">০ অক্ষর</span>
   </div>
+</section>
 
-  <div id="toast" class="toast"></div>
+<!-- পুরোনো নোট / নোটপ্যাড সেটিংস পপআপ -->
+<div id="npOverlay">
+  <div class="npModal">
+    <div class="npModalHead"><span id="npModalTitle">পুরোনো নোট</span><button id="npModalClose" type="button">✕</button></div>
+    <div class="npModalList" id="npModalList"></div>
+  </div>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc,
-      updateDoc,
-      deleteDoc,
-      collection,
-      query,
-      orderBy,
-      limit,
-      startAfter,
-      onSnapshot,
-      serverTimestamp,
-      getDocs,
-      writeBatch
-    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+<!-- লগইন -->
+<section id="login" class="screen">
+  <button class="backNoteBtn" id="loginToNote" type="button">← নোটপ্যাড</button>
+  <form class="card" id="loginForm">
+    <div class="logo">💬</div>
+    <h1>Chat Gpt 2.0</h1>
+    <input class="f" id="email" type="email" autocomplete="username" required>
+    <input class="f" id="password" type="password" autocomplete="current-password" required>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" type="submit"></button>
+  </form>
+</section>
 
-    const APP_VERSION = "v9";
-    const CHAT_ID = "couple_chat";
-    const PAGE_SIZE = 300;
-    const CHUNK_SIZE = 450000; // safely under 1 MiB Firestore limit
-    const MAX_VIDEO_SECONDS = 15;
-    const MAX_AUDIO_SECONDS = 120;
-    const AUTO_DELETE_MS = 30000;
-    const PIN_LOCKOUT_MS = 30000;
-    const BACKGROUND_LOCK_MS = 30000;
+<!-- PIN / বায়োমেট্রিক -->
+<section id="pin" class="screen">
+  <button class="backNoteBtn" id="pinToNote" type="button">← নোটপ্যাড</button>
+  <div class="card">
+    <div class="logo">🔒</div>
+    <div id="pinMsg"></div>
+    <div class="dots" id="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="pad" id="pad"></div>
+    <button class="bioBtn" id="bioBtn" type="button" style="display:none"></button><br>
+    <button class="link" id="forgot" type="button"></button>
+  </div>
+</section>
 
-    // Storage keys
-    const LS_NOTES = "mynotes_items_v1";
-    const LS_ACTIVE_NOTE = "mynotes_active_id_v1";
-    const LS_PIN_HASH = "cg2_pin_hash_v1";
-    const LS_PIN_FAILS = "cg2_pin_fails_v1";
-    const LS_PIN_LOCK_UNTIL = "cg2_pin_lock_until_v1";
-    const LS_WEBAUTHN_CRED = "cg2_webauthn_cred_v1";
-    const LS_BG_AT = "cg2_bg_timestamp_v1";
-    const LS_PIN_UNLOCKED = "cg2_pin_unlocked_v1";
-    const LS_LANG = "cg2_lang_v1";
+<!-- চ্যাট -->
+<section id="chat" class="screen">
+  <header>
+    <div class="t">
+      <div class="nm">Chat Gpt 2.0</div>
+      <div id="presence"><span class="pd"></span><span id="pText"></span></div>
+    </div>
+    <button id="langBtn" type="button" title="Language">🌐</button>
+    <button id="callV" type="button" title="Voice Call">📞</button>
+    <button id="callVid" type="button" title="Video Call">🎥</button>
+    <button id="clearBtn" type="button" title="Clear All" style="margin-right:10px">🗑️</button>
+    <button id="lockBtn" type="button" title="Lock">🔒</button>
+    <button id="logoutBtn" type="button" title="Logout">⎋</button>
+  </header>
+  <div id="adBar">
+    <span>⏱️</span>
+    <span class="spacer"></span>
+    <small id="ver">v9</small>
+    <button id="adBtn" type="button"></button>
+  </div>
+  <div id="list"></div>
+  <div id="replyBar">
+    <div class="rbBody"><b id="rbWho"></b><span id="rbText"></span></div>
+    <button id="rbClose" type="button">✕</button>
+  </div>
+  <div id="recBar">
+    <span>🎙️</span>
+    <span id="recTimer">00:00</span>
+    <span style="flex:1"></span>
+    <button id="recSend" type="button"></button>
+    <button id="recCancel" type="button"></button>
+  </div>
+  <div class="bar">
+    <input type="file" id="imgInput" accept="image/*" hidden>
+    <button class="ibtn" id="imgBtn" type="button">📷</button>
+    <button class="ibtn" id="vidRecBtn" type="button">🎬</button>
+    <button class="ibtn" id="micBtn" type="button">🎙️</button>
+    <textarea id="msg" rows="1"></textarea>
+    <button class="send" id="sendBtn" type="button">➤</button>
+  </div>
+</section>
 
-    // Firebase init (project: chatting-app-ec589)
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-PLACEHOLDER-FOR-CHAT-EC589",
-      authDomain: "chatting-app-ec589.firebaseapp.com",
-      projectId: "chatting-app-ec589",
-      storageBucket: "chatting-app-ec589.appspot.com",
-      messagingSenderId: "000000000000",
-      appId: "1:000000000000:web:chattingappec589"
+<!-- মেসেজ মেনু -->
+<div id="sheet"><div class="sheetBox">
+  <div id="rxRow"></div>
+  <button id="shReply" type="button"></button>
+  <button id="shDel" type="button" class="danger"></button>
+</div></div>
+
+<!-- ডিলিট অপশন মেনু -->
+<div id="delSheet"><div class="sheetBox">
+  <button id="delMe" type="button" class="danger"></button>
+  <button id="delBoth" type="button" class="danger"></button>
+  <button id="delCancel" type="button"></button>
+</div></div>
+
+<!-- ফুল-স্ক্রিন মিডিয়া ভিউয়ার -->
+<div id="mediaViewer">
+  <button id="mvClose" type="button">✕</button>
+  <img id="mvImg" alt="">
+  <video id="mvVid" controls playsinline></video>
+</div>
+
+<!-- ভিডিও রেকর্ডার -->
+<div id="vidRecModal">
+  <div id="vrStatus">00:00 / 00:15</div>
+  <video id="vidPreview" autoplay playsinline muted></video>
+  <div class="vrActs">
+    <button id="vrStart" type="button"></button>
+    <button id="vrStop" type="button"></button>
+    <button id="vrSend" type="button"></button>
+    <button id="vrClose" type="button"></button>
+  </div>
+</div>
+
+<!-- কল স্ক্রিন -->
+<div id="call">
+  <video id="remoteV" autoplay playsinline></video>
+  <video id="localV" autoplay playsinline muted></video>
+  <button id="minBtn" type="button">⌄</button>
+  <div class="callTop"><div class="nm">Chat Gpt 2.0</div><div id="callStatus"></div></div>
+  <div class="voiceAv">❤️</div>
+  <div class="ctrls">
+    <button class="cb" id="muteBtn" type="button">🎤</button>
+    <button class="cb" id="camBtn" type="button">📷</button>
+    <button class="cb end" id="hangBtn" type="button">📵</button>
+  </div>
+  <div class="miniBar"><span id="miniTime">📞</span><button id="miniHang" type="button">📵</button></div>
+</div>
+
+<!-- ইনকামিং কল -->
+<div id="incoming">
+  <div class="big">📞</div>
+  <div class="nm">Chat Gpt 2.0</div>
+  <div id="incType"></div>
+  <div class="inActs">
+    <button class="cb end" id="declineBtn" type="button">📵</button>
+    <button class="cb ok" id="acceptBtn" type="button">📞</button>
+  </div>
+</div>
+
+<div id="modal"><div class="dlg"><p id="modalText"></p><div class="acts">
+  <button id="modalNo" type="button"></button><button id="modalYes" type="button" class="danger"></button></div></div></div>
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, limitToLast, onSnapshot,
+  addDoc, updateDoc, deleteDoc, deleteField, doc, serverTimestamp, getDocs, getDoc, setDoc, writeBatch, limit, where }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCfUSphJqDJ5Ijs0Tp2foYcpkpyIHHNseA",
+  authDomain: "chatting-app-ec589.firebaseapp.com",
+  projectId: "chatting-app-ec589",
+  storageBucket: "chatting-app-ec589.firebasestorage.app",
+  messagingSenderId: "1040131212910",
+  appId: "1:1040131212910:web:26949df7ca0234fdb4087f"
+};
+const CHAT_ID = "couple_chat";
+const RELOCK_MS = 30000;
+const AUTO_DELETE_MS = 30000;
+const HEARTBEAT_MS = 25000;
+const ONLINE_WINDOW_MS = 70000;
+const TYPING_MS = 6000;
+const MSG_PAGE = 300;
+const CHUNK_CHARS = 700000;
+const MAX_VOICE_SEC = 120;
+const MAX_VIDEO_SEC = 15;
+const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
+const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", BIO_KEY = "cc_bio_cred", LANG_KEY = "cc_lang";
+const NOTES_LIST_KEY = "np_saved_notes", NOTE_DRAFT_KEY = "np_current_draft";
+
+const I18N = {
+  bn: {
+    emailPh: "ইমেইল", passPh: "পাসওয়ার্ড", login: "লগইন",
+    invCred: "ইমেইল বা পাসওয়ার্ড ভুল", netErr: "ইন্টারনেট সংযোগ নেই",
+    manyReq: "অনেকবার ভুল হয়েছে, একটু পরে চেষ্টা করুন", unauthDom: "Authorized domains-এ যোগ করা হয়নি",
+    loginFail: "লগইন ব্যর্থ: ",
+    enterPin: "PIN দিন", setPin: "নতুন ৪ সংখ্যার PIN দিন", confirmPin: "আবার একই PIN দিন",
+    mismatchPin: "মেলেনি, নতুন করে PIN দিন", waitSec: s => `অপেক্ষা করুন ${s} সেকেন্ড`,
+    fiveWrong: "৫ বার ভুল, ৩০ সেকেন্ড অপেক্ষা করুন", wrongPin: "ভুল PIN, আবার চেষ্টা করুন",
+    forgot: "PIN ভুলে গেছেন? লগআউট করুন",
+    logoutMsg: "লগআউট করবেন? এই ফোনের PIN ও ফিঙ্গারপ্রিন্ট মুছে যাবে।", logoutBtn: "লগআউট",
+    bioUse: "👆 ফিঙ্গারপ্রিন্ট দিয়ে আনলক করুন", bioSetupQ: "পরের বার ফিঙ্গারপ্রিন্ট দিয়ে দ্রুত আনলক করতে চান?",
+    bioDone: "ফিঙ্গারপ্রিন্ট যুক্ত হয়েছে", bioFail: "ফিঙ্গারপ্রিন্ট যাচাই করা যায়নি, PIN দিন",
+    turnOn: "চালু করুন", turnOff: "বন্ধ করুন",
+    adOnToast: "চালু: সিন হওয়া মেসেজ ও মিডিয়া ৩০ সেকেন্ড পর মুছবে", adOffToast: "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে",
+    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today",
+    olderBtn: "⬆️ আরও পুরনো মেসেজ দেখুন", msgPh: "মেসেজ লিখুন",
+    reply: "↩️ রিপ্লাই", del: "🗑️ ডিলিট",
+    delForMe: "আমার থেকে মুছুন", delForBoth: "দুজনের থেকে মুছুন", cancel: "বাতিল",
+    you: "আপনি", partner: "সঙ্গী", noOrig: "মূল মেসেজটি আর নেই",
+    allCleared: "সব মেসেজ মুছে গেছে",
+    today: "আজ", yesterday: "গতকাল",
+    neverOnline: "এখনও অনলাইনে আসেননি", typing: "টাইপ করছে…", online: "অনলাইন", lastSeen: "সর্বশেষ অনলাইনে: ",
+    voiceCall: "ভয়েস কল", videoCall: "ভিডিও কল", missed: "মিসড", noAnswer: "কেউ ধরেননি",
+    cancelledByMe: "কেটে দিয়েছেন", declined: "প্রত্যাখ্যাত", declinedByMe: "আপনি কেটে দিয়েছেন", failedConn: "সংযোগ হয়নি",
+    inVoice: "ভয়েস কল আসছে…", inVideo: "ভিডিও কল আসছে…",
+    calling: "কল করা হচ্ছে…", connecting: "সংযোগ হচ্ছে…", weakConn: "সংযোগ দুর্বল…",
+    callEnded: "কল শেষ হয়েছে", callDeclined: "কল প্রত্যাখ্যাত হয়েছে",
+    permMedia: "মাইক্রোফোন/ক্যামেরার অনুমতি দিন", noCallSup: "এই ব্রাউজারে কল সমর্থিত নয়",
+    turnHint: "সংযোগ ব্যর্থ হয়েছে। মোবাইল ডাটায় TURN সেটআপ লাগতে পারে।",
+    recSend: "পাঠান", recCancel: "বাতিল", vrStart: "রেকর্ড শুরু", vrStop: "থামুন", vrSend: "পাঠান", vrClose: "বন্ধ",
+    imgBig: "ছবি অনেক বড়, অন্য ছবি বেছে নিন", audBig: "ভয়েস ২ মিনিটের বেশি হতে পারবে না", vidBig: "ভিডিও অনেক বড় (১৫ সেকেন্ডের মধ্যে রাখুন)",
+    uploading: "পাঠানো হচ্ছে…", mediaDelErr: "মিডিয়া মোছা ব্যর্থ", yes: "হ্যাঁ", no: "না",
+    langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন"
+  },
+  en: {
+    emailPh: "Email", passPh: "Password", login: "Login",
+    invCred: "Invalid email or password", netErr: "No internet connection",
+    manyReq: "Too many attempts, try again later", unauthDom: "Domain not in Authorized domains",
+    loginFail: "Login failed: ",
+    enterPin: "Enter PIN", setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
+    mismatchPin: "PIN did not match, try again", waitSec: s => `Wait ${s}s`,
+    fiveWrong: "5 wrong attempts, wait 30s", wrongPin: "Wrong PIN, try again",
+    forgot: "Forgot PIN? Logout",
+    logoutMsg: "Logout? PIN and fingerprint on this phone will be removed.", logoutBtn: "Logout",
+    bioUse: "👆 Unlock with Fingerprint", bioSetupQ: "Enable fingerprint unlock for faster access next time?",
+    bioDone: "Fingerprint enabled", bioFail: "Fingerprint failed, use PIN",
+    turnOn: "Turn On", turnOff: "Turn Off",
+    adOnToast: "On: seen messages & media delete in 30s", adOffToast: "Auto-delete turned off",
+    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today",
+    olderBtn: "⬆️ Load older messages", msgPh: "Type a message",
+    reply: "↩️ Reply", del: "🗑️ Delete",
+    delForMe: "Delete for me", delForBoth: "Delete for everyone", cancel: "Cancel",
+    you: "You", partner: "Partner", noOrig: "Original message not found",
+    allCleared: "All messages cleared",
+    today: "Today", yesterday: "Yesterday",
+    neverOnline: "Not online yet", typing: "typing…", online: "Online", lastSeen: "Last seen: ",
+    voiceCall: "Voice call", videoCall: "Video call", missed: "Missed", noAnswer: "No answer",
+    cancelledByMe: "Cancelled", declined: "Declined", declinedByMe: "You declined", failedConn: "Connection failed",
+    inVoice: "Incoming voice call…", inVideo: "Incoming video call…",
+    calling: "Calling…", connecting: "Connecting…", weakConn: "Weak connection…",
+    callEnded: "Call ended", callDeclined: "Call declined",
+    permMedia: "Please allow microphone/camera permission", noCallSup: "Calls not supported in this browser",
+    turnHint: "Connection failed. TURN server may be needed on mobile data.",
+    recSend: "Send", recCancel: "Cancel", vrStart: "Start Record", vrStop: "Stop", vrSend: "Send", vrClose: "Close",
+    imgBig: "Image too large, pick another", audBig: "Voice note max 2 minutes", vidBig: "Video too large (keep within 15s)",
+    uploading: "Sending…", mediaDelErr: "Failed to delete media", yes: "Yes", no: "No",
+    langSwitched: "Language: English", openBig: "Open full screen"
+  }
+};
+
+let lang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "bn";
+const T = k => I18N[lang][k];
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+let me = null, unlocked = false, unsub = null, lastDocs = [], hiddenAt = 0;
+let msgLimit = MSG_PAGE, keepAnchor = false, inToolbox = false;
+const mediaCache = new Map();
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+let toastTimer;
+function toast(t, ms = 3800) {
+  const el = $("toast"); el.textContent = t; el.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
+}
+
+/* ---------- নোটপ্যাড (প্রাথমিক স্ক্রিন) ---------- */
+function getSavedNotes() {
+  try { return JSON.parse(localStorage.getItem(NOTES_LIST_KEY) || "[]"); } catch (e) { return []; }
+}
+function setSavedNotes(arr) {
+  localStorage.setItem(NOTES_LIST_KEY, JSON.stringify(arr));
+}
+function updateNoteCounter() {
+  const len = ($("noteBodyInput").value || "").length;
+  $("npCharCount").textContent = len + " অক্ষর";
+  localStorage.setItem(NOTE_DRAFT_KEY, JSON.stringify({
+    title: $("noteTitleInput").value,
+    body: $("noteBodyInput").value
+  }));
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(NOTE_DRAFT_KEY) || "{}");
+    $("noteTitleInput").value = d.title || "";
+    $("noteBodyInput").value = d.body || "";
+  } catch (e) {}
+  updateNoteCounter();
+}
+$("noteTitleInput").addEventListener("input", updateNoteCounter);
+$("noteBodyInput").addEventListener("input", updateNoteCounter);
+
+$("npSaveBtn").onclick = () => {
+  const title = $("noteTitleInput").value.trim() || "শিরোনামহীন নোট";
+  const body = $("noteBodyInput").value.trim();
+  if (!body && !$("noteTitleInput").value.trim()) {
+    toast("আগে কিছু লিখুন"); return;
+  }
+  const notes = getSavedNotes();
+  notes.unshift({
+    id: Date.now(),
+    title,
+    body,
+    date: new Date().toLocaleString("bn-BD", { dateStyle: "medium", timeStyle: "short" })
+  });
+  setSavedNotes(notes);
+  toast("নোট সেভ হয়েছে");
+};
+
+$("npMenuBtn").onclick = e => {
+  e.stopPropagation();
+  $("npMenu").classList.toggle("show");
+};
+document.addEventListener("click", () => $("npMenu").classList.remove("show"));
+
+$("mNewNote").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("noteTitleInput").value = "";
+  $("noteBodyInput").value = "";
+  updateNoteCounter();
+  toast("নতুন নোট তৈরি হয়েছে");
+};
+
+$("mOldNotes").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("npModalTitle").textContent = "পুরোনো নোটসমূহ";
+  const list = $("npModalList");
+  list.innerHTML = "";
+  const notes = getSavedNotes();
+  if (!notes.length) {
+    list.innerHTML = '<div style="text-align:center;color:#666;padding:16px">কোনো সেভ করা নোট নেই</div>';
+  } else {
+    notes.forEach(n => {
+      const row = document.createElement("div"); row.className = "savedItem";
+      const info = document.createElement("div"); info.className = "siInfo";
+      const b = document.createElement("b"); b.textContent = n.title;
+      const sm = document.createElement("small"); sm.textContent = n.date;
+      info.append(b, sm);
+      info.onclick = () => {
+        $("noteTitleInput").value = n.title;
+        $("noteBodyInput").value = n.body;
+        updateNoteCounter();
+        $("npOverlay").classList.remove("show");
+      };
+      const del = document.createElement("button"); del.textContent = "মুছুন";
+      del.onclick = e => {
+        e.stopPropagation();
+        setSavedNotes(getSavedNotes().filter(x => x.id !== n.id));
+        $("mOldNotes").click();
+      };
+      row.append(info, del);
+      list.appendChild(row);
+    });
+  }
+  $("npOverlay").classList.add("show");
+};
+
+$("mNpSettings").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("npModalTitle").textContent = "নোটপ্যাড সেটিংস";
+  const list = $("npModalList");
+  list.innerHTML = `
+    <div style="font-size:14px;color:#444;line-height:1.6">
+      • আপনার নোটগুলো শুধুমাত্র এই ফোনের লোকাল স্টোরেজে সংরক্ষিত থাকে।<br>
+      • ভার্সন: 1.0 (Offline Notes)
+    </div>
+  `;
+  $("npOverlay").classList.add("show");
+};
+
+$("mToolbox").onclick = () => {
+  $("npMenu").classList.remove("show");
+  inToolbox = true;
+  if (!me) show("login");
+  else if (unlocked) enterChat();
+  else startPin();
+};
+
+$("npModalClose").onclick = () => $("npOverlay").classList.remove("show");
+$("npOverlay").onclick = e => { if (e.target.id === "npOverlay") $("npOverlay").classList.remove("show"); };
+
+function returnToNotepad() {
+  inToolbox = false;
+  unlocked = false;
+  closeSheet(); closeDelSheet();
+  show("notepad");
+}
+$("loginToNote").onclick = returnToNotepad;
+$("pinToNote").onclick = returnToNotepad;
+
+loadDraft();
+
+/* ---------- ভাষা ও সাধারণ সহায়ক ---------- */
+function applyLang() {
+  document.documentElement.lang = lang;
+  $("email").placeholder = T("emailPh");
+  $("password").placeholder = T("passPh");
+  $("loginBtn").textContent = T("login");
+  $("forgot").textContent = T("forgot");
+  $("bioBtn").textContent = T("bioUse");
+  $("msg").placeholder = T("msgPh");
+  $("shReply").textContent = T("reply");
+  $("shDel").textContent = T("del");
+  $("delMe").textContent = T("delForMe");
+  $("delBoth").textContent = T("delForBoth");
+  $("delCancel").textContent = T("cancel");
+  $("recSend").textContent = T("recSend");
+  $("recCancel").textContent = T("recCancel");
+  $("vrStart").textContent = T("vrStart");
+  $("vrStop").textContent = T("vrStop");
+  $("vrSend").textContent = T("vrSend");
+  $("vrClose").textContent = T("vrClose");
+  if ($("pin").classList.contains("active")) startPin();
+  renderAd();
+  renderPresence();
+  renderIncoming();
+  if (me && unlocked) render(false);
+}
+$("langBtn").onclick = () => {
+  lang = lang === "bn" ? "en" : "bn";
+  localStorage.setItem(LANG_KEY, lang);
+  applyLang();
+  toast(T("langSwitched"));
+};
+
+let lastErrAt = 0;
+function errOnce(prefix, e) {
+  const now = Date.now();
+  if (now - lastErrAt < 10000) return;
+  lastErrAt = now;
+  const code = e && e.code ? e.code : String(e);
+  toast(prefix + ": " + code + (code.includes("permission-denied") ? " — Rules Publish?" : ""));
+}
+let modalOpen = false;
+function confirmBox(text, yesLabel = T("yes"), noLabel = T("no")) {
+  return new Promise(res => {
+    modalOpen = true;
+    $("modalText").textContent = text;
+    $("modalYes").textContent = yesLabel;
+    $("modalNo").textContent = noLabel;
+    $("modal").classList.add("show");
+    const done = v => { $("modal").classList.remove("show"); modalOpen = false;
+      $("modalYes").onclick = $("modalNo").onclick = null; res(v); };
+    $("modalYes").onclick = () => done(true);
+    $("modalNo").onclick = () => done(false);
+  });
+}
+const fmtDur = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+
+/* ---------- লগইন ---------- */
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("email").value.trim().toLowerCase();
+  $("loginErr").textContent = "";
+  $("loginBtn").disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, $("password").value);
+  } catch (err) {
+    const m = {
+      "auth/invalid-credential": T("invCred"),
+      "auth/wrong-password": T("invCred"),
+      "auth/network-request-failed": T("netErr"),
+      "auth/too-many-requests": T("manyReq"),
+      "auth/unauthorized-domain": T("unauthDom")
     };
+    $("loginErr").textContent = m[err.code] || (T("loginFail") + err.code);
+  }
+  $("loginBtn").disabled = false;
+});
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    me = null; unlocked = false; stopChat(); stopCalls(); stopPresence();
+    if (inToolbox) show("login"); else show("notepad");
+    return;
+  }
+  me = user;
+  startRingListener();
+  startPresence();
+  if (!inToolbox) { show("notepad"); return; }
+  if (unlocked) enterChat(); else startPin();
+});
 
-    // State
-    let currentUser = null;
-    let lang = localStorage.getItem(LS_LANG) || "bn";
-    let activeNoteId = localStorage.getItem(LS_ACTIVE_NOTE) || null;
-    let pinInput = "";
-    let pinMode = "verify"; // 'setup' | 'confirm' | 'verify'
-    let pendingPinFirst = "";
-    let replyTarget = null;
-    let messagesUnsub = null;
-    let oldestDocSnap = null;
-    let olderMessages = [];
-    let liveMessages = [];
-    let autoDeleteEnabled = false;
-    let autoDeleteEnabledAt = null;
-    let iceServers = [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" }
-    ];
-    let peerConnection = null;
-    let localStream = null;
-    let currentCallId = null;
-    let currentCallDocUnsub = null;
-    let currentCallCandUnsub = null;
-    let callStartTime = null;
-    let isCaller = false;
-    let mediaRecorder = null;
-    let recordChunks = [];
-    let recordTimer = null;
+async function doLogout() {
+  localStorage.removeItem(PIN_KEY);
+  localStorage.removeItem(BIO_KEY);
+  unlocked = false;
+  if (me) {
+    try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
+    catch (e) {}
+  }
+  await signOut(auth);
+}
+$("logoutBtn").onclick = async () => {
+  if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
+};
+$("forgot").onclick = async () => {
+  if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
+};
 
-    // DOM helpers
-    const $ = (id) => document.getElementById(id);
+/* ---------- PIN + ফিঙ্গারপ্রিন্ট (WebAuthn) ---------- */
+let pinBuf = "", pinFirst = null, pinMode = "unlock", fails = 0;
 
-    function showToast(msg, duration = 2600) {
-      const el = $("toast");
-      el.textContent = msg;
-      el.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => el.classList.remove("show"), duration);
+async function hashPin(p) {
+  const data = new TextEncoder().encode("couple_chat_v1:" + me.uid + ":" + p);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function buildPad() {
+  const pad = $("pad"); pad.innerHTML = "";
+  const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
+  keys.forEach(k => {
+    const b = document.createElement("button");
+    b.type = "button";
+    if (k === "") b.className = "ghost"; else b.textContent = k;
+    if (k !== "") b.onclick = () => pressKey(k);
+    pad.appendChild(b);
+  });
+}
+function renderDots() {
+  [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
+}
+function bioSupported() {
+  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
+}
+function startPin() {
+  pinBuf = ""; pinFirst = null; renderDots();
+  const has = !!localStorage.getItem(PIN_KEY);
+  pinMode = has ? "unlock" : "setup";
+  $("pinMsg").textContent = has ? T("enterPin") : T("setPin");
+  $("bioBtn").style.display = (has && bioSupported() && localStorage.getItem(BIO_KEY)) ? "inline-block" : "none";
+  show("pin");
+}
+async function pressKey(k) {
+  const until = Number(localStorage.getItem(LOCK_KEY) || 0);
+  if (Date.now() < until) {
+    $("pinMsg").textContent = I18N[lang].waitSec(Math.ceil((until - Date.now()) / 1000)); return;
+  }
+  if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
+  if (pinBuf.length >= 4) return;
+  pinBuf += k; renderDots();
+  if (pinBuf.length < 4) return;
+
+  const entered = pinBuf;
+  if (pinMode === "setup") {
+    if (pinFirst === null) {
+      pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
+      $("pinMsg").textContent = T("confirmPin");
+    } else if (pinFirst === entered) {
+      localStorage.setItem(PIN_KEY, await hashPin(entered));
+      await maybeEnrollBio();
+      unlock();
+    } else {
+      pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
+      $("pinMsg").textContent = T("mismatchPin"); shake();
     }
-
-    function showScreen(screenId) {
-      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
-      $(screenId).classList.add("active");
+  } else {
+    if ((await hashPin(entered)) === localStorage.getItem(PIN_KEY)) {
+      fails = 0;
+      if (bioSupported() && !localStorage.getItem(BIO_KEY)) await maybeEnrollBio();
+      unlock();
+    } else {
+      fails++; pinBuf = ""; setTimeout(renderDots, 120); shake();
+      if (fails >= 5) {
+        localStorage.setItem(LOCK_KEY, String(Date.now() + 30000)); fails = 0;
+        $("pinMsg").textContent = T("fiveWrong");
+      } else $("pinMsg").textContent = T("wrongPin");
     }
-
-    function closeDropdown() {
-      $("menuBackdrop").classList.remove("open");
-      $("dropdownMenu").classList.remove("open");
-    }
-
-    function openDropdown() {
-      $("menuBackdrop").classList.add("open");
-      $("dropdownMenu").classList.add("open");
-    }
-
-    // Localization
-    function applyLanguage() {
-      const isBn = lang === "bn";
-      $("msgInput").placeholder = isBn ? "মেসেজ লিখুন..." : "Type a message...";
-      $("enableAutoDeleteBtn").textContent = isBn ? "চালু করুন" : "Turn On";
-      $("disableAutoDeleteBtn").textContent = isBn ? "বন্ধ করুন" : "Turn Off";
-      $("clearAllChatBtn").textContent = isBn ? "সব মুছুন 🗑️" : "Clear All 🗑️";
-      $("loadOlderBtn").textContent = isBn ? "আরও পুরনো মেসেজ" : "Older Messages";
-      $("emptyChatBanner").textContent = isBn
-        ? "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today"
-        : "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today";
-    }
-
-    $("langToggleBtn").addEventListener("click", () => {
-      lang = lang === "bn" ? "en" : "bn";
-      localStorage.setItem(LS_LANG, lang);
-      applyLanguage();
-      showToast(lang === "bn" ? "ভাষা: বাংলা" : "Language: English");
-    });
-
-    // ------------------ NOTEPAD LOGIC ------------------
-    function getNotes() {
-      try {
-        return JSON.parse(localStorage.getItem(LS_NOTES) || "[]");
-      } catch {
-        return [];
-      }
-    }
-
-    function setNotes(list) {
-      localStorage.setItem(LS_NOTES, JSON.stringify(list));
-    }
-
-    function saveCurrentNote(silent = false) {
-      const title = $("noteTitleInput").value.trim() || "শিরোনামহীন নোট";
-      const body = $("noteBodyInput").value;
-      if (!body.trim() && !title.trim()) return;
-
-      const notes = getNotes();
-      const now = Date.now();
-      if (activeNoteId) {
-        const idx = notes.findIndex((n) => n.id === activeNoteId);
-        if (idx >= 0) {
-          notes[idx] = { ...notes[idx], title, body, updatedAt: now };
-        } else {
-          activeNoteId = "note_" + now;
-          notes.unshift({ id: activeNoteId, title, body, updatedAt: now });
-        }
-      } else {
-        activeNoteId = "note_" + now;
-        notes.unshift({ id: activeNoteId, title, body, updatedAt: now });
-      }
-      localStorage.setItem(LS_ACTIVE_NOTE, activeNoteId);
-      setNotes(notes);
-      $("noteSaveHint").textContent = "সেভ হয়েছে";
-      if (!silent) showToast("নোট সেভ হয়েছে");
-    }
-
-    function startNewNote() {
-      activeNoteId = null;
-      localStorage.removeItem(LS_ACTIVE_NOTE);
-      $("noteTitleInput").value = "";
-      $("noteBodyInput").value = "";
-      $("noteSaveHint").textContent = "নতুন নোট";
-    }
-
-    function openSavedNotesModal() {
-      const notes = getNotes();
-      $("modalTitle").textContent = "পুরোনো নোটসমূহ";
-      const body = $("modalBody");
-      body.innerHTML = "";
-      if (!notes.length) {
-        body.innerHTML = `<div style="color:var(--muted);text-align:center;padding:18px;">কোনো সংরক্ষিত নোট নেই।</div>`;
-      } else {
-        notes.forEach((n) => {
-          const item = document.createElement("div");
-          item.className = "saved-note-item";
-          item.innerHTML = `
-            <div class="saved-note-title">${escapeHtml(n.title)}</div>
-            <div class="saved-note-preview">${escapeHtml(n.body)}</div>
-            <div class="saved-note-actions">
-              <button class="btn-secondary" data-open-note="${n.id}">খুলুন</button>
-              <button class="btn-danger" data-del-note="${n.id}">মুছুন</button>
-            </div>
-          `;
-          body.appendChild(item);
-        });
-      }
-      $("modalOverlay").classList.add("open");
-    }
-
-    function openNotepadSettingsModal() {
-      $("modalTitle").textContent = "সেটিংস";
-      const hasPin = !!localStorage.getItem(LS_PIN_HASH);
-      $("modalBody").innerHTML = `
-        <div class="saved-note-item">
-          <div style="font-weight:700;">PIN স্ট্যাটাস</div>
-          <div style="font-size:13px;color:var(--muted);">${hasPin ? "৪-সংখ্যার PIN সেট করা আছে" : "PIN এখনো সেট করা হয়নি"}</div>
-          <div style="display:flex;gap:8px;margin-top:6px;">
-            <button id="modalResetPinBtn" class="btn-secondary">PIN পরিবর্তন করুন</button>
-          </div>
-        </div>
-        <div class="saved-note-item">
-          <div style="font-weight:700;">অ্যাপ তথ্য</div>
-          <div style="font-size:13px;color:var(--muted);">ভার্সন: ${APP_VERSION}</div>
-        </div>
-      `;
-      $("modalOverlay").classList.add("open");
-      $("modalResetPinBtn").onclick = () => {
-        $("modalOverlay").classList.remove("open");
-        startPinFlow("setup");
-        showScreen("pinScreen");
-      };
-    }
-
-    $("modalBody").addEventListener("click", (e) => {
-      const openId = e.target.getAttribute("data-open-note");
-      const delId = e.target.getAttribute("data-del-note");
-      if (openId) {
-        const note = getNotes().find((n) => n.id === openId);
-        if (note) {
-          activeNoteId = note.id;
-          localStorage.setItem(LS_ACTIVE_NOTE, note.id);
-          $("noteTitleInput").value = note.title;
-          $("noteBodyInput").value = note.body;
-          $("noteSaveHint").textContent = "লোড হয়েছে";
-        }
-        $("modalOverlay").classList.remove("open");
-      } else if (delId) {
-        const filtered = getNotes().filter((n) => n.id !== delId);
-        setNotes(filtered);
-        if (activeNoteId === delId) startNewNote();
-        openSavedNotesModal();
-        showToast("নোট মোছা হয়েছে");
+  }
+}
+async function maybeEnrollBio() {
+  if (!bioSupported() || !me) return;
+  if (!(await confirmBox(T("bioSetupQ"), T("yes"), T("no")))) return;
+  try {
+    const chal = crypto.getRandomValues(new Uint8Array(16));
+    const uidBytes = new TextEncoder().encode(me.uid);
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: chal,
+        rp: { name: "My Notes", id: location.hostname },
+        user: { id: uidBytes, name: me.email || "user", displayName: "User" },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+        timeout: 60000
       }
     });
-
-    $("closeModalBtn").addEventListener("click", () => $("modalOverlay").classList.remove("open"));
-    $("saveNoteBtn").addEventListener("click", () => saveCurrentNote(false));
-    $("noteTitleInput").addEventListener("input", () => {
-      $("noteSaveHint").textContent = "সেভ হচ্ছে...";
-      clearTimeout(saveCurrentNote._t);
-      saveCurrentNote._t = setTimeout(() => saveCurrentNote(true), 500);
-    });
-    $("noteBodyInput").addEventListener("input", () => {
-      $("noteSaveHint").textContent = "সেভ হচ্ছে...";
-      clearTimeout(saveCurrentNote._t);
-      saveCurrentNote._t = setTimeout(() => saveCurrentNote(true), 500);
-    });
-
-    $("noteMenuBtn").addEventListener("click", () => {
-      if ($("dropdownMenu").classList.contains("open")) closeDropdown();
-      else openDropdown();
-    });
-    $("menuBackdrop").addEventListener("click", closeDropdown);
-
-    $("menuNewNote").addEventListener("click", () => {
-      closeDropdown();
-      startNewNote();
-      showToast("নতুন নোট তৈরি হয়েছে");
-    });
-
-    $("menuOldNotes").addEventListener("click", () => {
-      closeDropdown();
-      openSavedNotesModal();
-    });
-
-    $("menuSettings").addEventListener("click", () => {
-      closeDropdown();
-      openNotepadSettingsModal();
-    });
-
-    // Toolbox -> Login / PIN / Chat
-    $("menuToolbox").addEventListener("click", async () => {
-      closeDropdown();
-      saveCurrentNote(true);
-      if (!auth.currentUser) {
-        showScreen("loginScreen");
-        return;
-      }
-      await enterProtectedChatFlow();
-    });
-
-    // ------------------ AUTH & PIN / BIOMETRIC ------------------
-    $("loginBackToNotesBtn").addEventListener("click", () => showScreen("notepadScreen"));
-
-    $("loginSubmitBtn").addEventListener("click", async () => {
-      const email = $("loginEmailInput").value.trim();
-      const pass = $("loginPasswordInput").value;
-      $("loginErrorMsg").textContent = "";
-      if (!email || !pass) {
-        $("loginErrorMsg").textContent = "ইমেইল ও পাসওয়ার্ড দিন।";
-        return;
-      }
-      try {
-        $("loginSubmitBtn").disabled = true;
-        await signInWithEmailAndPassword(auth, email, pass);
-        $("loginPasswordInput").value = "";
-        await enterProtectedChatFlow();
-      } catch (err) {
-        $("loginErrorMsg").textContent = "লগইন ব্যর্থ হয়েছে। তথ্য যাচাই করুন।";
-      } finally {
-        $("loginSubmitBtn").disabled = false;
-      }
-    });
-
-    async function sha256Hex(str) {
-      const buf = new TextEncoder().encode(str);
-      const hashBuf = await crypto.subtle.digest("SHA-256", buf);
-      return Array.from(new Uint8Array(hashBuf))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
+    if (cred) {
+      const rawId = [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem(BIO_KEY, rawId);
+      toast(T("bioDone"));
     }
-
-    function updatePinDots() {
-      const dots = $("pinDots").querySelectorAll(".pin-dot");
-      dots.forEach((d, i) => d.classList.toggle("filled", i < pinInput.length));
-    }
-
-    function startPinFlow(mode) {
-      pinMode = mode;
-      pinInput = "";
-      pendingPinFirst = "";
-      updatePinDots();
-      $("pinStatusText").textContent = "";
-      $("setupBiometricBtn").style.display = window.PublicKeyCredential ? "inline-flex" : "none";
-
-      if (mode === "setup") {
-        $("pinHeaderTitle").textContent = "নতুন ৪-সংখ্যার PIN";
-        $("pinInstruction").textContent = "একটি ৪-সংখ্যার PIN তৈরি করুন";
-      } else if (mode === "confirm") {
-        $("pinHeaderTitle").textContent = "PIN নিশ্চিত করুন";
-        $("pinInstruction").textContent = "একই PIN আবার দিন";
-      } else {
-        $("pinHeaderTitle").textContent = "PIN আনলক";
-        $("pinInstruction").textContent = "আপনার ৪-সংখ্যার PIN দিন";
-      }
-    }
-
-    async function enterProtectedChatFlow() {
-      const storedHash = localStorage.getItem(LS_PIN_HASH);
-      const unlocked = sessionStorage.getItem(LS_PIN_UNLOCKED) === "1";
-
-      if (!storedHash) {
-        startPinFlow("setup");
-        showScreen("pinScreen");
-        return;
-      }
-
-      if (unlocked) {
-        await openChatWorkspace();
-        return;
-      }
-
-      startPinFlow("verify");
-      showScreen("pinScreen");
-      if (localStorage.getItem(LS_WEBAUTHN_CRED) && window.PublicKeyCredential) {
-        attemptBiometricUnlock(true);
-      }
-    }
-
-    $("pinBackToNotesBtn").addEventListener("click", () => {
-      pinInput = "";
-      updatePinDots();
-      showScreen("notepadScreen");
-    });
-
-    document.querySelectorAll(".key-btn[data-key]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const lockUntil = Number(localStorage.getItem(LS_PIN_LOCK_UNTIL) || "0");
-        if (Date.now() < lockUntil) {
-          const sec = Math.ceil((lockUntil - Date.now()) / 1000);
-          $("pinStatusText").textContent = `${sec} সেকেন্ড পর আবার চেষ্টা করুন।`;
-          return;
-        }
-        if (pinInput.length >= 4) return;
-        pinInput += btn.getAttribute("data-key");
-        updatePinDots();
-
-        if (pinInput.length === 4) {
-          await handleCompletedPin(pinInput);
-        }
-      });
-    });
-
-    $("pinBackspaceBtn").addEventListener("click", () => {
-      pinInput = pinInput.slice(0, -1);
-      updatePinDots();
-    });
-
-    async function handleCompletedPin(code) {
-      if (pinMode === "setup") {
-        pendingPinFirst = code;
-        pinInput = "";
-        updatePinDots();
-        startPinFlow("confirm");
-        return;
-      }
-
-      if (pinMode === "confirm") {
-        if (code !== pendingPinFirst) {
-          pinInput = "";
-          pendingPinFirst = "";
-          updatePinDots();
-          $("pinStatusText").textContent = "PIN মেলেনি। আবার শুরু করুন।";
-          pinMode = "setup";
-          $("pinInstruction").textContent = "নতুন ৪-সংখ্যার PIN তৈরি করুন";
-          return;
-        }
-        const h = await sha256Hex(code);
-        localStorage.setItem(LS_PIN_HASH, h);
-        localStorage.setItem(LS_PIN_FAILS, "0");
-        localStorage.removeItem(LS_PIN_LOCK_UNTIL);
-        sessionStorage.setItem(LS_PIN_UNLOCKED, "1");
-        pinInput = "";
-        updatePinDots();
-        showToast("PIN সেট হয়েছে");
-        await openChatWorkspace();
-        return;
-      }
-
-      // verify
-      const h = await sha256Hex(code);
-      const expected = localStorage.getItem(LS_PIN_HASH);
-      if (h === expected) {
-        localStorage.setItem(LS_PIN_FAILS, "0");
-        localStorage.removeItem(LS_PIN_LOCK_UNTIL);
-        sessionStorage.setItem(LS_PIN_UNLOCKED, "1");
-        pinInput = "";
-        updatePinDots();
-        await openChatWorkspace();
-      } else {
-        const fails = Number(localStorage.getItem(LS_PIN_FAILS) || "0") + 1;
-        localStorage.setItem(LS_PIN_FAILS, String(fails));
-        pinInput = "";
-        updatePinDots();
-        if (fails >= 5) {
-          const until = Date.now() + PIN_LOCKOUT_MS;
-          localStorage.setItem(LS_PIN_LOCK_UNTIL, String(until));
-          localStorage.setItem(LS_PIN_FAILS, "0");
-          $("pinStatusText").textContent = "৫ বার ভুল PIN! ৩০ সেকেন্ড লক করা হয়েছে।";
-        } else {
-          $("pinStatusText").textContent = `ভুল PIN (${fails}/5)`;
-        }
-      }
-    }
-
-    // WebAuthn fingerprint support
-    $("setupBiometricBtn").addEventListener("click", async () => {
-      if (!window.PublicKeyCredential) {
-        showToast("এই ডিভাইসে বায়োমেট্রিক সমর্থিত নয়");
-        return;
-      }
-      try {
-        const challenge = crypto.getRandomValues(new Uint8Array(32));
-        const userId = crypto.getRandomValues(new Uint8Array(16));
-        const cred = await navigator.credentials.create({
-          publicKey: {
-            challenge,
-            rp: { name: "My Notes" },
-            user: {
-              id: userId,
-              name: "private_user",
-              displayName: "Private User"
-            },
-            pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
-            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-            timeout: 60000
-          }
-        });
-        if (cred && cred.rawId) {
-          const b64 = btoa(String.fromCharCode(...new Uint8Array(cred.rawId)));
-          localStorage.setItem(LS_WEBAUTHN_CRED, b64);
-          showToast("ফিঙ্গারপ্রিন্ট যুক্ত হয়েছে");
-        }
-      } catch {
-        showToast("ফিঙ্গারপ্রিন্ট সেটআপ বাতিল হয়েছে");
+  } catch (e) {
+    toast(T("bioFail"));
+  }
+}
+$("bioBtn").onclick = async () => {
+  const hexId = localStorage.getItem(BIO_KEY);
+  if (!hexId || !bioSupported()) return;
+  try {
+    const rawId = new Uint8Array(hexId.match(/.{1,2}/g).map(h => parseInt(h, 16)));
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(16)),
+        rpId: location.hostname,
+        allowCredentials: [{ type: "public-key", id: rawId, transports: ["internal"] }],
+        userVerification: "required",
+        timeout: 60000
       }
     });
+    if (assertion) { fails = 0; unlock(); }
+  } catch (e) {
+    toast(T("bioFail"));
+  }
+};
+function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
+function lockNow() { returnToNotepad(); renderIncoming(); }
+$("lockBtn").onclick = lockNow;
+buildPad();
 
-    async function attemptBiometricUnlock(silentFail = false) {
-      const credB64 = localStorage.getItem(LS_WEBAUTHN_CRED);
-      if (!credB64 || !window.PublicKeyCredential) return;
-      try {
-        const rawId = Uint8Array.from(atob(credB64), (c) => c.charCodeAt(0));
-        const challenge = crypto.getRandomValues(new Uint8Array(32));
-        const assertion = await navigator.credentials.get({
-          publicKey: {
-            challenge,
-            allowCredentials: [{ id: rawId, type: "public-key" }],
-            userVerification: "required",
-            timeout: 60000
-          }
-        });
-        if (assertion) {
-          localStorage.setItem(LS_PIN_FAILS, "0");
-          localStorage.removeItem(LS_PIN_LOCK_UNTIL);
-          sessionStorage.setItem(LS_PIN_UNLOCKED, "1");
-          await openChatWorkspace();
-        }
-      } catch {
-        if (!silentFail) {
-          $("pinStatusText").textContent = "ফিঙ্গারপ্রিন্ট মেলেনি, PIN দিন।";
-        }
-      }
-    }
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); setTyping(false); stopVoiceRec(true); }
+  else {
+    beat(true);
+    if (me && unlocked && !call && hiddenAt && Date.now() - hiddenAt > RELOCK_MS) lockNow();
+    hiddenAt = 0; markIncoming(); sweep();
+  }
+});
+window.addEventListener("pagehide", () => beat(false));
 
-    $("biometricUnlockBtn").addEventListener("click", () => attemptBiometricUnlock(false));
+/* ---------- অনলাইন অবস্থা ও টাইপিং ---------- */
+let hbTimer = null, presTimer = null, usersUnsub = null, partner = null;
+let lastTypingWrite = 0, typingStop = null;
 
-    // Logout icon (⎋) -> Directly return to Notepad WITHOUT popup/notification & WITHOUT clearing PIN/biometric/notes
-    $("chatLogoutBtn").addEventListener("click", async () => {
-      try {
-        if (currentUser) {
-          await setDoc(doc(db, "users", currentUser.uid), {
-            online: false,
-            lastActive: serverTimestamp()
-          }, { merge: true }).catch(() => {});
-        }
-      } finally {
-        showScreen("notepadScreen");
-      }
+function beat(online) {
+  if (!me) return;
+  setDoc(doc(db, "users", me.uid),
+    { email: (me.email || "").toLowerCase(), online, lastActive: serverTimestamp() },
+    { merge: true }).catch(() => {});
+}
+function setTyping(on) {
+  if (!me) return;
+  if (!on && !lastTypingWrite) return;
+  lastTypingWrite = on ? Date.now() : 0;
+  setDoc(doc(db, "users", me.uid), { typingAt: on ? serverTimestamp() : null }, { merge: true }).catch(() => {});
+}
+function startPresence() {
+  if (hbTimer) return;
+  beat(document.visibilityState === "visible");
+  hbTimer = setInterval(() => { if (document.visibilityState === "visible") beat(true); }, HEARTBEAT_MS);
+  presTimer = setInterval(renderPresence, 1000);
+  usersUnsub = onSnapshot(collection(db, "users"), snap => {
+    partner = null;
+    snap.docs.forEach(d => {
+      if (d.id !== me.uid) partner = d.data({ serverTimestamps: "estimate" });
     });
+    renderPresence();
+  }, () => {});
+}
+function stopPresence() {
+  clearInterval(hbTimer); hbTimer = null;
+  clearInterval(presTimer); presTimer = null;
+  if (usersUnsub) { usersUnsub(); usersUnsub = null; }
+  partner = null;
+}
+function renderPresence() {
+  const box = $("presence"), txt = $("pText");
+  if (!partner || !partner.lastActive) {
+    box.classList.remove("on", "typing"); txt.textContent = T("neverOnline"); return;
+  }
+  const ms = partner.lastActive.toMillis();
+  const on = partner.online === true && Date.now() - ms < ONLINE_WINDOW_MS;
+  const tAt = partner.typingAt && partner.typingAt.toMillis ? partner.typingAt.toMillis() : 0;
+  const typing = on && tAt && Date.now() - tAt < TYPING_MS;
+  box.classList.toggle("on", on);
+  box.classList.toggle("typing", !!typing);
+  if (typing) txt.textContent = T("typing");
+  else if (on) txt.textContent = T("online");
+  else {
+    const d = new Date(ms);
+    txt.textContent = T("lastSeen") + dayLabel(d) + " " + fmtTime(d);
+  }
+}
 
-    // ------------------ CHAT WORKSPACE ------------------
-    async function openChatWorkspace() {
-      showScreen("chatScreen");
-      applyLanguage();
-      if (!currentUser && auth.currentUser) {
-        currentUser = auth.currentUser;
-      }
-      if (!currentUser) return;
+/* ---------- মিডিয়া সংরক্ষণ, ফুল-স্ক্রিন ভিউ ও মোছা ---------- */
+const mediaCol = () => collection(db, "chats", CHAT_ID, "media");
 
-      await setDoc(doc(db, "users", currentUser.uid), {
-        email: currentUser.email || "",
-        online: true,
-        lastActive: serverTimestamp()
-      }, { merge: true }).catch(() => {});
+function openMediaViewer(type, url) {
+  if (!url) return;
+  $("mvImg").style.display = "none";
+  $("mvVid").style.display = "none";
+  $("mvVid").pause();
+  if (type === "image") {
+    $("mvImg").src = url;
+    $("mvImg").style.display = "block";
+  } else {
+    $("mvVid").src = url;
+    $("mvVid").style.display = "block";
+  }
+  $("mediaViewer").classList.add("show");
+}
+$("mvClose").onclick = () => {
+  $("mvVid").pause();
+  $("mvVid").src = "";
+  $("mvImg").src = "";
+  $("mediaViewer").classList.remove("show");
+};
 
-      loadIceConfig();
-      subscribeSettings();
-      subscribePeerPresence();
-      subscribeMessages();
-      subscribeIncomingCalls();
-    }
+async function saveMediaChunks(base64DataUrl) {
+  const mediaRef = doc(mediaCol());
+  const chunks = [];
+  for (let i = 0; i < base64DataUrl.length; i += CHUNK_CHARS) {
+    chunks.push(base64DataUrl.slice(i, i + CHUNK_CHARS));
+  }
+  await setDoc(mediaRef, { ownerId: me.uid, total: chunks.length, createdAt: serverTimestamp() });
+  for (let i = 0; i < chunks.length; i++) {
+    await setDoc(doc(collection(mediaRef, "chunks"), String(i)), { idx: i, data: chunks[i] });
+  }
+  return mediaRef.id;
+}
 
-    async function loadIceConfig() {
-      try {
-        const snap = await getDoc(doc(db, "config", "ice"));
-        if (snap.exists() && snap.data().json) {
-          const parsed = JSON.parse(snap.data().json);
-          if (Array.isArray(parsed) && parsed.length) {
-            iceServers = parsed;
-          }
-        }
-      } catch {}
-    }
+async function loadMediaDataUrl(mediaId) {
+  if (!mediaId) return "";
+  if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+  const cSnap = await getDocs(collection(mediaCol(), mediaId, "chunks"));
+  const parts = cSnap.docs.map(d => d.data()).sort((a, b) => a.idx - b.idx).map(x => x.data);
+  const full = parts.join("");
+  if (full) mediaCache.set(mediaId, full);
+  return full;
+}
 
-    function subscribeSettings() {
-      onSnapshot(doc(db, "chats", CHAT_ID, "meta", "settings"), (snap) => {
-        if (snap.exists()) {
-          const d = snap.data();
-          autoDeleteEnabled = !!d.autoDelete;
-          autoDeleteEnabledAt = d.enabledAt || null;
-        } else {
-          autoDeleteEnabled = false;
-          autoDeleteEnabledAt = null;
-        }
-        $("enableAutoDeleteBtn").classList.toggle("active-mode", autoDeleteEnabled);
-        $("disableAutoDeleteBtn").classList.toggle("active-mode", !autoDeleteEnabled);
-        renderMessages();
-      });
-    }
+async function deleteMediaById(mediaId) {
+  if (!mediaId) return;
+  mediaCache.delete(mediaId);
+  try {
+    const mRef = doc(mediaCol(), mediaId);
+    const cSnap = await getDocs(collection(mRef, "chunks"));
+    const batch = writeBatch(db);
+    cSnap.docs.forEach(d => batch.delete(d.ref));
+    batch.delete(mRef);
+    await batch.commit();
+  } catch (e) {
+    toast(T("mediaDelErr"));
+  }
+}
 
-    $("enableAutoDeleteBtn").addEventListener("click", async () => {
-      await setDoc(doc(db, "chats", CHAT_ID, "meta", "settings"), {
-        autoDelete: true,
-        enabledAt: Date.now()
-      }, { merge: true });
-      showToast("অটো-ডিলিট চালু হয়েছে (৩০ সেকেন্ড)");
+async function compressImage(file) {
+  const bmp = await createImageBitmap(file);
+  const maxDim = 1280;
+  let { width: w, height: h } = bmp;
+  if (w > maxDim || h > maxDim) {
+    const ratio = Math.min(maxDim / w, maxDim / h);
+    w = Math.round(w * ratio);
+    h = Math.round(h * ratio);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(bmp, 0, 0, w, h);
+  bmp.close();
+  let q = 0.72;
+  let dataUrl = canvas.toDataURL("image/jpeg", q);
+  while (dataUrl.length * 0.75 > 420000 && q > 0.35) {
+    q -= 0.1;
+    dataUrl = canvas.toDataURL("image/jpeg", q);
+  }
+  return dataUrl;
+}
+
+$("imgBtn").onclick = () => $("imgInput").click();
+$("imgInput").addEventListener("change", async () => {
+  const file = $("imgInput").files && $("imgInput").files[0];
+  $("imgInput").value = "";
+  if (!file || !me) return;
+  if (file.size > 12 * 1024 * 1024) { toast(T("imgBig")); return; }
+  toast(T("uploading"));
+  try {
+    const dataUrl = await compressImage(file);
+    if (dataUrl.length * 0.75 > 700000) { toast(T("imgBig")); return; }
+    const mediaId = await saveMediaChunks(dataUrl);
+    await addDoc(col(), {
+      type: "image", mediaId, text: "", senderId: me.uid,
+      createdAt: serverTimestamp(), status: "sent", hiddenFor: []
     });
+  } catch (e) {
+    errOnce("Image send failed", e);
+  }
+});
 
-    $("disableAutoDeleteBtn").addEventListener("click", async () => {
-      await setDoc(doc(db, "chats", CHAT_ID, "meta", "settings"), {
-        autoDelete: false
-      }, { merge: true });
-      showToast("অটো-ডিলিট বন্ধ হয়েছে");
-    });
+/* ভয়েস নোট (সর্বোচ্চ ২ মিনিট) */
+let mr = null, recChunks = [], recSec = 0, recTicker = null, discardRec = false;
 
-    $("clearAllChatBtn").addEventListener("click", async () => {
-      try {
-        const qSnap = await getDocs(collection(db, "chats", CHAT_ID, "messages"));
-        const batch = writeBatch(db);
-        qSnap.forEach((d) => batch.delete(d.ref));
-        await batch.commit();
-        olderMessages = [];
-        liveMessages = [];
-        renderMessages();
-        showToast("সব মেসেজ মোছা হয়েছে");
-      } catch {
-        showToast("মেসেজ মোছা যায়নি");
-      }
-    });
-
-    $("versionBadge").addEventListener("click", () => {
-      showToast(`Version: ${APP_VERSION} | UID: ${currentUser ? currentUser.uid.slice(0, 6) : "none"} | ICE: ${iceServers.length}`);
-    });
-
-    function subscribePeerPresence() {
-      onSnapshot(collection(db, "users"), (snap) => {
-        let peer = null;
-        snap.forEach((d) => {
-          if (currentUser && d.id !== currentUser.uid) {
-            peer = d.data();
-          }
-        });
-        if (!peer) return;
-        const isOnline = !!peer.online;
-        $("peerOnlineDot").classList.toggle("online", isOnline);
-
-        const typingRecent = peer.typingAt && (Date.now() - peer.typingAt < 4000);
-        if (typingRecent) {
-          $("peerPresenceText").textContent = lang === "bn" ? "টাইপ করছে…" : "Typing…";
-        } else if (isOnline) {
-          $("peerPresenceText").textContent = lang === "bn" ? "অনলাইন" : "Online";
-        } else {
-          const ts = peer.lastActive?.toDate ? peer.lastActive.toDate() : null;
-          const timeStr = ts ? ts.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
-          $("peerPresenceText").textContent = lang === "bn"
-            ? `সর্বশেষ অনলাইনে ${timeStr}`
-            : `Last seen ${timeStr}`;
-        }
-      });
-    }
-
-    function subscribeMessages() {
-      if (messagesUnsub) messagesUnsub();
-      const q = query(
-        collection(db, "chats", CHAT_ID, "messages"),
-        orderBy("createdAt", "desc"),
-        limit(PAGE_SIZE)
-      );
-
-      messagesUnsub = onSnapshot(q, async (snap) => {
-        const docs = snap.docs.reverse();
-        oldestDocSnap = snap.docs.length ? snap.docs[snap.docs.length - 1] : null;
-        $("loadOlderWrap").style.display = snap.docs.length >= PAGE_SIZE ? "block" : "none";
-
-        liveMessages = docs.map((d) => ({ id: d.id, ...d.data() }));
-
-        // Mark incoming messages as delivered / seen when chat is active
-        if (currentUser && $("chatScreen").classList.contains("active")) {
-          for (const m of liveMessages) {
-            if (m.senderId && m.senderId !== currentUser.uid && m.status !== "seen") {
-              updateDoc(doc(db, "chats", CHAT_ID, "messages", m.id), {
-                status: "seen",
-                seenAt: Date.now()
-              }).catch(() => {});
-            }
-          }
-        }
-        renderMessages();
-      });
-    }
-
-    $("loadOlderBtn").addEventListener("click", async () => {
-      if (!oldestDocSnap) return;
-      const q = query(
-        collection(db, "chats", CHAT_ID, "messages"),
-        orderBy("createdAt", "desc"),
-        startAfter(oldestDocSnap),
-        limit(PAGE_SIZE)
-      );
-      const snap = await getDocs(q);
-      if (snap.empty) {
-        $("loadOlderWrap").style.display = "none";
-        return;
-      }
-      oldestDocSnap = snap.docs[snap.docs.length - 1];
-      const fetched = snap.docs.reverse().map((d) => ({ id: d.id, ...d.data() }));
-      const existingIds = new Set(olderMessages.map((x) => x.id));
-      fetched.forEach((x) => {
-        if (!existingIds.has(x.id)) olderMessages.push(x);
-      });
-      renderMessages();
-    });
-
-    function getAllVisibleMessages() {
-      const map = new Map();
-      [...olderMessages, ...liveMessages].forEach((m) => map.set(m.id, m));
-      const uid = currentUser ? currentUser.uid : "";
-      return Array.from(map.values()).filter((m) => {
-        const hidden = Array.isArray(m.hiddenFor) && m.hiddenFor.includes(uid);
-        return !hidden;
-      });
-    }
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    function renderMessages() {
-      const listEl = $("messagesList");
-      const bannerEl = $("emptyChatBanner");
-      const msgs = getAllVisibleMessages();
-
-      bannerEl.style.display = msgs.length === 0 ? "block" : "none";
-      listEl.innerHTML = "";
-
-      let lastDateKey = "";
-      const now = Date.now();
-
-      msgs.forEach((m) => {
-        const createdMs = m.createdAt?.toMillis ? m.createdAt.toMillis() : (typeof m.createdAt === "number" ? m.createdAt : now);
-        const dt = new Date(createdMs);
-        const dateKey = dt.toLocaleDateString();
-
-        if (dateKey !== lastDateKey) {
-          lastDateKey = dateKey;
-          const div = document.createElement("div");
-          div.className = "date-divider";
-          div.textContent = dt.toLocaleDateString(lang === "bn" ? "bn-BD" : "en-US", {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-          });
-          listEl.appendChild(div);
-        }
-
-        const isMe = currentUser && m.senderId === currentUser.uid;
-        const row = document.createElement("div");
-        row.className = `msg-row ${isMe ? "me" : "other"}`;
-
-        let burnHtml = "";
-        if (autoDeleteEnabled && m.seenAt) {
-          const remMs = AUTO_DELETE_MS - (now - m.seenAt);
-          if (remMs <= 0) {
-            deleteMessageAndMedia(m);
-            return;
-          }
-          burnHtml = `<span class="burn-timer">⏱️ ${Math.ceil(remMs / 1000)}s</span>`;
-        }
-
-        let replyHtml = "";
-        if (m.replyTo) {
-          replyHtml = `<div class="reply-quote">${escapeHtml(m.replyTo)}</div>`;
-        }
-
-        let contentHtml = "";
-        if (m.type === "call") {
-          contentHtml = `<div>📞 ${escapeHtml(m.callType || "কল")} • ${escapeHtml(m.result || "শেষ হয়েছে")}${m.duration ? ` (${escapeHtml(m.duration)})` : ""}</div>`;
-        } else if (m.type === "image") {
-          contentHtml = `
-            <img class="media-img" data-media-id="${escapeHtml(m.mediaId || "")}" data-media-type="image" src="" alt="ছবি" />
-            ${m.text ? `<div style="margin-top:6px;">${escapeHtml(m.text)}</div>` : ""}
-          `;
-        } else if (m.type === "audio") {
-          contentHtml = `
-            <audio controls preload="metadata" data-media-id="${escapeHtml(m.mediaId || "")}" style="max-width:220px;"></audio>
-          `;
-        } else if (m.type === "video") {
-          contentHtml = `
-            <video class="media-video" controls playsinline preload="metadata" data-media-id="${escapeHtml(m.mediaId || "")}"></video>
-            <button class="media-open-btn" data-open-media-id="${escapeHtml(m.mediaId || "")}" data-media-type="video">⛶ ফুল-স্ক্রিন</button>
-          `;
-        } else {
-          contentHtml = `<div>${escapeHtml(m.text || "")}</div>`;
-        }
-
-        let ticksHtml = "";
-        if (isMe && m.type !== "call") {
-          if (m.status === "seen") {
-            ticksHtml = `<span class="ticks seen">✓✓</span>`;
-          } else if (m.status === "delivered") {
-            ticksHtml = `<span class="ticks">✓✓</span>`;
-          } else {
-            ticksHtml = `<span class="ticks">✓</span>`;
-          }
-        }
-
-        const timeText = dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-        let reactionsHtml = "";
-        if (m.reactions && typeof m.reactions === "object") {
-          const entries = Object.entries(m.reactions).filter(([, emoji]) => !!emoji);
-          if (entries.length) {
-            reactionsHtml = `<div class="reactions-row">${entries.map(([, em]) => `<span class="reaction-chip">${escapeHtml(em)}</span>`).join("")}</div>`;
-          }
-        }
-
-        row.innerHTML = `
-          <div class="bubble" data-msg-id="${m.id}">
-            ${replyHtml}
-            ${contentHtml}
-          </div>
-          ${reactionsHtml}
-          <div class="msg-meta">
-            <span>${timeText}</span>
-            ${ticksHtml}
-            ${burnHtml}
-          </div>
-        `;
-
-        // Long press / action menu on message
-        const bubble = row.querySelector(".bubble");
-        attachMessageActions(bubble, m, isMe);
-
-        // Hydrate media from chunks
-        if (m.mediaId) {
-          hydrateMediaElement(row, m.mediaId, m.type);
-        }
-
-        listEl.appendChild(row);
-      });
-    }
-
-    function attachMessageActions(el, msg, isMe) {
-      let pressTimer = null;
-      const startPress = () => {
-        pressTimer = setTimeout(() => openMessageActionSheet(msg, isMe), 480);
-      };
-      const cancelPress = () => clearTimeout(pressTimer);
-
-      el.addEventListener("touchstart", startPress, { passive: true });
-      el.addEventListener("touchend", cancelPress);
-      el.addEventListener("touchmove", cancelPress);
-      el.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        openMessageActionSheet(msg, isMe);
-      });
-    }
-
-    function openMessageActionSheet(msg, isMe) {
-      $("modalTitle").textContent = "মেসেজ অপশন";
-      $("modalBody").innerHTML = `
-        <div style="display:flex;gap:8px;justify-content:space-around;padding:6px 0;">
-          ${["👍", "❤️", "😂", "😮", "😢"].map((em) => `<button class="pill-btn" data-react="${em}" style="font-size:18px;">${em}</button>`).join("")}
-        </div>
-        <button id="actReplyBtn" class="btn-secondary">↩️ রিপ্লাই করুন</button>
-        <button id="actHideMeBtn" class="btn-danger">আমার থেকে মুছুন</button>
-        ${isMe ? `<button id="actDelBothBtn" class="btn-danger">দুজনের থেকে মুছুন</button>` : ""}
-      `;
-      $("modalOverlay").classList.add("open");
-
-      $("modalBody").querySelectorAll("[data-react]").forEach((b) => {
-        b.onclick = async () => {
-          const emoji = b.getAttribute("data-react");
-          const currentReactions = { ...(msg.reactions || {}) };
-          currentReactions[currentUser.uid] = currentReactions[currentUser.uid] === emoji ? "" : emoji;
-          await updateDoc(doc(db, "chats", CHAT_ID, "messages", msg.id), { reactions: currentReactions });
-          $("modalOverlay").classList.remove("open");
-        };
-      });
-
-      $("actReplyBtn").onclick = () => {
-        replyTarget = msg.text || `[${msg.type}]`;
-        $("replyPreviewText").textContent = `রিপ্লাই: ${replyTarget}`;
-        $("replyBar").classList.add("active");
-        $("modalOverlay").classList.remove("open");
-      };
-
-      $("actHideMeBtn").onclick = async () => {
-        const hidden = Array.isArray(msg.hiddenFor) ? [...msg.hiddenFor] : [];
-        if (!hidden.includes(currentUser.uid)) hidden.push(currentUser.uid);
-        await updateDoc(doc(db, "chats", CHAT_ID, "messages", msg.id), { hiddenFor: hidden });
-        $("modalOverlay").classList.remove("open");
-        showToast("আপনার তালিকা থেকে মোছা হয়েছে");
-      };
-
-      const delBothBtn = $("actDelBothBtn");
-      if (delBothBtn) {
-        delBothBtn.onclick = async () => {
-          await deleteMessageAndMedia(msg);
-          $("modalOverlay").classList.remove("open");
-          showToast("দুজনের কাছ থেকে মোছা হয়েছে");
-        };
-      }
-    }
-
-    async function deleteMessageAndMedia(msg) {
-      if (msg.mediaId) {
-        try {
-          const cSnap = await getDocs(collection(db, "chats", CHAT_ID, "media", msg.mediaId, "chunks"));
-          const batch = writeBatch(db);
-          cSnap.forEach((d) => batch.delete(d.ref));
-          batch.delete(doc(db, "chats", CHAT_ID, "media", msg.mediaId));
-          await batch.commit();
-        } catch {}
-      }
-      await deleteDoc(doc(db, "chats", CHAT_ID, "messages", msg.id)).catch(() => {});
-    }
-
-    $("cancelReplyBtn").addEventListener("click", () => {
-      replyTarget = null;
-      $("replyBar").classList.remove("active");
-    });
-
-    // Typing indicator & sending text
-    $("msgInput").addEventListener("input", () => {
-      if (!currentUser) return;
-      setDoc(doc(db, "users", currentUser.uid), { typingAt: Date.now() }, { merge: true }).catch(() => {});
-    });
-
-    async function sendTextMessage() {
-      const text = $("msgInput").value.trim();
-      if (!text || !currentUser) return;
-      $("msgInput").value = "";
-      const payload = {
-        type: "text",
-        text,
-        senderId: currentUser.uid,
-        createdAt: serverTimestamp(),
-        status: "sent",
-        replyTo: replyTarget || null,
-        reactions: {},
-        hiddenFor: []
-      };
-      replyTarget = null;
-      $("replyBar").classList.remove("active");
-      await setDoc(doc(collection(db, "chats", CHAT_ID, "messages")), payload);
-      $("messagesWrap").scrollTop = $("messagesWrap").scrollHeight;
-    }
-
-    $("sendMsgBtn").addEventListener("click", sendTextMessage);
-
-    // ------------------ MEDIA CHUNKING & PLAYBACK ------------------
-    const mediaCache = new Map();
-
-    async function assembleMediaDataUrl(mediaId) {
-      if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
-      const q = query(
-        collection(db, "chats", CHAT_ID, "media", mediaId, "chunks"),
-        orderBy("chunkId", "asc")
-      );
-      const snap = await getDocs(q);
-      if (snap.empty) return null;
-      const fullDataUrl = snap.docs.map((d) => d.data().data || "").join("");
-      mediaCache.set(mediaId, fullDataUrl);
-      return fullDataUrl;
-    }
-
-    async function hydrateMediaElement(rowEl, mediaId, type) {
-      const dataUrl = await assembleMediaDataUrl(mediaId);
-      if (!dataUrl) return;
-
-      if (type === "image") {
-        const img = rowEl.querySelector(`img[data-media-id="${mediaId}"]`);
-        if (img) {
-          img.src = dataUrl;
-          img.onclick = () => openFullscreenViewer(dataUrl, "image", "ছবি");
-        }
-      } else if (type === "audio") {
-        const aud = rowEl.querySelector(`audio[data-media-id="${mediaId}"]`);
-        if (aud) {
-          aud.src = dataUrl;
-        }
-      } else if (type === "video") {
-        const vid = rowEl.querySelector(`video[data-media-id="${mediaId}"]`);
-        if (vid) {
-          vid.src = dataUrl;
-        }
-        const openBtn = rowEl.querySelector(`[data-open-media-id="${mediaId}"]`);
-        if (openBtn) {
-          openBtn.onclick = () => openFullscreenViewer(dataUrl, "video", "ভিডিও");
-        }
-      }
-    }
-
-    function openFullscreenViewer(dataUrl, type, title) {
-      $("viewerTitle").textContent = title;
-      if (type === "video") {
-        $("viewerContent").innerHTML = `<video src="${dataUrl}" controls autoplay playsinline style="max-width:100%;max-height:85dvh;border-radius:12px;"></video>`;
-      } else {
-        $("viewerContent").innerHTML = `<img src="${dataUrl}" alt="${escapeHtml(title)}" style="max-width:100%;max-height:85dvh;border-radius:12px;" />`;
-      }
-      $("viewerOverlay").classList.add("open");
-    }
-
-    $("closeViewerBtn").addEventListener("click", () => {
-      $("viewerContent").innerHTML = "";
-      $("viewerOverlay").classList.remove("open");
-    });
-
-    async function uploadDataUrlAsMedia(dataUrl, msgType) {
-      if (!currentUser) return;
-      const mediaId = "med_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
-      const totalChunks = Math.ceil(dataUrl.length / CHUNK_SIZE);
-
-      await setDoc(doc(db, "chats", CHAT_ID, "media", mediaId), {
-        ownerId: currentUser.uid,
-        total: totalChunks,
-        createdAt: serverTimestamp()
-      });
-
-      for (let i = 0; i < totalChunks; i++) {
-        const part = dataUrl.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-        const chunkKey = String(i).padStart(4, "0");
-        await setDoc(doc(db, "chats", CHAT_ID, "media", mediaId, "chunks", chunkKey), {
-          chunkId: i,
-          data: part,
-          ownerId: currentUser.uid,
-          total: totalChunks,
-          createdAt: serverTimestamp()
-        });
-      }
-
-      await setDoc(doc(collection(db, "chats", CHAT_ID, "messages")), {
-        type: msgType,
-        mediaId,
-        senderId: currentUser.uid,
-        createdAt: serverTimestamp(),
-        status: "sent",
-        reactions: {},
-        hiddenFor: []
-      });
-    }
-
-    // Auto-compress image
-    $("pickImageBtn").addEventListener("click", () => $("imageFileInput").click());
-    $("imageFileInput").addEventListener("change", (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.onload = async () => {
-          const maxDim = 960;
-          let { width, height } = img;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressed = canvas.toDataURL("image/jpeg", 0.72);
-          showToast("ছবি পাঠানো হচ্ছে...");
-          await uploadDataUrlAsMedia(compressed, "image");
-        };
-        img.src = reader.result;
-      };
-      reader.readAsDataURL(file);
-      e.target.value = "";
-    });
-
-    // Voice note recorder (max 2 minutes)
-    $("recordAudioBtn").addEventListener("click", async () => {
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        return;
-      }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recordChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = (ev) => {
-          if (ev.data.size > 0) recordChunks.push(ev.data);
-        };
-        mediaRecorder.onstop = async () => {
-          clearTimeout(recordTimer);
-          stream.getTracks().forEach((t) => t.stop());
-          $("recordAudioBtn").textContent = "🎙️";
-          const blob = new Blob(recordChunks, { type: mediaRecorder.mimeType || "audio/webm" });
-          const reader = new FileReader();
-          reader.onload = async () => {
-            showToast("ভয়েস নোট পাঠানো হচ্ছে...");
-            await uploadDataUrlAsMedia(reader.result, "audio");
-          };
-          reader.readAsDataURL(blob);
-        };
-        mediaRecorder.start();
-        $("recordAudioBtn").textContent = "⏹️";
-        showToast("ভয়েস রেকর্ড চলছে (সর্বোচ্চ ২ মিনিট)...");
-        recordTimer = setTimeout(() => {
-          if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
-        }, MAX_AUDIO_SECONDS * 1000);
-      } catch {
-        showToast("মাইক্রোফোন অনুমতি প্রয়োজন");
-      }
-    });
-
-    // Camera-only video recorder (max 15 seconds)
-    $("recordVideoBtn").addEventListener("click", async () => {
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        return;
-      }
-      try {
-        if (navigator.mediaDevices?.getUserMedia && window.MediaRecorder) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" },
-            audio: true
-          });
-          $("localVideo").srcObject = stream;
-          $("callOverlay").classList.add("active");
-          $("callPeerLabel").textContent = "ভিডিও রেকর্ড (সর্বোচ্চ ১৫ সেকেন্ড)";
-          $("callStatusLabel").textContent = "রেকর্ড হচ্ছে...";
-
-          recordChunks = [];
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = (ev) => {
-            if (ev.data.size > 0) recordChunks.push(ev.data);
-          };
-          mediaRecorder.onstop = async () => {
-            clearTimeout(recordTimer);
-            stream.getTracks().forEach((t) => t.stop());
-            $("callOverlay").classList.remove("active");
-            $("recordVideoBtn").textContent = "🎬";
-            const blob = new Blob(recordChunks, { type: mediaRecorder.mimeType || "video/webm" });
-            const reader = new FileReader();
-            reader.onload = async () => {
-              showToast("ভিডিও পাঠানো হচ্ছে...");
-              await uploadDataUrlAsMedia(reader.result, "video");
-            };
-            reader.readAsDataURL(blob);
-          };
-          mediaRecorder.start();
-          $("recordVideoBtn").textContent = "⏹️";
-          recordTimer = setTimeout(() => {
-            if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
-          }, MAX_VIDEO_SECONDS * 1000);
-        } else {
-          $("videoFileInput").click();
-        }
-      } catch {
-        $("videoFileInput").click();
-      }
-    });
-
-    $("videoFileInput").addEventListener("change", (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+$("micBtn").onclick = async () => {
+  if (mr || !me) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
+    toast(T("noCallSup")); return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recChunks = []; recSec = 0; discardRec = false;
+    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "";
+    mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    mr.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+    mr.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(recTicker); recTicker = null;
+      $("recBar").classList.remove("show");
+      const currentMr = mr; mr = null;
+      if (discardRec || !recChunks.length || !me) return;
+      const blob = new Blob(recChunks, { type: currentMr.mimeType || "audio/webm" });
+      if (blob.size > 700000) { toast(T("audBig")); return; }
       const reader = new FileReader();
       reader.onload = async () => {
-        showToast("ভিডিও পাঠানো হচ্ছে...");
-        await uploadDataUrlAsMedia(reader.result, "video");
-      };
-      reader.readAsDataURL(file);
-      e.target.value = "";
-    });
-
-    // ------------------ WEBRTC VOICE / VIDEO CALL ------------------
-    async function startCall(callType) {
-      if (!currentUser) return;
-      isCaller = true;
-      callStartTime = Date.now();
-      const callRef = doc(collection(db, "chats", CHAT_ID, "calls"));
-      currentCallId = callRef.id;
-
-      $("callOverlay").classList.remove("minimized");
-      $("callOverlay").classList.add("active");
-      $("incomingCallBar").style.display = "none";
-      $("callPeerLabel").textContent = callType === "video" ? "ভিডিও কল" : "ভয়েস কল";
-      $("callStatusLabel").textContent = "রিং হচ্ছে...";
-
-      localStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: callType === "video"
-      });
-      $("localVideo").srcObject = localStream;
-
-      peerConnection = new RTCPeerConnection({ iceServers });
-      localStream.getTracks().forEach((t) => peerConnection.addTrack(t, localStream));
-
-      peerConnection.ontrack = (ev) => {
-        if (ev.streams?.[0]) $("remoteVideo").srcObject = ev.streams[0];
-      };
-
-      peerConnection.onicecandidate = async (ev) => {
-        if (ev.candidate) {
-          await setDoc(doc(collection(callRef, "candidates")), {
-            from: currentUser.uid,
-            candidate: ev.candidate.toJSON()
+        try {
+          const mediaId = await saveMediaChunks(String(reader.result));
+          await addDoc(col(), {
+            type: "audio", mediaId, duration: recSec, text: "", senderId: me.uid,
+            createdAt: serverTimestamp(), status: "sent", hiddenFor: []
           });
-        }
+        } catch (e) { errOnce("Voice send failed", e); }
       };
+      reader.readAsDataURL(blob);
+    };
+    mr.start(500);
+    $("recTimer").textContent = "00:00";
+    $("recBar").classList.add("show");
+    recTicker = setInterval(() => {
+      recSec++;
+      $("recTimer").textContent = fmtDur(recSec);
+      if (recSec >= MAX_VOICE_SEC) stopVoiceRec(false);
+    }, 1000);
+  } catch (e) {
+    toast(T("permMedia"));
+  }
+};
+function stopVoiceRec(discard) {
+  discardRec = !!discard;
+  if (mr && mr.state !== "inactive") mr.stop();
+}
+$("recSend").onclick = () => stopVoiceRec(false);
+$("recCancel").onclick = () => stopVoiceRec(true);
 
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+/* ভিডিও রেকর্ডার (শুধু ক্যামেরা থেকে, সর্বোচ্চ ১৫ সেকেন্ড) */
+let vrStream = null, vrRec = null, vrChunks = [], vrSec = 0, vrTicker = null, vrBlob = null;
 
-      await setDoc(callRef, {
-        from: currentUser.uid,
-        type: callType,
-        status: "ringing",
-        offer: { type: offer.type, sdp: offer.sdp },
-        createdAt: serverTimestamp()
+$("vidRecBtn").onclick = async () => {
+  if (!me || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
+    toast(T("noCallSup")); return;
+  }
+  try {
+    vrStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 360 }, height: { ideal: 270 } },
+      audio: true
+    });
+    vrBlob = null; vrSec = 0;
+    $("vidPreview").srcObject = vrStream;
+    $("vrStatus").textContent = "00:00 / 00:15";
+    $("vrStart").style.display = "inline-block";
+    $("vrStop").style.display = "none";
+    $("vrSend").style.display = "none";
+    $("vidRecModal").classList.add("show");
+  } catch (e) {
+    toast(T("permMedia"));
+  }
+};
+$("vrStart").onclick = () => {
+  if (!vrStream || vrRec) return;
+  vrChunks = []; vrSec = 0; vrBlob = null;
+  const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus") ? "video/webm;codecs=vp8,opus"
+    : (MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "");
+  vrRec = mime ? new MediaRecorder(vrStream, { mimeType: mime, videoBitsPerSecond: 300000 })
+               : new MediaRecorder(vrStream, { videoBitsPerSecond: 300000 });
+  vrRec.ondataavailable = e => { if (e.data && e.data.size > 0) vrChunks.push(e.data); };
+  vrRec.onstop = () => {
+    clearInterval(vrTicker); vrTicker = null;
+    vrBlob = new Blob(vrChunks, { type: vrRec.mimeType || "video/webm" });
+    vrRec = null;
+    $("vrStop").style.display = "none";
+    $("vrStart").style.display = "inline-block";
+    if (vrBlob.size > 1100000) {
+      toast(T("vidBig")); vrBlob = null;
+    } else if (vrBlob.size > 0) {
+      $("vrSend").style.display = "inline-block";
+    }
+  };
+  vrRec.start(400);
+  $("vrStart").style.display = "none";
+  $("vrStop").style.display = "inline-block";
+  $("vrSend").style.display = "none";
+  vrTicker = setInterval(() => {
+    vrSec++;
+    $("vrStatus").textContent = `${fmtDur(vrSec)} / 00:15`;
+    if (vrSec >= MAX_VIDEO_SEC && vrRec && vrRec.state !== "inactive") vrRec.stop();
+  }, 1000);
+};
+$("vrStop").onclick = () => {
+  if (vrRec && vrRec.state !== "inactive") vrRec.stop();
+};
+$("vrSend").onclick = async () => {
+  if (!vrBlob || !me) return;
+  const blob = vrBlob;
+  closeVidRecModal();
+  toast(T("uploading"));
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const mediaId = await saveMediaChunks(String(reader.result));
+      await addDoc(col(), {
+        type: "video", mediaId, duration: vrSec || 1, text: "", senderId: me.uid,
+        createdAt: serverTimestamp(), status: "sent", hiddenFor: []
       });
+    } catch (e) { errOnce("Video send failed", e); }
+  };
+  reader.readAsDataURL(blob);
+};
+function closeVidRecModal() {
+  clearInterval(vrTicker); vrTicker = null;
+  if (vrRec && vrRec.state !== "inactive") { try { vrRec.stop(); } catch (e) {} }
+  if (vrStream) { vrStream.getTracks().forEach(t => t.stop()); vrStream = null; }
+  $("vidPreview").srcObject = null;
+  $("vidRecModal").classList.remove("show");
+}
+$("vrClose").onclick = closeVidRecModal;
 
-      listenToCallRoom(callRef.id, callType);
+/* ---------- চ্যাট ---------- */
+const col = () => collection(db, "chats", CHAT_ID, "messages");
+
+function enterChat() { show("chat"); applyLang(); startChat(); render(true); markIncoming(); renderPresence(); }
+
+function startChat() {
+  if (unsub) return;
+  const q = query(col(), orderBy("createdAt", "asc"), limitToLast(msgLimit));
+  unsub = onSnapshot(q, snap => { lastDocs = snap.docs; render(false); markIncoming(); sweep(); },
+    err => errOnce("Load failed", err));
+  startSettings();
+}
+function stopChat() {
+  if (unsub) { unsub(); unsub = null; }
+  stopSettings();
+  msgLimit = MSG_PAGE;
+  lastDocs = []; $("list").innerHTML = "";
+}
+function loadOlder() {
+  msgLimit += MSG_PAGE; keepAnchor = true;
+  if (unsub) { unsub(); unsub = null; }
+  startChat();
+}
+
+function markIncoming() {
+  if (!me) return;
+  const visible = unlocked && document.visibilityState === "visible";
+  lastDocs.forEach(d => {
+    const m = d.data();
+    if (m.senderId === me.uid) return;
+    if (visible && m.status !== "seen") {
+      updateDoc(d.ref, { status: "seen", seenAt: serverTimestamp() })
+        .catch(e => errOnce("Seen failed", e));
+    } else if (!visible && m.status === "sent") {
+      updateDoc(d.ref, { status: "delivered" }).catch(() => {});
+    }
+  });
+}
+
+/* ---------- স্বয়ংক্রিয় মোছা ---------- */
+const settingsRef = () => doc(db, "chats", CHAT_ID, "meta", "settings");
+let autoDelete = false, enabledAtMs = 0, settingsUnsub = null, sweepTimer = null;
+const deleting = new Set();
+const stamping = new Set();
+
+function startSettings() {
+  if (settingsUnsub) return;
+  settingsUnsub = onSnapshot(settingsRef(), s => {
+    const data = s.exists() ? s.data({ serverTimestamps: "estimate" }) : {};
+    autoDelete = !!data.autoDelete;
+    enabledAtMs = data.enabledAt ? data.enabledAt.toMillis() : (autoDelete ? Date.now() : 0);
+    if (autoDelete && !data.enabledAt) {
+      setDoc(settingsRef(), { enabledAt: serverTimestamp() }, { merge: true }).catch(() => {});
+    }
+    renderAd(); sweep();
+  }, e => errOnce("Settings failed", e));
+  if (!sweepTimer) sweepTimer = setInterval(sweep, 1000);
+}
+function stopSettings() {
+  if (settingsUnsub) { settingsUnsub(); settingsUnsub = null; }
+  clearInterval(sweepTimer); sweepTimer = null;
+  autoDelete = false; enabledAtMs = 0;
+}
+function renderAd() {
+  $("adBtn").textContent = autoDelete ? T("turnOff") : T("turnOn");
+  if (me) render(false);
+}
+function eligible(m) { return autoDelete && m.seenAt && m.seenAt.toMillis() >= enabledAtMs; }
+const leftSec = seenMs => Math.max(0, Math.ceil((seenMs + AUTO_DELETE_MS - Date.now()) / 1000));
+
+function sweep() {
+  if (!me || !autoDelete) return;
+  const now = Date.now();
+  lastDocs.forEach(d => {
+    const m = d.data({ serverTimestamps: "estimate" });
+    if (m.senderId === me.uid && m.status === "seen" && !m.seenAt && !stamping.has(d.id)
+        && m.createdAt && m.createdAt.toMillis() >= enabledAtMs) {
+      stamping.add(d.id);
+      updateDoc(d.ref, { seenAt: serverTimestamp() })
+        .catch(e => { errOnce("seenAt failed", e); setTimeout(() => stamping.delete(d.id), 15000); });
+      return;
+    }
+    if (deleting.has(d.id)) return;
+    if (eligible(m) && now - m.seenAt.toMillis() >= AUTO_DELETE_MS) {
+      deleting.add(d.id);
+      const mid = m.mediaId;
+      deleteDoc(d.ref)
+        .then(async () => { if (mid) await deleteMediaById(mid); deleting.delete(d.id); })
+        .catch(e => { errOnce("Delete failed", e); setTimeout(() => deleting.delete(d.id), 15000); });
+    }
+  });
+  document.querySelectorAll(".cd").forEach(el => {
+    el.textContent = "⏱ " + leftSec(Number(el.dataset.seen)) + "s";
+  });
+}
+$("adBtn").onclick = () => {
+  const next = !autoDelete;
+  const data = next ? { autoDelete: true, enabledAt: serverTimestamp() } : { autoDelete: false };
+  setDoc(settingsRef(), data, { merge: true })
+    .then(() => toast(next ? T("adOnToast") : T("adOffToast")))
+    .catch(e => errOnce("Toggle failed", e));
+};
+$("ver").onclick = () => {
+  const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
+  const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
+  toast("v9 | Auto: " + (autoDelete ? "ON" : "OFF")
+    + " | Since: " + f(enabledAtMs)
+    + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
+    + " | Now: " + f(Date.now()), 9000);
+};
+
+const fmtTime = d => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+function dayLabel(d) {
+  const t = new Date(), y = new Date(); y.setDate(t.getDate() - 1);
+  if (d.toDateString() === t.toDateString()) return T("today");
+  if (d.toDateString() === y.toDateString()) return T("yesterday");
+  return d.toLocaleDateString(lang === "bn" ? "bn-BD" : "en-US", { day: "numeric", month: "long", year: "numeric" });
+}
+
+/* ---------- মেসেজ দেখানো ---------- */
+function callText(m) {
+  const mineCall = m.senderId === me.uid;
+  const kind = m.callType === "video" ? T("videoCall") : T("voiceCall");
+  const icon = m.callType === "video" ? "🎥" : "📞";
+  const dur = m.duration ? " · " + fmtDur(m.duration) : "";
+  switch (m.result) {
+    case "ended": return icon + " " + kind + dur;
+    case "missed": return mineCall ? icon + " " + kind + " · " + T("noAnswer") : "📵 " + T("missed") + " " + kind;
+    case "cancelled": return mineCall ? icon + " " + kind + " · " + T("cancelledByMe") : "📵 " + T("missed") + " " + kind;
+    case "declined": return mineCall ? icon + " " + kind + " · " + T("declined") : icon + " " + kind + " · " + T("declinedByMe");
+    default: return icon + " " + kind + " · " + T("failedConn");
+  }
+}
+function cdSpan(m) {
+  const w = document.createElement("span");
+  w.className = "cd"; w.dataset.seen = String(m.seenAt.toMillis());
+  w.textContent = "⏱ " + leftSec(m.seenAt.toMillis()) + "s";
+  return w;
+}
+
+function render(forceBottom) {
+  const list = $("list");
+  const prevH = list.scrollHeight, prevTop = list.scrollTop;
+  const nearBottom = prevH - prevTop - list.clientHeight < 140;
+  const frag = document.createDocumentFragment();
+  let lastDay = "";
+
+  const visibleDocs = lastDocs.filter(d => {
+    const h = d.data().hiddenFor;
+    return !(Array.isArray(h) && h.includes(me.uid));
+  });
+
+  if (lastDocs.length >= msgLimit) {
+    const ob = document.createElement("button");
+    ob.className = "older"; ob.textContent = T("olderBtn"); ob.onclick = loadOlder;
+    frag.appendChild(ob);
+  }
+  if (!visibleDocs.length) {
+    const e = document.createElement("div"); e.className = "empty";
+    e.textContent = T("emptyChat"); frag.appendChild(e);
+  }
+
+  visibleDocs.forEach(d => {
+    const m = d.data({ serverTimestamps: "estimate" });
+    const when = m.createdAt ? m.createdAt.toDate() : new Date();
+    const key = when.toDateString();
+    if (key !== lastDay) {
+      lastDay = key;
+      const s = document.createElement("div"); s.className = "day"; s.textContent = dayLabel(when); frag.appendChild(s);
     }
 
-    function subscribeIncomingCalls() {
-      const callsCol = collection(db, "chats", CHAT_ID, "calls");
-      onSnapshot(callsCol, (snap) => {
-        snap.docChanges().forEach((ch) => {
-          if (ch.type === "added") {
-            const d = ch.doc.data();
-            if (d.status === "ringing" && d.from !== currentUser?.uid && !currentCallId) {
-              currentCallId = ch.doc.id;
-              isCaller = false;
-              $("callOverlay").classList.remove("minimized");
-              $("callOverlay").classList.add("active");
-              $("incomingCallBar").style.display = "flex";
-              $("callPeerLabel").textContent = d.type === "video" ? "ইনকামিং ভিডিও কল" : "ইনকামিং ভয়েস কল";
-              $("callStatusLabel").textContent = "কল আসছে...";
-            }
-          }
-        });
-      });
+    if (m.type === "call") {
+      const r = document.createElement("div"); r.className = "callLog"; r.dataset.mid = d.id;
+      const t = document.createElement("span"); t.textContent = callText(m);
+      const tm = document.createElement("small"); tm.textContent = fmtTime(when);
+      r.append(t, tm);
+      if (eligible(m)) r.appendChild(cdSpan(m));
+      frag.appendChild(r);
+      return;
     }
 
-    $("acceptCallBtn").addEventListener("click", async () => {
-      if (!currentCallId) return;
-      $("incomingCallBar").style.display = "none";
-      const callRef = doc(db, "chats", CHAT_ID, "calls", currentCallId);
-      const snap = await getDoc(callRef);
-      if (!snap.exists()) return;
-      const data = snap.data();
-      callStartTime = Date.now();
+    const mine = m.senderId === me.uid;
+    const row = document.createElement("div"); row.className = "row" + (mine ? " me" : ""); row.dataset.mid = d.id;
+    const b = document.createElement("div"); b.className = "b";
 
-      localStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: data.type === "video"
-      });
-      $("localVideo").srcObject = localStream;
-
-      peerConnection = new RTCPeerConnection({ iceServers });
-      localStream.getTracks().forEach((t) => peerConnection.addTrack(t, localStream));
-      peerConnection.ontrack = (ev) => {
-        if (ev.streams?.[0]) $("remoteVideo").srcObject = ev.streams[0];
-      };
-      peerConnection.onicecandidate = async (ev) => {
-        if (ev.candidate) {
-          await setDoc(doc(collection(callRef, "candidates")), {
-            from: currentUser.uid,
-            candidate: ev.candidate.toJSON()
-          });
-        }
-      };
-
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      await updateDoc(callRef, {
-        status: "connected",
-        answer: { type: answer.type, sdp: answer.sdp }
-      });
-      $("callStatusLabel").textContent = "সংযুক্ত";
-      listenToCallRoom(currentCallId, data.type);
-    });
-
-    $("rejectCallBtn").addEventListener("click", async () => {
-      if (currentCallId) {
-        await updateDoc(doc(db, "chats", CHAT_ID, "calls", currentCallId), { status: "ended" }).catch(() => {});
-      }
-      cleanupCallUI("বাতিল", "কল বাতিল");
-    });
-
-    function listenToCallRoom(callId, callType) {
-      const callRef = doc(db, "chats", CHAT_ID, "calls", callId);
-      if (currentCallDocUnsub) currentCallDocUnsub();
-      if (currentCallCandUnsub) currentCallCandUnsub();
-
-      currentCallDocUnsub = onSnapshot(callRef, async (snap) => {
-        if (!snap.exists()) return;
-        const d = snap.data();
-        if (d.answer && peerConnection && !peerConnection.currentRemoteDescription) {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer));
-          $("callStatusLabel").textContent = "সংযুক্ত";
-        }
-        if (d.status === "ended") {
-          cleanupCallUI("শেষ হয়েছে", callType === "video" ? "ভিডিও কল" : "ভয়েস কল");
-        }
-      });
-
-      currentCallCandUnsub = onSnapshot(collection(callRef, "candidates"), (snap) => {
-        snap.docChanges().forEach(async (ch) => {
-          if (ch.type === "added") {
-            const c = ch.doc.data();
-            if (c.from !== currentUser?.uid && peerConnection && c.candidate) {
-              await peerConnection.addIceCandidate(new RTCIceCandidate(c.candidate)).catch(() => {});
-            }
-          }
-        });
-      });
+    if (m.replyTo) {
+      const q = document.createElement("div"); q.className = "q";
+      const who = document.createElement("b"); who.textContent = m.replyTo.from === me.uid ? T("you") : T("partner");
+      const sp = document.createElement("span"); sp.textContent = m.replyTo.text || "";
+      q.append(who, sp);
+      q.onclick = e => { e.stopPropagation(); jumpTo(m.replyTo.id); };
+      b.appendChild(q);
     }
 
-    async function cleanupCallUI(resultLabel, callTypeLabel) {
-      if (currentCallDocUnsub) currentCallDocUnsub();
-      if (currentCallCandUnsub) currentCallCandUnsub();
-      currentCallDocUnsub = null;
-      currentCallCandUnsub = null;
-
-      if (localStream) {
-        localStream.getTracks().forEach((t) => t.stop());
-        localStream = null;
-      }
-      if (peerConnection) {
-        peerConnection.close();
-        peerConnection = null;
-      }
-      $("localVideo").srcObject = null;
-      $("remoteVideo").srcObject = null;
-      $("callOverlay").classList.remove("active");
-      $("callOverlay").classList.remove("minimized");
-      $("incomingCallBar").style.display = "none";
-
-      if (currentCallId && isCaller && currentUser) {
-        const durSec = callStartTime ? Math.max(1, Math.round((Date.now() - callStartTime) / 1000)) : 0;
-        const durStr = `${Math.floor(durSec / 60)}m ${durSec % 60}s`;
-        await setDoc(doc(collection(db, "chats", CHAT_ID, "messages")), {
-          type: "call",
-          callType: callTypeLabel,
-          result: resultLabel,
-          duration: durStr,
-          senderId: currentUser.uid,
-          createdAt: serverTimestamp(),
-          status: "sent",
-          reactions: {},
-          hiddenFor: []
-        }).catch(() => {});
-      }
-
-      currentCallId = null;
-      callStartTime = null;
-      isCaller = false;
+    if (m.type === "image" && m.mediaId) {
+      const img = document.createElement("img"); img.className = "mediaImg";
+      const setImg = url => { img.src = url; img.onclick = () => openMediaViewer("image", url); };
+      if (mediaCache.has(m.mediaId)) setImg(mediaCache.get(m.mediaId));
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) setImg(url); }).catch(() => {});
+      b.appendChild(img);
+    } else if (m.type === "audio" && m.mediaId) {
+      const aud = document.createElement("audio"); aud.className = "mediaAud"; aud.controls = true; aud.preload = "metadata";
+      if (mediaCache.has(m.mediaId)) aud.src = mediaCache.get(m.mediaId);
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) aud.src = url; }).catch(() => {});
+      b.appendChild(aud);
+    } else if (m.type === "video" && m.mediaId) {
+      const vid = document.createElement("video"); vid.className = "mediaVid"; vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
+      const obtn = document.createElement("button"); obtn.className = "openMediaBtn"; obtn.type = "button"; obtn.textContent = "⛶ " + T("openBig");
+      const setVid = url => { vid.src = url; obtn.onclick = () => openMediaViewer("video", url); };
+      if (mediaCache.has(m.mediaId)) setVid(mediaCache.get(m.mediaId));
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) setVid(url); }).catch(() => {});
+      b.append(vid, obtn);
     }
 
-    $("voiceCallBtn").addEventListener("click", () => startCall("audio"));
-    $("videoCallBtn").addEventListener("click", () => startCall("video"));
+    if (m.text) {
+      const tx = document.createElement("div"); tx.className = "tx"; tx.textContent = m.text;
+      b.appendChild(tx);
+    }
 
-    $("toggleMuteBtn").addEventListener("click", () => {
-      if (!localStream) return;
-      const track = localStream.getAudioTracks()[0];
-      if (track) {
-        track.enabled = !track.enabled;
-        showToast(track.enabled ? "মাইক্রোফোন চালু" : "মিউট করা হয়েছে");
+    const meta = document.createElement("div"); meta.className = "meta";
+    if (eligible(m)) meta.appendChild(cdSpan(m));
+    const time = document.createElement("span"); time.textContent = fmtTime(when); meta.appendChild(time);
+    if (mine) {
+      const t = document.createElement("span");
+      const st = m.status || "sent";
+      t.className = "tick" + (st === "seen" ? " seen" : "");
+      t.textContent = st === "sent" ? "✓" : "✓✓";
+      meta.appendChild(t);
+    }
+    b.appendChild(meta);
+
+    const vals = Object.values(m.reactions || {});
+    if (vals.length) {
+      const wrap = document.createElement("div"); wrap.className = "rxs";
+      const counts = {};
+      vals.forEach(e => counts[e] = (counts[e] || 0) + 1);
+      Object.entries(counts).forEach(([e, n]) => {
+        const s = document.createElement("span"); s.className = "rp"; s.textContent = e;
+        if (n > 1) { const sm = document.createElement("small"); sm.textContent = n; s.appendChild(sm); }
+        wrap.appendChild(s);
+      });
+      b.appendChild(wrap);
+    }
+
+    attachLongPress(b, d.id);
+    row.appendChild(b); frag.appendChild(row);
+  });
+
+  list.replaceChildren(frag);
+  if (keepAnchor) { keepAnchor = false; list.scrollTop = prevTop + (list.scrollHeight - prevH); }
+  else if (forceBottom || nearBottom) list.scrollTop = list.scrollHeight;
+}
+
+function jumpTo(id) {
+  const el = $("list").querySelector('[data-mid="' + id + '"]');
+  if (!el) { toast(T("noOrig")); return; }
+  el.scrollIntoView({ block: "center", behavior: "smooth" });
+  el.classList.add("hl"); setTimeout(() => el.classList.remove("hl"), 1500);
+}
+
+/* ---------- মেসেজ মেনু ও ডিলিট অপশন ---------- */
+let sheetFor = null, replyTo = null;
+
+function attachLongPress(el, id) {
+  let timer;
+  el.addEventListener("touchstart", () => { timer = setTimeout(() => openSheet(id), 500); }, { passive: true });
+  ["touchend", "touchmove", "touchcancel"].forEach(ev =>
+    el.addEventListener(ev, () => clearTimeout(timer), { passive: true }));
+  el.addEventListener("contextmenu", e => { e.preventDefault(); openSheet(id); });
+}
+function openSheet(id) {
+  if (modalOpen || $("sheet").classList.contains("show")) return;
+  const d = lastDocs.find(x => x.id === id); if (!d) return;
+  const m = d.data();
+  sheetFor = { id, ref: d.ref, m };
+  const mineReact = (m.reactions || {})[me.uid];
+  const row = $("rxRow"); row.innerHTML = "";
+  REACTIONS.forEach(em => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = em; if (mineReact === em) b.className = "sel";
+    b.onclick = () => { closeSheet(); toggleReaction(d.ref, mineReact, em); };
+    row.appendChild(b);
+  });
+  $("sheet").classList.add("show");
+}
+function closeSheet() { $("sheet").classList.remove("show"); }
+$("sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
+
+function closeDelSheet() { $("delSheet").classList.remove("show"); }
+$("delSheet").addEventListener("click", e => { if (e.target.id === "delSheet") closeDelSheet(); });
+$("delCancel").onclick = closeDelSheet;
+
+function toggleReaction(ref, current, em) {
+  const key = "reactions." + me.uid;
+  updateDoc(ref, current === em ? { [key]: deleteField() } : { [key]: em })
+    .catch(e => errOnce("Reaction failed", e));
+}
+$("shReply").onclick = () => {
+  if (!sheetFor) return;
+  const m = sheetFor.m;
+  const preview = m.text || (m.type === "image" ? "📷" : m.type === "audio" ? "🎙️" : m.type === "video" ? "🎬" : "");
+  replyTo = { id: sheetFor.id, text: preview.slice(0, 80), from: m.senderId };
+  closeSheet(); showReplyBar(); $("msg").focus();
+};
+$("shDel").onclick = () => {
+  if (!sheetFor) return;
+  const isMine = sheetFor.m.senderId === me.uid;
+  closeSheet();
+  $("delBoth").style.display = isMine ? "block" : "none";
+  $("delSheet").classList.add("show");
+};
+$("delMe").onclick = async () => {
+  const s = sheetFor; closeDelSheet();
+  if (!s) return;
+  const cur = Array.isArray(s.m.hiddenFor) ? s.m.hiddenFor : [];
+  if (!cur.includes(me.uid)) {
+    updateDoc(s.ref, { hiddenFor: [...cur, me.uid] }).catch(e => errOnce("Delete for me failed", e));
+  }
+};
+$("delBoth").onclick = async () => {
+  const s = sheetFor; closeDelSheet();
+  if (!s || s.m.senderId !== me.uid) return;
+  const mid = s.m.mediaId;
+  deleteDoc(s.ref)
+    .then(async () => { if (mid) await deleteMediaById(mid); })
+    .catch(e => errOnce("Delete failed", e));
+};
+
+function showReplyBar() {
+  const bar = $("replyBar");
+  if (!replyTo) { bar.classList.remove("show"); return; }
+  $("rbWho").textContent = replyTo.from === me.uid ? T("you") : T("partner");
+  $("rbText").textContent = replyTo.text;
+  bar.classList.add("show");
+  $("list").scrollTop = $("list").scrollHeight;
+}
+$("rbClose").onclick = () => { replyTo = null; showReplyBar(); };
+
+/* ---------- সব মেসেজ মোছা ---------- */
+let clearing = false;
+async function clearAll() {
+  if (clearing || !me) return;
+  clearing = true;
+  try {
+    while (true) {
+      const snap = await getDocs(query(col(), limit(400)));
+      if (snap.empty) break;
+      for (const d of snap.docs) {
+        const mid = d.data().mediaId;
+        if (mid) await deleteMediaById(mid);
       }
-    });
+      const batch = writeBatch(db);
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+    }
+    mediaCache.clear();
+    toast(T("allCleared"));
+  } catch (e) {
+    errOnce("Clear failed", e);
+  }
+  clearing = false;
+}
+$("clearBtn").onclick = clearAll;
 
-    $("toggleCamBtn").addEventListener("click", () => {
-      if (!localStream) return;
-      const track = localStream.getVideoTracks()[0];
-      if (track) {
-        track.enabled = !track.enabled;
-        showToast(track.enabled ? "ক্যামেরা চালু" : "ক্যামেরা বন্ধ");
-      }
-    });
+/* ---------- মেসেজ পাঠানো ---------- */
+const msg = $("msg");
+function grow() { msg.style.height = "auto"; msg.style.height = Math.min(msg.scrollHeight, 120) + "px"; }
+msg.addEventListener("input", () => {
+  grow();
+  if (msg.value.trim()) {
+    const now = Date.now();
+    if (now - lastTypingWrite > 2500) setTyping(true);
+    clearTimeout(typingStop);
+    typingStop = setTimeout(() => setTyping(false), 4000);
+  } else {
+    clearTimeout(typingStop); setTyping(false);
+  }
+});
+msg.addEventListener("blur", () => { clearTimeout(typingStop); setTyping(false); });
 
-    $("hangupCallBtn").addEventListener("click", async () => {
-      if (currentCallId) {
-        await updateDoc(doc(db, "chats", CHAT_ID, "calls", currentCallId), { status: "ended" }).catch(() => {});
-      }
-      cleanupCallUI("শেষ হয়েছে", "কল");
-    });
+function send() {
+  const text = msg.value.trim();
+  if (!text || !me) return;
+  msg.value = ""; grow(); msg.focus();
+  clearTimeout(typingStop); setTyping(false);
+  const payload = { type: "text", text, senderId: me.uid, createdAt: serverTimestamp(), status: "sent", hiddenFor: [] };
+  if (replyTo) { payload.replyTo = replyTo; replyTo = null; showReplyBar(); }
+  addDoc(col(), payload).catch(e => errOnce("Send failed", e));
+  setTimeout(() => { $("list").scrollTop = $("list").scrollHeight; }, 50);
+}
+$("sendBtn").onclick = send;
+$("sendBtn").addEventListener("mousedown", e => e.preventDefault());
 
-    $("minimizeCallBtn").addEventListener("click", () => {
-      $("callOverlay").classList.toggle("minimized");
-    });
+if (window.visualViewport) {
+  visualViewport.addEventListener("resize", () => {
+    $("chat").style.height = visualViewport.height + "px";
+    $("list").scrollTop = $("list").scrollHeight;
+  });
+}
 
-    // ------------------ BACKGROUND LOCK & BACK HANDLING ------------------
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        localStorage.setItem(LS_BG_AT, String(Date.now()));
-        if (currentUser) {
-          setDoc(doc(db, "users", currentUser.uid), {
-            online: false,
-            lastActive: serverTimestamp()
-          }, { merge: true }).catch(() => {});
-        }
-      } else {
-        const bgAt = Number(localStorage.getItem(LS_BG_AT) || "0");
-        if (bgAt && Date.now() - bgAt > BACKGROUND_LOCK_MS && $("chatScreen").classList.contains("active")) {
-          sessionStorage.removeItem(LS_PIN_UNLOCKED);
-          startPinFlow("verify");
-          showScreen("pinScreen");
-        }
-        if (currentUser && $("chatScreen").classList.contains("active")) {
-          setDoc(doc(db, "users", currentUser.uid), {
-            online: true,
-            lastActive: serverTimestamp()
-          }, { merge: true }).catch(() => {});
-        }
-      }
-    });
+/* ---------- ভয়েস / ভিডিও কল (WebRTC) ---------- */
+const callsCol = () => collection(db, "chats", CHAT_ID, "calls");
+let call = null, incoming = null, ringUnsub = null, busy = false;
 
-    window.addEventListener("popstate", () => {
-      if ($("viewerOverlay").classList.contains("open")) {
-        $("viewerOverlay").classList.remove("open");
+async function getIceServers() {
+  try {
+    const s = await getDoc(doc(db, "config", "ice"));
+    if (s.exists()) {
+      const arr = JSON.parse(s.data().json);
+      if (Array.isArray(arr) && arr.length) return arr;
+    }
+  } catch (e) {}
+  return [{ urls: "stun:stun.l.google.com:19302" }];
+}
+function getMedia(type) {
+  return navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: true, noiseSuppression: true },
+    video: type === "video" ? { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } } : false
+  });
+}
+let ringTimer = null, actx = null;
+function startRing() {
+  if (ringTimer) return;
+  const beep = () => {
+    try {
+      if (navigator.vibrate) navigator.vibrate([400, 200, 400]);
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.frequency.value = 440; g.gain.value = 0.15;
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + 0.35);
+    } catch (e) {}
+  };
+  beep(); ringTimer = setInterval(beep, 1800);
+}
+function stopRing() { clearInterval(ringTimer); ringTimer = null; }
+
+function startRingListener() {
+  if (ringUnsub) return;
+  const q = query(callsCol(), where("status", "==", "ringing"));
+  ringUnsub = onSnapshot(q, snap => {
+    incoming = null;
+    snap.docs.forEach(d => {
+      const m = d.data({ serverTimestamps: "estimate" });
+      const age = Date.now() - (m.createdAt ? m.createdAt.toMillis() : Date.now());
+      if (m.from === me.uid) {
+        if (age > 90000 && !(call && call.ref.id === d.id)) updateDoc(d.ref, { status: "ended" }).catch(() => {});
         return;
       }
-      if ($("callOverlay").classList.contains("active") && !$("callOverlay").classList.contains("minimized")) {
-        $("callOverlay").classList.add("minimized");
-      }
+      if (age < 90000 && !call) incoming = { ref: d.ref, id: d.id, type: m.type, offer: m.offer };
     });
+    renderIncoming();
+  }, () => {});
+}
+function stopCalls() {
+  endCall(false);
+  if (ringUnsub) { ringUnsub(); ringUnsub = null; }
+  incoming = null; renderIncoming();
+}
+function renderIncoming() {
+  const showIt = !!(incoming && unlocked && !call);
+  $("incoming").classList.toggle("show", showIt);
+  $("incType").textContent = incoming ? (incoming.type === "video" ? T("inVideo") : T("inVoice")) : "";
+  if (showIt) startRing(); else stopRing();
+}
+function setCallStatus(t) {
+  $("callStatus").textContent = t;
+  $("miniTime").textContent = "📞 " + (t || "");
+}
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user || null;
+let histDepth = 0;
+function pushCallState() { try { history.pushState({ ccCall: 1 }, ""); histDepth++; } catch (e) {} }
+function unwindHistory() {
+  if (histDepth > 0) { const n = histDepth; histDepth = 0; try { history.go(-n); } catch (e) {} }
+}
+function setMini(on) {
+  if (!call) return;
+  call.mini = on;
+  const el = $("call");
+  el.classList.toggle("mini", on);
+  if (!on) el.style.left = el.style.top = el.style.right = el.style.bottom = "";
+}
+window.addEventListener("popstate", () => {
+  if (!call) return;
+  if (histDepth > 0) histDepth--;
+  if (!call.mini) setMini(true);
+  pushCallState();
+});
+$("minBtn").onclick = () => setMini(true);
+
+(function () {
+  const el = $("call");
+  let down = false, moving = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  el.addEventListener("pointerdown", e => {
+    if (!call || !call.mini || e.target.closest("#miniHang")) return;
+    down = true; moving = false; sx = e.clientX; sy = e.clientY;
+    const r = el.getBoundingClientRect(); ox = r.left; oy = r.top;
+    try { el.setPointerCapture(e.pointerId); } catch (x) {}
+  });
+  el.addEventListener("pointermove", e => {
+    if (!down) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (!moving && Math.hypot(dx, dy) < 8) return;
+    moving = true;
+    const x = Math.min(Math.max(0, ox + dx), window.innerWidth - el.offsetWidth);
+    const y = Math.min(Math.max(0, oy + dy), window.innerHeight - el.offsetHeight);
+    el.style.left = x + "px"; el.style.top = y + "px";
+    el.style.right = "auto"; el.style.bottom = "auto";
+  });
+  el.addEventListener("pointerup", () => {
+    if (!down) return; down = false; if (!moving) setMini(false);
+  });
+  el.addEventListener("pointercancel", () => { down = false; });
+})();
+
+async function openCallUI(type, status) {
+  $("call").classList.toggle("vid", type === "video");
+  $("call").classList.remove("mini");
+  $("call").classList.add("show");
+  $("muteBtn").classList.remove("off"); $("muteBtn").textContent = "🎤";
+  $("camBtn").classList.remove("off"); $("camBtn").textContent = "📷";
+  setCallStatus(status);
+  pushCallState();
+  if (type === "video" && call) {
+    $("localV").srcObject = new MediaStream(call.stream.getVideoTracks());
+    $("localV").play().catch(() => {});
+  }
+  try { if (navigator.wakeLock && call) call.wake = await navigator.wakeLock.request("screen"); } catch (e) {}
+}
+async function applyRemote(c, desc) {
+  await c.pc.setRemoteDescription(new RTCSessionDescription(desc));
+  c.remoteSet = true;
+  clearTimeout(c.ringTimeout);
+  c.pending.splice(0).forEach(x => c.pc.addIceCandidate(new RTCIceCandidate(x)).catch(() => {}));
+}
+async function setupPeer(callRef, type, stream, role) {
+  const pc = new RTCPeerConnection({ iceServers: await getIceServers() });
+  const c = { ref: callRef, pc, stream, type, role, unsubs: [], pending: [],
+              remoteSet: false, gotAnswer: false, docSeen: false, mini: false, logged: false, result: null,
+              timer: null, ringTimeout: null, startedAt: 0, wake: null };
+  call = c;
+  stream.getTracks().forEach(t => pc.addTrack(t, stream));
+  pc.ontrack = e => { $("remoteV").srcObject = e.streams[0]; $("remoteV").play().catch(() => {}); };
+  pc.onicecandidate = e => {
+    if (e.candidate) addDoc(collection(callRef, "candidates"), { from: me.uid, c: e.candidate.toJSON() }).catch(() => {});
+  };
+  pc.onconnectionstatechange = () => {
+    if (call !== c) return;
+    const s = pc.connectionState;
+    if (s === "connected") { c.startedAt = Date.now(); startTimer(c); }
+    else if (s === "disconnected") setCallStatus(T("weakConn"));
+    else if (s === "failed") { toast(T("turnHint")); c.result = "failed"; endCall(true); }
+  };
+  c.unsubs.push(onSnapshot(collection(callRef, "candidates"), snap => {
+    snap.docChanges().forEach(ch => {
+      if (ch.type !== "added") return;
+      const d = ch.doc.data();
+      if (d.from === me.uid) return;
+      if (c.remoteSet) pc.addIceCandidate(new RTCIceCandidate(d.c)).catch(() => {});
+      else c.pending.push(d.c);
     });
+  }));
+  c.unsubs.push(onSnapshot(callRef, snap => {
+    if (!snap.exists()) { if (c.docSeen) endCall(false); return; }
+    c.docSeen = true;
+    const m = snap.data();
+    if (m.status === "declined") { toast(T("callDeclined")); c.result = "declined"; endCall(false); }
+    else if (m.status === "ended" || m.status === "missed") {
+      toast(T("callEnded"));
+      if (m.status === "missed") c.result = "missed";
+      endCall(false);
+    } else if (c.role === "caller" && m.answer && !c.gotAnswer) {
+      c.gotAnswer = true;
+      setCallStatus(T("connecting"));
+      applyRemote(c, m.answer).catch(() => {});
+    }
+  }));
+  return c;
+}
+function startTimer(c) {
+  clearInterval(c.timer);
+  const tick = () => setCallStatus(fmtDur(Math.floor((Date.now() - c.startedAt) / 1000)));
+  tick(); c.timer = setInterval(tick, 1000);
+}
+async function startCall(type) {
+  if (call || busy || !me) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast(T("noCallSup")); return; }
+  busy = true;
+  let stream = null;
+  try {
+    try { stream = await getMedia(type); }
+    catch (e) { toast(T("permMedia")); return; }
+    const ref = doc(callsCol());
+    const c = await setupPeer(ref, type, stream, "caller");
+    openCallUI(type, T("calling"));
+    const offer = await c.pc.createOffer();
+    await c.pc.setLocalDescription(offer);
+    await setDoc(ref, { from: me.uid, type, status: "ringing", createdAt: serverTimestamp(),
+                        offer: { type: offer.type, sdp: offer.sdp } });
+    c.ringTimeout = setTimeout(() => {
+      if (call === c && !c.remoteSet) {
+        toast(T("noAnswer")); c.result = "missed";
+        updateDoc(ref, { status: "missed" }).catch(() => {});
+        endCall(false);
+      }
+    }, 45000);
+  } catch (e) {
+    toast(T("failedConn"));
+    if (call) { call.result = "failed"; endCall(false); }
+    else if (stream) stream.getTracks().forEach(t => t.stop());
+  } finally { busy = false; }
+}
+async function acceptCall() {
+  if (!incoming || call || busy) return;
+  const inc = incoming; incoming = null;
+  busy = true;
+  let stream = null;
+  try {
+    try { stream = await getMedia(inc.type); }
+    catch (e) {
+      toast(T("permMedia"));
+      updateDoc(inc.ref, { status: "declined" }).catch(() => {});
+      renderIncoming(); return;
+    }
+    const c = await setupPeer(inc.ref, inc.type, stream, "callee");
+    renderIncoming();
+    openCallUI(inc.type, T("connecting"));
+    await applyRemote(c, inc.offer);
+    const ans = await c.pc.createAnswer();
+    await c.pc.setLocalDescription(ans);
+    await updateDoc(inc.ref, { answer: { type: ans.type, sdp: ans.sdp }, status: "active" });
+  } catch (e) {
+    toast(T("failedConn"));
+    if (call) endCall(true); else if (stream) stream.getTracks().forEach(t => t.stop());
+  } finally { busy = false; }
+}
+function declineCall() {
+  if (!incoming) return;
+  const r = incoming.ref; incoming = null; renderIncoming();
+  updateDoc(r, { status: "declined" }).catch(() => {});
+  setTimeout(() => cleanupCall(r), 4000);
+}
+function writeCallLog(c) {
+  if (!me || c.logged) return;
+  c.logged = true;
+  const duration = c.startedAt ? Math.round((Date.now() - c.startedAt) / 1000) : 0;
+  const result = c.result || (c.startedAt ? "ended" : "cancelled");
+  addDoc(col(), { type: "call", callType: c.type, result, duration, senderId: me.uid,
+                  createdAt: serverTimestamp(), status: "sent", hiddenFor: [] }).catch(() => {});
+}
+async function endCall(notify) {
+  const c = call; if (!c) return;
+  call = null;
+  clearTimeout(c.ringTimeout); clearInterval(c.timer);
+  c.unsubs.forEach(u => u());
+  try { c.pc.close(); } catch (e) {}
+  c.stream.getTracks().forEach(t => t.stop());
+  if (c.wake) { try { c.wake.release(); } catch (e) {} }
+  if (c.role === "caller") writeCallLog(c);
+  $("remoteV").srcObject = null; $("localV").srcObject = null;
+  const el = $("call");
+  el.classList.remove("show", "mini");
+  el.style.left = el.style.top = el.style.right = el.style.bottom = "";
+  if (notify) updateDoc(c.ref, { status: "ended" }).catch(() => {});
+  setTimeout(() => cleanupCall(c.ref), 4000);
+  unwindHistory();
+  renderIncoming();
+}
+async function cleanupCall(ref) {
+  try {
+    const s = await getDocs(collection(ref, "candidates"));
+    const b = writeBatch(db);
+    s.forEach(d => b.delete(d.ref));
+    b.delete(ref);
+    await b.commit();
+  } catch (e) {}
+}
 
-    // Initial load of saved active note
-    (function init() {
-      if (activeNoteId) {
-        const found = getNotes().find((n) => n.id === activeNoteId);
-        if (found) {
-          $("noteTitleInput").value = found.title;
-          $("noteBodyInput").value = found.body;
-        }
-      }
-      applyLanguage();
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw.js").catch(() => {});
-      }
-    })();
-  </script>
+$("callV").onclick = () => startCall("voice");
+$("callVid").onclick = () => startCall("video");
+$("acceptBtn").onclick = acceptCall;
+$("declineBtn").onclick = declineCall;
+$("hangBtn").onclick = () => endCall(true);
+$("miniHang").onclick = e => { e.stopPropagation(); endCall(true); };
+$("muteBtn").onclick = () => {
+  if (!call) return;
+  const t = call.stream.getAudioTracks()[0]; if (!t) return;
+  t.enabled = !t.enabled;
+  $("muteBtn").classList.toggle("off", !t.enabled);
+  $("muteBtn").textContent = t.enabled ? "🎤" : "🔇";
+};
+$("camBtn").onclick = () => {
+  if (!call) return;
+  const t = call.stream.getVideoTracks()[0]; if (!t) return;
+  t.enabled = !t.enabled;
+  $("camBtn").classList.toggle("off", !t.enabled);
+  $("camBtn").textContent = t.enabled ? "📷" : "🚫";
+};
+
+applyLang();
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
+}
+</script>
 </body>
 </html>
