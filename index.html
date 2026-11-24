@@ -731,8 +731,14 @@ async function doLogout() {
   }
   await signOut(auth);
 }
-$("logoutBtn").onclick = async () => {
-  if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
+
+/* লগআউট আইকন (⎋): কোনো পপ-আপ বা নোটিফিকেশন ছাড়াই, PIN ও ফিঙ্গারপ্রিন্ট না মুছে সরাসরি নোটপ্যাডে ফেরানো */
+$("logoutBtn").onclick = () => {
+  if (me) {
+    setTyping(false);
+    setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }).catch(() => {});
+  }
+  returnToNotepad();
 };
 $("forgot").onclick = async () => {
   if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
