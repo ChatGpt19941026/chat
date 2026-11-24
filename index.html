@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="theme-color" content="#075E54">
+<meta name="theme-color" content="#f59e0b">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Chat Gpt 2.0</title>
+<title>My Notes</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overscroll-behavior:none;
@@ -17,8 +17,42 @@ html,body{height:100%;margin:0;overscroll-behavior:none;
 .screen.active{display:flex}
 button{font:inherit;cursor:pointer}
 
+/* নোটপ্যাড (প্রাথমিক ছদ্মবেশী স্ক্রিন) */
+#notepad{background:#fffdf7}
+.npHead{display:flex;align-items:center;gap:8px;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top));
+  background:#f59e0b;color:#fff;position:relative}
+.npHead .npTitle{flex:1;font-size:19px;font-weight:700}
+.npSaveBtn{border:0;border-radius:16px;padding:6px 14px;background:#fff;color:#b45309;font-size:13.5px;font-weight:700}
+.npMenuBtn{border:0;background:none;color:#fff;font-size:24px;line-height:1;padding:4px 8px}
+.npMenu{position:absolute;right:12px;top:calc(52px + env(safe-area-inset-top));background:#fff;color:#111;
+  border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.22);min-width:190px;display:none;flex-direction:column;overflow:hidden;z-index:48}
+.npMenu.show{display:flex}
+.npMenu button{border:0;background:none;text-align:left;padding:13px 16px;font-size:15px;border-bottom:1px solid #f1f1f1}
+.npMenu button:last-child{border-bottom:0}
+.npMenu button:active{background:#fef3c7}
+.npBody{flex:1;display:flex;flex-direction:column;padding:14px}
+#noteTitleInput{border:0;border-bottom:1px solid #e5e7eb;padding:8px 4px;font-size:18px;font-weight:600;background:transparent;outline:none;margin-bottom:10px}
+#noteBodyInput{flex:1;border:0;resize:none;font:inherit;font-size:16px;line-height:1.6;background:transparent;outline:none}
+.npFoot{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;padding-bottom:calc(8px + env(safe-area-inset-bottom));
+  background:#fef3c7;color:#78350f;font-size:12.5px}
+
+/* পুরোনো নোট ও সেটিংস পপআপ */
+#npOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:49}
+#npOverlay.show{display:flex}
+.npModal{background:#fff;border-radius:14px;width:100%;max-width:380px;max-height:75dvh;display:flex;flex-direction:column;overflow:hidden}
+.npModalHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fef3c7;font-weight:700;color:#78350f}
+.npModalHead button{border:0;background:none;font-size:18px}
+.npModalList{padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.savedItem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid #eee;border-radius:10px;background:#fffdf7}
+.savedItem .siInfo{flex:1;min-width:0}
+.savedItem .siInfo b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.savedItem .siInfo small{color:#666;font-size:12px}
+.savedItem button{border:0;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:6px 10px;font-size:12.5px}
+
 /* লগইন ও PIN */
-#login,#pin{align-items:center;justify-content:center;padding:24px;background:#fff}
+#login,#pin{align-items:center;justify-content:center;padding:24px;background:#fff;position:relative}
+.backNoteBtn{position:absolute;left:14px;top:calc(14px + env(safe-area-inset-top));border:0;background:#f3f4f6;color:#333;
+  border-radius:16px;padding:6px 12px;font-size:13px}
 .card{width:100%;max-width:360px;text-align:center}
 .logo{font-size:56px}
 h1{margin:8px 0 24px;font-size:24px;color:#075E54}
@@ -77,10 +111,10 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 .q b{display:block;color:#075E54;font-size:12px}
 .q span{display:block;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
-.mediaImg{display:block;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000}
+.mediaImg{display:block;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000;cursor:pointer}
 .mediaVid{display:block;max-width:100%;max-height:260px;border-radius:8px;margin-bottom:4px;background:#000}
 .mediaAud{display:block;max-width:240px;height:36px;margin-bottom:4px}
-.mediaPending{font-size:13px;color:#555;padding:6px 0}
+.openMediaBtn{display:inline-block;margin-bottom:4px;padding:4px 10px;border:0;border-radius:12px;background:rgba(0,0,0,.08);color:#075E54;font-size:12px}
 .meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
 .tick.seen{color:#34B7F1}
 .cd{color:#c62828;font-weight:600}
@@ -117,7 +151,14 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 .sheetBox>button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 8px;font-size:16px}
 .sheetBox>button.danger{color:#c62828}
 
-/* ভিডিও রেকর্ডার মোডাল */
+/* ফুল-স্ক্রিন মিডিয়া ভিউয়ার */
+#mediaViewer{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:58;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+#mediaViewer.show{display:flex}
+#mvClose{position:absolute;right:16px;top:calc(16px + env(safe-area-inset-top));border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:50%;width:40px;height:40px;font-size:20px}
+#mvImg{max-width:100%;max-height:85vh;object-fit:contain;display:none}
+#mvVid{max-width:100%;max-height:85vh;display:none}
+
+/* ভিডিও রেকর্ডার (সর্বোচ্চ ১৫ সেকেন্ড, সরাসরি ক্যামেরা) */
 #vidRecModal{position:fixed;inset:0;background:#000;z-index:55;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:24px;color:#fff}
 #vidRecModal.show{display:flex}
 #vidPreview{width:100%;max-width:420px;max-height:65vh;border-radius:14px;background:#111;transform:scaleX(-1);object-fit:cover}
@@ -178,8 +219,40 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 </head>
 <body>
 
+<!-- নোটপ্যাড (প্রাথমিক স্ক্রিন) -->
+<section id="notepad" class="screen active">
+  <div class="npHead">
+    <div class="npTitle">📝 নোটপ্যাড</div>
+    <button class="npSaveBtn" id="npSaveBtn" type="button">সেভ</button>
+    <button class="npMenuBtn" id="npMenuBtn" type="button" aria-label="Menu">⋮</button>
+    <div class="npMenu" id="npMenu">
+      <button id="mNewNote" type="button">নতুন নোট</button>
+      <button id="mOldNotes" type="button">পুরোনো নোট দেখুন</button>
+      <button id="mNpSettings" type="button">সেটিংস</button>
+      <button id="mToolbox" type="button">টুলবক্স</button>
+    </div>
+  </div>
+  <div class="npBody">
+    <input id="noteTitleInput" type="text" placeholder="নোটের শিরোনাম লিখুন...">
+    <textarea id="noteBodyInput" placeholder="এখানে আপনার নোট লিখুন..."></textarea>
+  </div>
+  <div class="npFoot">
+    <span id="npStatus">স্বয়ংক্রিয়ভাবে এই ফোনে সেভ থাকে</span>
+    <span id="npCharCount">০ অক্ষর</span>
+  </div>
+</section>
+
+<!-- পুরোনো নোট / নোটপ্যাড সেটিংস পপআপ -->
+<div id="npOverlay">
+  <div class="npModal">
+    <div class="npModalHead"><span id="npModalTitle">পুরোনো নোট</span><button id="npModalClose" type="button">✕</button></div>
+    <div class="npModalList" id="npModalList"></div>
+  </div>
+</div>
+
 <!-- লগইন -->
 <section id="login" class="screen">
+  <button class="backNoteBtn" id="loginToNote" type="button">← নোটপ্যাড</button>
   <form class="card" id="loginForm">
     <div class="logo">💬</div>
     <h1>Chat Gpt 2.0</h1>
@@ -192,6 +265,7 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 
 <!-- PIN / বায়োমেট্রিক -->
 <section id="pin" class="screen">
+  <button class="backNoteBtn" id="pinToNote" type="button">← নোটপ্যাড</button>
   <div class="card">
     <div class="logo">🔒</div>
     <div id="pinMsg"></div>
@@ -219,7 +293,7 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
   <div id="adBar">
     <span>⏱️</span>
     <span class="spacer"></span>
-    <small id="ver">v8</small>
+    <small id="ver">v9</small>
     <button id="adBtn" type="button"></button>
   </div>
   <div id="list"></div>
@@ -258,7 +332,14 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
   <button id="delCancel" type="button"></button>
 </div></div>
 
-<!-- ভিডিও রেকর্ডার (সর্বোচ্চ ১৫ সেকেন্ড, সরাসরি ক্যামেরা) -->
+<!-- ফুল-স্ক্রিন মিডিয়া ভিউয়ার -->
+<div id="mediaViewer">
+  <button id="mvClose" type="button">✕</button>
+  <img id="mvImg" alt="">
+  <video id="mvVid" controls playsinline></video>
+</div>
+
+<!-- ভিডিও রেকর্ডার -->
 <div id="vidRecModal">
   <div id="vrStatus">00:00 / 00:15</div>
   <video id="vidPreview" autoplay playsinline muted></video>
@@ -323,11 +404,12 @@ const HEARTBEAT_MS = 25000;
 const ONLINE_WINDOW_MS = 70000;
 const TYPING_MS = 6000;
 const MSG_PAGE = 300;
-const CHUNK_CHARS = 700000; // Firestore ১ MiB সীমার নিচে নিরাপদ চাঙ্ক সাইজ (~৫২৫ KB raw)
-const MAX_VOICE_SEC = 120;  // ভয়েস সর্বোচ্চ ২ মিনিট
-const MAX_VIDEO_SEC = 15;   // ভিডিও সর্বোচ্চ ১৫ সেকেন্ড
+const CHUNK_CHARS = 700000;
+const MAX_VOICE_SEC = 120;
+const MAX_VIDEO_SEC = 15;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
 const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", BIO_KEY = "cc_bio_cred", LANG_KEY = "cc_lang";
+const NOTES_LIST_KEY = "np_saved_notes", NOTE_DRAFT_KEY = "np_current_draft";
 
 const I18N = {
   bn: {
@@ -362,7 +444,7 @@ const I18N = {
     recSend: "পাঠান", recCancel: "বাতিল", vrStart: "রেকর্ড শুরু", vrStop: "থামুন", vrSend: "পাঠান", vrClose: "বন্ধ",
     imgBig: "ছবি অনেক বড়, অন্য ছবি বেছে নিন", audBig: "ভয়েস ২ মিনিটের বেশি হতে পারবে না", vidBig: "ভিডিও অনেক বড় (১৫ সেকেন্ডের মধ্যে রাখুন)",
     uploading: "পাঠানো হচ্ছে…", mediaDelErr: "মিডিয়া মোছা ব্যর্থ", yes: "হ্যাঁ", no: "না",
-    langSwitched: "ভাষা: বাংলা"
+    langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন"
   },
   en: {
     emailPh: "Email", passPh: "Password", login: "Login",
@@ -396,7 +478,7 @@ const I18N = {
     recSend: "Send", recCancel: "Cancel", vrStart: "Start Record", vrStop: "Stop", vrSend: "Send", vrClose: "Close",
     imgBig: "Image too large, pick another", audBig: "Voice note max 2 minutes", vidBig: "Video too large (keep within 15s)",
     uploading: "Sending…", mediaDelErr: "Failed to delete media", yes: "Yes", no: "No",
-    langSwitched: "Language: English"
+    langSwitched: "Language: English", openBig: "Open full screen"
   }
 };
 
@@ -409,9 +491,146 @@ const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
 let me = null, unlocked = false, unsub = null, lastDocs = [], hiddenAt = 0;
-let msgLimit = MSG_PAGE, keepAnchor = false;
+let msgLimit = MSG_PAGE, keepAnchor = false, inToolbox = false;
 const mediaCache = new Map();
 
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+let toastTimer;
+function toast(t, ms = 3800) {
+  const el = $("toast"); el.textContent = t; el.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
+}
+
+/* ---------- নোটপ্যাড (প্রাথমিক স্ক্রিন) ---------- */
+function getSavedNotes() {
+  try { return JSON.parse(localStorage.getItem(NOTES_LIST_KEY) || "[]"); } catch (e) { return []; }
+}
+function setSavedNotes(arr) {
+  localStorage.setItem(NOTES_LIST_KEY, JSON.stringify(arr));
+}
+function updateNoteCounter() {
+  const len = ($("noteBodyInput").value || "").length;
+  $("npCharCount").textContent = len + " অক্ষর";
+  localStorage.setItem(NOTE_DRAFT_KEY, JSON.stringify({
+    title: $("noteTitleInput").value,
+    body: $("noteBodyInput").value
+  }));
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(NOTE_DRAFT_KEY) || "{}");
+    $("noteTitleInput").value = d.title || "";
+    $("noteBodyInput").value = d.body || "";
+  } catch (e) {}
+  updateNoteCounter();
+}
+$("noteTitleInput").addEventListener("input", updateNoteCounter);
+$("noteBodyInput").addEventListener("input", updateNoteCounter);
+
+$("npSaveBtn").onclick = () => {
+  const title = $("noteTitleInput").value.trim() || "শিরোনামহীন নোট";
+  const body = $("noteBodyInput").value.trim();
+  if (!body && !$("noteTitleInput").value.trim()) {
+    toast("আগে কিছু লিখুন"); return;
+  }
+  const notes = getSavedNotes();
+  notes.unshift({
+    id: Date.now(),
+    title,
+    body,
+    date: new Date().toLocaleString("bn-BD", { dateStyle: "medium", timeStyle: "short" })
+  });
+  setSavedNotes(notes);
+  toast("নোট সেভ হয়েছে");
+};
+
+$("npMenuBtn").onclick = e => {
+  e.stopPropagation();
+  $("npMenu").classList.toggle("show");
+};
+document.addEventListener("click", () => $("npMenu").classList.remove("show"));
+
+$("mNewNote").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("noteTitleInput").value = "";
+  $("noteBodyInput").value = "";
+  updateNoteCounter();
+  toast("নতুন নোট তৈরি হয়েছে");
+};
+
+$("mOldNotes").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("npModalTitle").textContent = "পুরোনো নোটসমূহ";
+  const list = $("npModalList");
+  list.innerHTML = "";
+  const notes = getSavedNotes();
+  if (!notes.length) {
+    list.innerHTML = '<div style="text-align:center;color:#666;padding:16px">কোনো সেভ করা নোট নেই</div>';
+  } else {
+    notes.forEach(n => {
+      const row = document.createElement("div"); row.className = "savedItem";
+      const info = document.createElement("div"); info.className = "siInfo";
+      const b = document.createElement("b"); b.textContent = n.title;
+      const sm = document.createElement("small"); sm.textContent = n.date;
+      info.append(b, sm);
+      info.onclick = () => {
+        $("noteTitleInput").value = n.title;
+        $("noteBodyInput").value = n.body;
+        updateNoteCounter();
+        $("npOverlay").classList.remove("show");
+      };
+      const del = document.createElement("button"); del.textContent = "মুছুন";
+      del.onclick = e => {
+        e.stopPropagation();
+        setSavedNotes(getSavedNotes().filter(x => x.id !== n.id));
+        $("mOldNotes").click();
+      };
+      row.append(info, del);
+      list.appendChild(row);
+    });
+  }
+  $("npOverlay").classList.add("show");
+};
+
+$("mNpSettings").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("npModalTitle").textContent = "নোটপ্যাড সেটিংস";
+  const list = $("npModalList");
+  list.innerHTML = `
+    <div style="font-size:14px;color:#444;line-height:1.6">
+      • আপনার নোটগুলো শুধুমাত্র এই ফোনের লোকাল স্টোরেজে সংরক্ষিত থাকে।<br>
+      • ভার্সন: 1.0 (Offline Notes)
+    </div>
+  `;
+  $("npOverlay").classList.add("show");
+};
+
+$("mToolbox").onclick = () => {
+  $("npMenu").classList.remove("show");
+  inToolbox = true;
+  if (!me) show("login");
+  else if (unlocked) enterChat();
+  else startPin();
+};
+
+$("npModalClose").onclick = () => $("npOverlay").classList.remove("show");
+$("npOverlay").onclick = e => { if (e.target.id === "npOverlay") $("npOverlay").classList.remove("show"); };
+
+function returnToNotepad() {
+  inToolbox = false;
+  unlocked = false;
+  closeSheet(); closeDelSheet();
+  show("notepad");
+}
+$("loginToNote").onclick = returnToNotepad;
+$("pinToNote").onclick = returnToNotepad;
+
+loadDraft();
+
+/* ---------- ভাষা ও সাধারণ সহায়ক ---------- */
 function applyLang() {
   document.documentElement.lang = lang;
   $("email").placeholder = T("emailPh");
@@ -444,15 +663,6 @@ $("langBtn").onclick = () => {
   toast(T("langSwitched"));
 };
 
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  $(id).classList.add("active");
-}
-let toastTimer;
-function toast(t, ms = 3800) {
-  const el = $("toast"); el.textContent = t; el.style.display = "block";
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
-}
 let lastErrAt = 0;
 function errOnce(prefix, e) {
   const now = Date.now();
@@ -499,10 +709,15 @@ $("loginForm").addEventListener("submit", async e => {
 });
 
 onAuthStateChanged(auth, user => {
-  if (!user) { me = null; unlocked = false; stopChat(); stopCalls(); stopPresence(); show("login"); return; }
+  if (!user) {
+    me = null; unlocked = false; stopChat(); stopCalls(); stopPresence();
+    if (inToolbox) show("login"); else show("notepad");
+    return;
+  }
   me = user;
   startRingListener();
   startPresence();
+  if (!inToolbox) { show("notepad"); return; }
   if (unlocked) enterChat(); else startPin();
 });
 
@@ -602,7 +817,7 @@ async function maybeEnrollBio() {
     const cred = await navigator.credentials.create({
       publicKey: {
         challenge: chal,
-        rp: { name: "Chat Gpt 2.0", id: location.hostname },
+        rp: { name: "My Notes", id: location.hostname },
         user: { id: uidBytes, name: me.email || "user", displayName: "User" },
         pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
         authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
@@ -639,7 +854,7 @@ $("bioBtn").onclick = async () => {
 };
 function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
 function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
-function lockNow() { if (!me) return; closeSheet(); closeDelSheet(); unlocked = false; startPin(); renderIncoming(); }
+function lockNow() { returnToNotepad(); renderIncoming(); }
 $("lockBtn").onclick = lockNow;
 buildPad();
 
@@ -707,8 +922,29 @@ function renderPresence() {
   }
 }
 
-/* ---------- মিডিয়া সংরক্ষণ ও মোছা (Firestore chunks) ---------- */
+/* ---------- মিডিয়া সংরক্ষণ, ফুল-স্ক্রিন ভিউ ও মোছা ---------- */
 const mediaCol = () => collection(db, "chats", CHAT_ID, "media");
+
+function openMediaViewer(type, url) {
+  if (!url) return;
+  $("mvImg").style.display = "none";
+  $("mvVid").style.display = "none";
+  $("mvVid").pause();
+  if (type === "image") {
+    $("mvImg").src = url;
+    $("mvImg").style.display = "block";
+  } else {
+    $("mvVid").src = url;
+    $("mvVid").style.display = "block";
+  }
+  $("mediaViewer").classList.add("show");
+}
+$("mvClose").onclick = () => {
+  $("mvVid").pause();
+  $("mvVid").src = "";
+  $("mvImg").src = "";
+  $("mediaViewer").classList.remove("show");
+};
 
 async function saveMediaChunks(base64DataUrl) {
   const mediaRef = doc(mediaCol());
@@ -853,7 +1089,7 @@ $("vidRecBtn").onclick = async () => {
   }
   try {
     vrStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user", width: { ideal: 480 }, height: { ideal: 360 } },
+      video: { facingMode: "user", width: { ideal: 360 }, height: { ideal: 270 } },
       audio: true
     });
     vrBlob = null; vrSec = 0;
@@ -872,8 +1108,8 @@ $("vrStart").onclick = () => {
   vrChunks = []; vrSec = 0; vrBlob = null;
   const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus") ? "video/webm;codecs=vp8,opus"
     : (MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "");
-  vrRec = mime ? new MediaRecorder(vrStream, { mimeType: mime, videoBitsPerSecond: 450000 })
-               : new MediaRecorder(vrStream, { videoBitsPerSecond: 450000 });
+  vrRec = mime ? new MediaRecorder(vrStream, { mimeType: mime, videoBitsPerSecond: 300000 })
+               : new MediaRecorder(vrStream, { videoBitsPerSecond: 300000 });
   vrRec.ondataavailable = e => { if (e.data && e.data.size > 0) vrChunks.push(e.data); };
   vrRec.onstop = () => {
     clearInterval(vrTicker); vrTicker = null;
@@ -1031,7 +1267,7 @@ $("adBtn").onclick = () => {
 $("ver").onclick = () => {
   const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
   const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
-  toast("v8 | Auto: " + (autoDelete ? "ON" : "OFF")
+  toast("v9 | Auto: " + (autoDelete ? "ON" : "OFF")
     + " | Since: " + f(enabledAtMs)
     + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
     + " | Now: " + f(Date.now()), 9000);
@@ -1122,8 +1358,9 @@ function render(forceBottom) {
 
     if (m.type === "image" && m.mediaId) {
       const img = document.createElement("img"); img.className = "mediaImg";
-      if (mediaCache.has(m.mediaId)) img.src = mediaCache.get(m.mediaId);
-      else loadMediaDataUrl(m.mediaId).then(url => { if (url) img.src = url; }).catch(() => {});
+      const setImg = url => { img.src = url; img.onclick = () => openMediaViewer("image", url); };
+      if (mediaCache.has(m.mediaId)) setImg(mediaCache.get(m.mediaId));
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) setImg(url); }).catch(() => {});
       b.appendChild(img);
     } else if (m.type === "audio" && m.mediaId) {
       const aud = document.createElement("audio"); aud.className = "mediaAud"; aud.controls = true; aud.preload = "metadata";
@@ -1132,9 +1369,11 @@ function render(forceBottom) {
       b.appendChild(aud);
     } else if (m.type === "video" && m.mediaId) {
       const vid = document.createElement("video"); vid.className = "mediaVid"; vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
-      if (mediaCache.has(m.mediaId)) vid.src = mediaCache.get(m.mediaId);
-      else loadMediaDataUrl(m.mediaId).then(url => { if (url) vid.src = url; }).catch(() => {});
-      b.appendChild(vid);
+      const obtn = document.createElement("button"); obtn.className = "openMediaBtn"; obtn.type = "button"; obtn.textContent = "⛶ " + T("openBig");
+      const setVid = url => { vid.src = url; obtn.onclick = () => openMediaViewer("video", url); };
+      if (mediaCache.has(m.mediaId)) setVid(mediaCache.get(m.mediaId));
+      else loadMediaDataUrl(m.mediaId).then(url => { if (url) setVid(url); }).catch(() => {});
+      b.append(vid, obtn);
     }
 
     if (m.text) {
