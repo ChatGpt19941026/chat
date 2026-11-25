@@ -30,11 +30,9 @@ button{font:inherit;cursor:pointer}
 .npMenu button{border:0;background:none;text-align:left;padding:13px 16px;font-size:15px;border-bottom:1px solid #f1f1f1}
 .npMenu button:last-child{border-bottom:0}
 .npMenu button:active{background:#fef3c7}
-.npBody{flex:1;display:flex;flex-direction:column;padding:14px}
+.npBody{flex:1;display:flex;flex-direction:column;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
 #noteTitleInput{border:0;border-bottom:1px solid #e5e7eb;padding:8px 4px;font-size:18px;font-weight:600;background:transparent;outline:none;margin-bottom:10px}
 #noteBodyInput{flex:1;border:0;resize:none;font:inherit;font-size:16px;line-height:1.6;background:transparent;outline:none}
-.npFoot{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;padding-bottom:calc(8px + env(safe-area-inset-bottom));
-  background:#fef3c7;color:#78350f;font-size:12.5px}
 
 /* পুরোনো নোট ও সেটিংস পপআপ */
 #npOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:49}
@@ -88,6 +86,7 @@ header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;
 header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
 
 #adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
+#adBar .ic{font-size:18px}
 #adBar .spacer{flex:1}
 #adBar small{opacity:.85;font-size:12px;text-decoration:underline;padding:2px 6px}
 #adBar button{border:0;border-radius:14px;padding:4px 12px;background:#fff;color:#075E54;font-size:12.5px;font-weight:600}
@@ -111,17 +110,18 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 .q b{display:block;color:#075E54;font-size:12px}
 .q span{display:block;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
-.mediaImg{display:block;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000;cursor:pointer}
-.mediaVid{display:block;max-width:100%;max-height:260px;border-radius:8px;margin-bottom:4px;background:#000}
-.mediaAud{display:block;max-width:240px;height:36px;margin-bottom:4px}
+.mediaImg{display:block;width:240px;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000;cursor:pointer}
+.mediaVid{display:block;width:240px;max-width:100%;max-height:260px;border-radius:8px;margin-bottom:4px;background:#000}
+.mediaAud{display:block;width:240px;max-width:100%;height:36px;margin-bottom:4px}
 .openMediaBtn{display:inline-block;margin-bottom:4px;padding:4px 10px;border:0;border-radius:12px;background:rgba(0,0,0,.08);color:#075E54;font-size:12px}
+.medPh{padding:16px 24px;font-size:13px;color:#666}
 .meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
 .tick.seen{color:#34B7F1}
 .cd{color:#c62828;font-weight:600}
 .rxs{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
 .rp{background:rgba(0,0,0,.07);border-radius:10px;padding:1px 6px;font-size:13px}
 .rp small{font-size:11px;margin-left:2px}
-.empty{margin:auto;padding:16px;text-align:center;white-space:pre-line;color:#555;font-size:15px;line-height:1.5}
+.empty{margin:auto;padding:16px;text-align:center;white-space:pre-line;color:#444;font-size:27px;font-weight:500;line-height:1.55}
 
 #replyBar{display:none;align-items:center;gap:8px;padding:6px 10px;background:#e9e4dc;border-top:1px solid #d6d0c6}
 #replyBar.show{display:flex}
@@ -158,7 +158,7 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 #mvImg{max-width:100%;max-height:85vh;object-fit:contain;display:none}
 #mvVid{max-width:100%;max-height:85vh;display:none}
 
-/* ভিডিও রেকর্ডার (সর্বোচ্চ ১৫ সেকেন্ড, সরাসরি ক্যামেরা) */
+/* ভিডিও রেকর্ডার */
 #vidRecModal{position:fixed;inset:0;background:#000;z-index:55;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:24px;color:#fff}
 #vidRecModal.show{display:flex}
 #vidPreview{width:100%;max-width:420px;max-height:65vh;border-radius:14px;background:#111;transform:scaleX(-1);object-fit:cover}
@@ -236,10 +236,6 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
     <input id="noteTitleInput" type="text" placeholder="নোটের শিরোনাম লিখুন...">
     <textarea id="noteBodyInput" placeholder="এখানে আপনার নোট লিখুন..."></textarea>
   </div>
-  <div class="npFoot">
-    <span id="npStatus">স্বয়ংক্রিয়ভাবে এই ফোনে সেভ থাকে</span>
-    <span id="npCharCount">০ অক্ষর</span>
-  </div>
 </section>
 
 <!-- পুরোনো নোট / নোটপ্যাড সেটিংস পপআপ -->
@@ -288,13 +284,13 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
     <button id="callVid" type="button" title="Video Call">🎥</button>
     <button id="clearBtn" type="button" title="Clear All" style="margin-right:10px">🗑️</button>
     <button id="lockBtn" type="button" title="Lock">🔒</button>
-    <button id="logoutBtn" type="button" title="Logout">⎋</button>
+    <button id="logoutBtn" type="button" title="Notepad">⎋</button>
   </header>
   <div id="adBar">
-    <span>⏱️</span>
-    <span class="spacer"></span>
-    <small id="ver">v9</small>
+    <span class="ic">⏱️</span>
     <button id="adBtn" type="button"></button>
+    <span class="spacer"></span>
+    <small id="ver">v10</small>
   </div>
   <div id="list"></div>
   <div id="replyBar">
@@ -386,7 +382,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, query, orderBy, limitToLast, onSnapshot,
-  addDoc, updateDoc, deleteDoc, deleteField, doc, serverTimestamp, getDocs, getDoc, setDoc, writeBatch, limit, where }
+  addDoc, updateDoc, deleteDoc, deleteField, arrayUnion, doc, serverTimestamp, getDocs, getDoc, setDoc, writeBatch, limit, where }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -408,7 +404,7 @@ const CHUNK_CHARS = 700000;
 const MAX_VOICE_SEC = 120;
 const MAX_VIDEO_SEC = 15;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
-const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", BIO_KEY = "cc_bio_cred", LANG_KEY = "cc_lang";
+const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", BIO_KEY = "cc_bio_cred", BIO_ASKED = "cc_bio_asked", LANG_KEY = "cc_lang";
 const NOTES_LIST_KEY = "np_saved_notes", NOTE_DRAFT_KEY = "np_current_draft";
 
 const I18N = {
@@ -422,11 +418,11 @@ const I18N = {
     fiveWrong: "৫ বার ভুল, ৩০ সেকেন্ড অপেক্ষা করুন", wrongPin: "ভুল PIN, আবার চেষ্টা করুন",
     forgot: "PIN ভুলে গেছেন? লগআউট করুন",
     logoutMsg: "লগআউট করবেন? এই ফোনের PIN ও ফিঙ্গারপ্রিন্ট মুছে যাবে।", logoutBtn: "লগআউট",
-    bioUse: "👆 ফিঙ্গারপ্রিন্ট দিয়ে আনলক করুন", bioSetupQ: "পরের বার ফিঙ্গারপ্রিন্ট দিয়ে দ্রুত আনলক করতে চান?",
+    bioUse: "👆 ফিঙ্গারপ্রিন্ট দিয়ে আনলক করুন", bioSetupQ: "ফিঙ্গারপ্রিন্ট দিয়ে দ্রুত আনলক চালু করবেন? (PIN থাকবে)",
     bioDone: "ফিঙ্গারপ্রিন্ট যুক্ত হয়েছে", bioFail: "ফিঙ্গারপ্রিন্ট যাচাই করা যায়নি, PIN দিন",
     turnOn: "চালু করুন", turnOff: "বন্ধ করুন",
     adOnToast: "চালু: সিন হওয়া মেসেজ ও মিডিয়া ৩০ সেকেন্ড পর মুছবে", adOffToast: "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে",
-    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today",
+    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can I help you today",
     olderBtn: "⬆️ আরও পুরনো মেসেজ দেখুন", msgPh: "মেসেজ লিখুন",
     reply: "↩️ রিপ্লাই", del: "🗑️ ডিলিট",
     delForMe: "আমার থেকে মুছুন", delForBoth: "দুজনের থেকে মুছুন", cancel: "বাতিল",
@@ -439,12 +435,14 @@ const I18N = {
     inVoice: "ভয়েস কল আসছে…", inVideo: "ভিডিও কল আসছে…",
     calling: "কল করা হচ্ছে…", connecting: "সংযোগ হচ্ছে…", weakConn: "সংযোগ দুর্বল…",
     callEnded: "কল শেষ হয়েছে", callDeclined: "কল প্রত্যাখ্যাত হয়েছে",
-    permMedia: "মাইক্রোফোন/ক্যামেরার অনুমতি দিন", noCallSup: "এই ব্রাউজারে কল সমর্থিত নয়",
+    permMedia: "মাইক্রোফোন/ক্যামেরার অনুমতি দিন", noCallSup: "এই ব্রাউজারে সমর্থিত নয়",
     turnHint: "সংযোগ ব্যর্থ হয়েছে। মোবাইল ডাটায় TURN সেটআপ লাগতে পারে।",
     recSend: "পাঠান", recCancel: "বাতিল", vrStart: "রেকর্ড শুরু", vrStop: "থামুন", vrSend: "পাঠান", vrClose: "বন্ধ",
-    imgBig: "ছবি অনেক বড়, অন্য ছবি বেছে নিন", audBig: "ভয়েস ২ মিনিটের বেশি হতে পারবে না", vidBig: "ভিডিও অনেক বড় (১৫ সেকেন্ডের মধ্যে রাখুন)",
-    uploading: "পাঠানো হচ্ছে…", mediaDelErr: "মিডিয়া মোছা ব্যর্থ", yes: "হ্যাঁ", no: "না",
-    langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন"
+    imgBig: "ছবি অনেক বড়, অন্য ছবি বেছে নিন", audBig: "ভয়েস অনেক বড়, ছোট করে রেকর্ড করুন", vidBig: "ভিডিও অনেক বড় (১৫ সেকেন্ডের মধ্যে রাখুন)",
+    uploading: "পাঠানো হচ্ছে…", sentOk: "পাঠানো হয়েছে", upBusy: "আগের ফাইল পাঠানো চলছে, একটু অপেক্ষা করুন",
+    mediaDelErr: "মিডিয়া মোছা ব্যর্থ", yes: "হ্যাঁ", no: "না",
+    langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন", mLoading: "লোড হচ্ছে…", mMissing: "⚠️ মিডিয়া পাওয়া যায়নি",
+    recInCall: "কল চলাকালীন রেকর্ড করা যাবে না"
   },
   en: {
     emailPh: "Email", passPh: "Password", login: "Login",
@@ -456,11 +454,11 @@ const I18N = {
     fiveWrong: "5 wrong attempts, wait 30s", wrongPin: "Wrong PIN, try again",
     forgot: "Forgot PIN? Logout",
     logoutMsg: "Logout? PIN and fingerprint on this phone will be removed.", logoutBtn: "Logout",
-    bioUse: "👆 Unlock with Fingerprint", bioSetupQ: "Enable fingerprint unlock for faster access next time?",
+    bioUse: "👆 Unlock with Fingerprint", bioSetupQ: "Enable fingerprint unlock? (PIN stays as fallback)",
     bioDone: "Fingerprint enabled", bioFail: "Fingerprint failed, use PIN",
     turnOn: "Turn On", turnOff: "Turn Off",
     adOnToast: "On: seen messages & media delete in 30s", adOffToast: "Auto-delete turned off",
-    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can i help you today",
+    emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can I help you today",
     olderBtn: "⬆️ Load older messages", msgPh: "Type a message",
     reply: "↩️ Reply", del: "🗑️ Delete",
     delForMe: "Delete for me", delForBoth: "Delete for everyone", cancel: "Cancel",
@@ -473,12 +471,14 @@ const I18N = {
     inVoice: "Incoming voice call…", inVideo: "Incoming video call…",
     calling: "Calling…", connecting: "Connecting…", weakConn: "Weak connection…",
     callEnded: "Call ended", callDeclined: "Call declined",
-    permMedia: "Please allow microphone/camera permission", noCallSup: "Calls not supported in this browser",
+    permMedia: "Please allow microphone/camera permission", noCallSup: "Not supported in this browser",
     turnHint: "Connection failed. TURN server may be needed on mobile data.",
     recSend: "Send", recCancel: "Cancel", vrStart: "Start Record", vrStop: "Stop", vrSend: "Send", vrClose: "Close",
-    imgBig: "Image too large, pick another", audBig: "Voice note max 2 minutes", vidBig: "Video too large (keep within 15s)",
-    uploading: "Sending…", mediaDelErr: "Failed to delete media", yes: "Yes", no: "No",
-    langSwitched: "Language: English", openBig: "Open full screen"
+    imgBig: "Image too large, pick another", audBig: "Voice note too large, record a shorter one", vidBig: "Video too large (keep within 15s)",
+    uploading: "Sending…", sentOk: "Sent", upBusy: "Previous file is still sending, please wait",
+    mediaDelErr: "Failed to delete media", yes: "Yes", no: "No",
+    langSwitched: "Language: English", openBig: "Open full screen", mLoading: "Loading…", mMissing: "⚠️ Media not found",
+    recInCall: "Cannot record during a call"
   }
 };
 
@@ -492,7 +492,6 @@ const $ = id => document.getElementById(id);
 
 let me = null, unlocked = false, unsub = null, lastDocs = [], hiddenAt = 0;
 let msgLimit = MSG_PAGE, keepAnchor = false, inToolbox = false;
-const mediaCache = new Map();
 
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -508,12 +507,9 @@ function toast(t, ms = 3800) {
 function getSavedNotes() {
   try { return JSON.parse(localStorage.getItem(NOTES_LIST_KEY) || "[]"); } catch (e) { return []; }
 }
-function setSavedNotes(arr) {
-  localStorage.setItem(NOTES_LIST_KEY, JSON.stringify(arr));
-}
-function updateNoteCounter() {
-  const len = ($("noteBodyInput").value || "").length;
-  $("npCharCount").textContent = len + " অক্ষর";
+function setSavedNotes(arr) { localStorage.setItem(NOTES_LIST_KEY, JSON.stringify(arr)); }
+// লেখা চুপচাপ খসড়া হিসেবে ফোনে থাকে (অ্যাপ বন্ধ হলেও হারায় না)
+function saveDraft() {
   localStorage.setItem(NOTE_DRAFT_KEY, JSON.stringify({
     title: $("noteTitleInput").value,
     body: $("noteBodyInput").value
@@ -525,40 +521,39 @@ function loadDraft() {
     $("noteTitleInput").value = d.title || "";
     $("noteBodyInput").value = d.body || "";
   } catch (e) {}
-  updateNoteCounter();
 }
-$("noteTitleInput").addEventListener("input", updateNoteCounter);
-$("noteBodyInput").addEventListener("input", updateNoteCounter);
+$("noteTitleInput").addEventListener("input", saveDraft);
+$("noteBodyInput").addEventListener("input", saveDraft);
 
+// সেভ চাপলে নোট জমা হয় এবং সঙ্গে সঙ্গে নতুন খালি নোট চালু হয়
 $("npSaveBtn").onclick = () => {
-  const title = $("noteTitleInput").value.trim() || "শিরোনামহীন নোট";
+  const rawTitle = $("noteTitleInput").value.trim();
   const body = $("noteBodyInput").value.trim();
-  if (!body && !$("noteTitleInput").value.trim()) {
-    toast("আগে কিছু লিখুন"); return;
-  }
+  if (!rawTitle && !body) { toast("আগে কিছু লিখুন"); return; }
   const notes = getSavedNotes();
   notes.unshift({
     id: Date.now(),
-    title,
+    title: rawTitle || "শিরোনামহীন নোট",
     body,
     date: new Date().toLocaleString("bn-BD", { dateStyle: "medium", timeStyle: "short" })
   });
   setSavedNotes(notes);
-  toast("নোট সেভ হয়েছে");
+  $("noteTitleInput").value = "";
+  $("noteBodyInput").value = "";
+  localStorage.removeItem(NOTE_DRAFT_KEY);
+  $("noteTitleInput").focus();
+  toast("নোট সেভ হয়েছে, নতুন নোট চালু");
 };
 
-$("npMenuBtn").onclick = e => {
-  e.stopPropagation();
-  $("npMenu").classList.toggle("show");
-};
+$("npMenuBtn").onclick = e => { e.stopPropagation(); $("npMenu").classList.toggle("show"); };
 document.addEventListener("click", () => $("npMenu").classList.remove("show"));
 
 $("mNewNote").onclick = () => {
   $("npMenu").classList.remove("show");
   $("noteTitleInput").value = "";
   $("noteBodyInput").value = "";
-  updateNoteCounter();
-  toast("নতুন নোট তৈরি হয়েছে");
+  saveDraft();
+  toast("নতুন নোট তৈরি হয়েছে");
 };
 
 $("mOldNotes").onclick = () => {
@@ -579,7 +574,7 @@ $("mOldNotes").onclick = () => {
       info.onclick = () => {
         $("noteTitleInput").value = n.title;
         $("noteBodyInput").value = n.body;
-        updateNoteCounter();
+        saveDraft();
         $("npOverlay").classList.remove("show");
       };
       const del = document.createElement("button"); del.textContent = "মুছুন";
@@ -598,13 +593,11 @@ $("mOldNotes").onclick = () => {
 $("mNpSettings").onclick = () => {
   $("npMenu").classList.remove("show");
   $("npModalTitle").textContent = "নোটপ্যাড সেটিংস";
-  const list = $("npModalList");
-  list.innerHTML = `
+  $("npModalList").innerHTML = `
     <div style="font-size:14px;color:#444;line-height:1.6">
       • আপনার নোটগুলো শুধুমাত্র এই ফোনের লোকাল স্টোরেজে সংরক্ষিত থাকে।<br>
       • ভার্সন: 1.0 (Offline Notes)
-    </div>
-  `;
+    </div>`;
   $("npOverlay").classList.add("show");
 };
 
@@ -619,10 +612,15 @@ $("mToolbox").onclick = () => {
 $("npModalClose").onclick = () => $("npOverlay").classList.remove("show");
 $("npOverlay").onclick = e => { if (e.target.id === "npOverlay") $("npOverlay").classList.remove("show"); };
 
+function closeOverlays() {
+  stopVoiceRec(true);
+  closeVidRecModal();
+  $("mediaViewer").classList.remove("show");
+}
 function returnToNotepad() {
   inToolbox = false;
   unlocked = false;
-  closeSheet(); closeDelSheet();
+  closeSheet(); closeDelSheet(); closeOverlays();
   show("notepad");
 }
 $("loginToNote").onclick = returnToNotepad;
@@ -630,7 +628,7 @@ $("pinToNote").onclick = returnToNotepad;
 
 loadDraft();
 
-/* ---------- ভাষা ও সাধারণ সহায়ক ---------- */
+/* ---------- ভাষা ও সাধারণ সহায়ক ---------- */
 function applyLang() {
   document.documentElement.lang = lang;
   $("email").placeholder = T("emailPh");
@@ -650,8 +648,7 @@ function applyLang() {
   $("vrStop").textContent = T("vrStop");
   $("vrSend").textContent = T("vrSend");
   $("vrClose").textContent = T("vrClose");
-  if ($("pin").classList.contains("active")) startPin();
-  renderAd();
+  $("adBtn").textContent = autoDelete ? T("turnOff") : T("turnOn");
   renderPresence();
   renderIncoming();
   if (me && unlocked) render(false);
@@ -724,6 +721,7 @@ onAuthStateChanged(auth, user => {
 async function doLogout() {
   localStorage.removeItem(PIN_KEY);
   localStorage.removeItem(BIO_KEY);
+  localStorage.removeItem(BIO_ASKED);
   unlocked = false;
   if (me) {
     try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
@@ -732,7 +730,7 @@ async function doLogout() {
   await signOut(auth);
 }
 
-/* লগআউট আইকন (⎋): কোনো পপ-আপ বা নোটিফিকেশন ছাড়াই, PIN ও ফিঙ্গারপ্রিন্ট না মুছে সরাসরি নোটপ্যাডে ফেরানো */
+/* ⎋ আইকন: কোনো পপ-আপ ছাড়া সরাসরি নোটপ্যাডে ফেরায় (PIN ও ফিঙ্গারপ্রিন্ট থাকে) */
 $("logoutBtn").onclick = () => {
   if (me) {
     setTyping(false);
@@ -767,15 +765,41 @@ function renderDots() {
   [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
 }
 function bioSupported() {
-  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
+  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && window.isSecureContext);
+}
+let bioBusy = false;
+async function bioCheck() {
+  const hexId = localStorage.getItem(BIO_KEY);
+  if (!hexId || !bioSupported() || bioBusy) return false;
+  bioBusy = true;
+  try {
+    const rawId = new Uint8Array(hexId.match(/.{1,2}/g).map(h => parseInt(h, 16)));
+    const a = await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(16)),
+        rpId: location.hostname,
+        allowCredentials: [{ type: "public-key", id: rawId, transports: ["internal"] }],
+        userVerification: "required",
+        timeout: 60000
+      }
+    });
+    return !!a;
+  } catch (e) { return false; }
+  finally { bioBusy = false; }
 }
 function startPin() {
   pinBuf = ""; pinFirst = null; renderDots();
   const has = !!localStorage.getItem(PIN_KEY);
   pinMode = has ? "unlock" : "setup";
   $("pinMsg").textContent = has ? T("enterPin") : T("setPin");
-  $("bioBtn").style.display = (has && bioSupported() && localStorage.getItem(BIO_KEY)) ? "inline-block" : "none";
+  const bio = has && bioSupported() && !!localStorage.getItem(BIO_KEY);
+  $("bioBtn").style.display = bio ? "inline-block" : "none";
   show("pin");
+  // ফিঙ্গারপ্রিন্ট চালু থাকলে নিজে থেকেই চাইবে; না পারলে PIN দিন
+  if (bio) setTimeout(async () => {
+    if (!$("pin").classList.contains("active") || pinMode !== "unlock") return;
+    if (await bioCheck() && $("pin").classList.contains("active")) { fails = 0; unlock(); }
+  }, 350);
 }
 async function pressKey(k) {
   const until = Number(localStorage.getItem(LOCK_KEY) || 0);
@@ -803,7 +827,7 @@ async function pressKey(k) {
   } else {
     if ((await hashPin(entered)) === localStorage.getItem(PIN_KEY)) {
       fails = 0;
-      if (bioSupported() && !localStorage.getItem(BIO_KEY)) await maybeEnrollBio();
+      await maybeEnrollBio();
       unlock();
     } else {
       fails++; pinBuf = ""; setTimeout(renderDots, 120); shake();
@@ -814,49 +838,30 @@ async function pressKey(k) {
     }
   }
 }
+// ফিঙ্গারপ্রিন্টের প্রস্তাব শুধু একবার আসে (হ্যাঁ বা না, যা-ই বলুন)
 async function maybeEnrollBio() {
-  if (!bioSupported() || !me) return;
+  if (!bioSupported() || !me || localStorage.getItem(BIO_KEY) || localStorage.getItem(BIO_ASKED)) return;
+  localStorage.setItem(BIO_ASKED, "1");
   if (!(await confirmBox(T("bioSetupQ"), T("yes"), T("no")))) return;
   try {
-    const chal = crypto.getRandomValues(new Uint8Array(16));
-    const uidBytes = new TextEncoder().encode(me.uid);
     const cred = await navigator.credentials.create({
       publicKey: {
-        challenge: chal,
+        challenge: crypto.getRandomValues(new Uint8Array(16)),
         rp: { name: "My Notes", id: location.hostname },
-        user: { id: uidBytes, name: me.email || "user", displayName: "User" },
+        user: { id: new TextEncoder().encode(me.uid).slice(0, 64), name: me.email || "user", displayName: "User" },
         pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
         authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
         timeout: 60000
       }
     });
     if (cred) {
-      const rawId = [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join("");
-      localStorage.setItem(BIO_KEY, rawId);
+      localStorage.setItem(BIO_KEY, [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join(""));
       toast(T("bioDone"));
     }
-  } catch (e) {
-    toast(T("bioFail"));
-  }
+  } catch (e) { toast(T("bioFail")); }
 }
 $("bioBtn").onclick = async () => {
-  const hexId = localStorage.getItem(BIO_KEY);
-  if (!hexId || !bioSupported()) return;
-  try {
-    const rawId = new Uint8Array(hexId.match(/.{1,2}/g).map(h => parseInt(h, 16)));
-    const assertion = await navigator.credentials.get({
-      publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(16)),
-        rpId: location.hostname,
-        allowCredentials: [{ type: "public-key", id: rawId, transports: ["internal"] }],
-        userVerification: "required",
-        timeout: 60000
-      }
-    });
-    if (assertion) { fails = 0; unlock(); }
-  } catch (e) {
-    toast(T("bioFail"));
-  }
+  if (await bioCheck()) { fails = 0; unlock(); } else toast(T("bioFail"));
 };
 function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
 function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
@@ -865,8 +870,9 @@ $("lockBtn").onclick = lockNow;
 buildPad();
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") { hiddenAt = Date.now(); beat(false); setTyping(false); stopVoiceRec(true); }
-  else {
+  if (document.visibilityState === "hidden") {
+    hiddenAt = Date.now(); beat(false); setTyping(false); closeOverlays();
+  } else {
     beat(true);
     if (me && unlocked && !call && hiddenAt && Date.now() - hiddenAt > RELOCK_MS) lockNow();
     hiddenAt = 0; markIncoming(); sweep();
@@ -928,55 +934,47 @@ function renderPresence() {
   }
 }
 
-/* ---------- মিডিয়া সংরক্ষণ, ফুল-স্ক্রিন ভিউ ও মোছা ---------- */
+/* ---------- মিডিয়া: Firestore-এ টুকরো করে রাখা, ক্যাশ ও ফুল-স্ক্রিন ভিউ ---------- */
 const mediaCol = () => collection(db, "chats", CHAT_ID, "media");
+const mediaCache = new Map();     // mediaId -> blob URL ("" = পাওয়া যায়নি)
+const mediaLoading = new Set();
+const mediaEls = new Map();       // msgId -> { url, el } (রি-রেন্ডারে প্লেব্যাক না থামাতে)
 
-function openMediaViewer(type, url) {
-  if (!url) return;
-  $("mvImg").style.display = "none";
-  $("mvVid").style.display = "none";
-  $("mvVid").pause();
-  if (type === "image") {
-    $("mvImg").src = url;
-    $("mvImg").style.display = "block";
-  } else {
-    $("mvVid").src = url;
-    $("mvVid").style.display = "block";
-  }
-  $("mediaViewer").classList.add("show");
+async function urlFromData(dataUrl) {
+  const blob = await (await fetch(dataUrl)).blob();
+  return URL.createObjectURL(blob);
 }
-$("mvClose").onclick = () => {
-  $("mvVid").pause();
-  $("mvVid").src = "";
-  $("mvImg").src = "";
-  $("mediaViewer").classList.remove("show");
-};
-
-async function saveMediaChunks(base64DataUrl) {
+async function saveMediaChunks(dataUrl) {
   const mediaRef = doc(mediaCol());
   const chunks = [];
-  for (let i = 0; i < base64DataUrl.length; i += CHUNK_CHARS) {
-    chunks.push(base64DataUrl.slice(i, i + CHUNK_CHARS));
-  }
-  await setDoc(mediaRef, { ownerId: me.uid, total: chunks.length, createdAt: serverTimestamp() });
-  for (let i = 0; i < chunks.length; i++) {
-    await setDoc(doc(collection(mediaRef, "chunks"), String(i)), { idx: i, data: chunks[i] });
-  }
+  for (let i = 0; i < dataUrl.length; i += CHUNK_CHARS) chunks.push(dataUrl.slice(i, i + CHUNK_CHARS));
+  try {
+    await setDoc(mediaRef, { ownerId: me.uid, total: chunks.length, createdAt: serverTimestamp() });
+    for (let i = 0; i < chunks.length; i++) {
+      await setDoc(doc(collection(mediaRef, "chunks"), String(i).padStart(3, "0")), { idx: i, data: chunks[i] });
+    }
+  } catch (e) { deleteMediaById(mediaRef.id); throw e; }
   return mediaRef.id;
 }
-
-async function loadMediaDataUrl(mediaId) {
-  if (!mediaId) return "";
-  if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
-  const cSnap = await getDocs(collection(mediaCol(), mediaId, "chunks"));
-  const parts = cSnap.docs.map(d => d.data()).sort((a, b) => a.idx - b.idx).map(x => x.data);
-  const full = parts.join("");
-  if (full) mediaCache.set(mediaId, full);
-  return full;
+async function ensureMedia(mediaId) {
+  if (!mediaId || mediaCache.has(mediaId) || mediaLoading.has(mediaId)) return;
+  mediaLoading.add(mediaId);
+  try {
+    const cSnap = await getDocs(collection(mediaCol(), mediaId, "chunks"));
+    const full = cSnap.docs.map(d => d.data()).sort((a, b) => a.idx - b.idx).map(x => x.data).join("");
+    mediaCache.set(mediaId, full ? await urlFromData(full) : "");
+  } catch (e) {
+    errOnce("Media load failed", e);
+    setTimeout(() => mediaLoading.delete(mediaId), 8000);
+    return;
+  }
+  mediaLoading.delete(mediaId);
+  if (me && unlocked) render(false);
 }
-
 async function deleteMediaById(mediaId) {
   if (!mediaId) return;
+  const u = mediaCache.get(mediaId);
+  if (u) { try { URL.revokeObjectURL(u); } catch (e) {} }
   mediaCache.delete(mediaId);
   try {
     const mRef = doc(mediaCol(), mediaId);
@@ -985,9 +983,70 @@ async function deleteMediaById(mediaId) {
     cSnap.docs.forEach(d => batch.delete(d.ref));
     batch.delete(mRef);
     await batch.commit();
-  } catch (e) {
-    toast(T("mediaDelErr"));
+  } catch (e) { toast(T("mediaDelErr")); }
+}
+function placeholder(txt) {
+  const p = document.createElement("div"); p.className = "medPh"; p.textContent = txt; return p;
+}
+function mediaNode(msgId, m) {
+  const url = mediaCache.get(m.mediaId);
+  if (url === undefined) { ensureMedia(m.mediaId); return placeholder(T("mLoading")); }
+  if (url === "") return placeholder(T("mMissing"));
+  const hit = mediaEls.get(msgId);
+  if (hit && hit.url === url) return hit.el;
+  let el;
+  if (m.type === "image") {
+    el = document.createElement("img"); el.className = "mediaImg"; el.src = url;
+    el.onclick = () => openMediaViewer("image", url);
+  } else if (m.type === "video") {
+    el = document.createElement("div");
+    const vid = document.createElement("video"); vid.className = "mediaVid"; vid.src = url + "#t=0.1";
+    vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
+    const obtn = document.createElement("button"); obtn.className = "openMediaBtn"; obtn.type = "button";
+    obtn.textContent = "⛶ " + T("openBig"); obtn.onclick = () => openMediaViewer("video", url);
+    el.append(vid, obtn);
+  } else {
+    el = document.createElement("audio"); el.className = "mediaAud"; el.src = url;
+    el.controls = true; el.preload = "metadata";
   }
+  mediaEls.set(msgId, { url, el });
+  return el;
+}
+function openMediaViewer(type, url) {
+  if (!url) return;
+  $("mvImg").style.display = "none";
+  $("mvVid").style.display = "none";
+  $("mvVid").pause();
+  if (type === "image") { $("mvImg").src = url; $("mvImg").style.display = "block"; }
+  else { $("mvVid").src = url; $("mvVid").style.display = "block"; }
+  $("mediaViewer").classList.add("show");
+}
+$("mvClose").onclick = () => {
+  $("mvVid").pause(); $("mvVid").removeAttribute("src"); $("mvVid").load();
+  $("mvImg").removeAttribute("src");
+  $("mediaViewer").classList.remove("show");
+};
+
+let uploading = false;
+async function sendMedia(type, dataUrl, extra) {
+  if (!me) return;
+  if (uploading) { toast(T("upBusy")); return; }
+  uploading = true; toast(T("uploading"), 60000);
+  let id = null;
+  try {
+    id = await saveMediaChunks(dataUrl);
+    mediaCache.set(id, await urlFromData(dataUrl));
+    const payload = Object.assign({ type, mediaId: id, text: "", senderId: me.uid,
+      createdAt: serverTimestamp(), status: "sent", hiddenFor: [] }, extra || {});
+    if (replyTo) { payload.replyTo = replyTo; replyTo = null; showReplyBar(); }
+    await addDoc(col(), payload);
+    toast(T("sentOk"), 1500);
+    setTimeout(() => { $("list").scrollTop = $("list").scrollHeight; }, 80);
+  } catch (e) {
+    if (id) deleteMediaById(id);
+    toast("Send failed: " + (e.code || e.message) + ((e.code || "").includes("permission-denied") ? " — Rules Publish?" : ""), 6000);
+  }
+  uploading = false;
 }
 
 async function compressImage(file) {
@@ -996,12 +1055,12 @@ async function compressImage(file) {
   let { width: w, height: h } = bmp;
   if (w > maxDim || h > maxDim) {
     const ratio = Math.min(maxDim / w, maxDim / h);
-    w = Math.round(w * ratio);
-    h = Math.round(h * ratio);
+    w = Math.round(w * ratio); h = Math.round(h * ratio);
   }
   const canvas = document.createElement("canvas");
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h);
   ctx.drawImage(bmp, 0, 0, w, h);
   bmp.close();
   let q = 0.72;
@@ -1019,55 +1078,47 @@ $("imgInput").addEventListener("change", async () => {
   $("imgInput").value = "";
   if (!file || !me) return;
   if (file.size > 12 * 1024 * 1024) { toast(T("imgBig")); return; }
-  toast(T("uploading"));
-  try {
-    const dataUrl = await compressImage(file);
-    if (dataUrl.length * 0.75 > 700000) { toast(T("imgBig")); return; }
-    const mediaId = await saveMediaChunks(dataUrl);
-    await addDoc(col(), {
-      type: "image", mediaId, text: "", senderId: me.uid,
-      createdAt: serverTimestamp(), status: "sent", hiddenFor: []
-    });
-  } catch (e) {
-    errOnce("Image send failed", e);
-  }
+  toast(T("uploading"), 20000);
+  let dataUrl;
+  try { dataUrl = await compressImage(file); } catch (e) { toast(T("imgBig")); return; }
+  if (dataUrl.length * 0.75 > 700000) { toast(T("imgBig")); return; }
+  sendMedia("image", dataUrl);
 });
+
+function blobToDataUrl(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = rej; r.readAsDataURL(blob);
+  });
+}
 
 /* ভয়েস নোট (সর্বোচ্চ ২ মিনিট) */
 let mr = null, recChunks = [], recSec = 0, recTicker = null, discardRec = false;
 
 $("micBtn").onclick = async () => {
   if (mr || !me) return;
+  if (call) { toast(T("recInCall")); return; }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
     toast(T("noCallSup")); return;
   }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recChunks = []; recSec = 0; discardRec = false;
-    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "";
-    mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
-    mr.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
-    mr.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
+    const opts = { audioBitsPerSecond: 32000 };
+    if (MediaRecorder.isTypeSupported("audio/webm")) opts.mimeType = "audio/webm";
+    const rec = new MediaRecorder(stream, opts);
+    mr = rec;
+    rec.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+    rec.onstop = async () => {
+      stream.getTracks().forEach(tr => tr.stop());
       clearInterval(recTicker); recTicker = null;
       $("recBar").classList.remove("show");
-      const currentMr = mr; mr = null;
+      mr = null;
       if (discardRec || !recChunks.length || !me) return;
-      const blob = new Blob(recChunks, { type: currentMr.mimeType || "audio/webm" });
+      const blob = new Blob(recChunks, { type: rec.mimeType || "audio/webm" });
       if (blob.size > 700000) { toast(T("audBig")); return; }
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const mediaId = await saveMediaChunks(String(reader.result));
-          await addDoc(col(), {
-            type: "audio", mediaId, duration: recSec, text: "", senderId: me.uid,
-            createdAt: serverTimestamp(), status: "sent", hiddenFor: []
-          });
-        } catch (e) { errOnce("Voice send failed", e); }
-      };
-      reader.readAsDataURL(blob);
+      sendMedia("audio", await blobToDataUrl(blob), { duration: recSec });
     };
-    mr.start(500);
+    rec.start(500);
     $("recTimer").textContent = "00:00";
     $("recBar").classList.add("show");
     recTicker = setInterval(() => {
@@ -1075,13 +1126,12 @@ $("micBtn").onclick = async () => {
       $("recTimer").textContent = fmtDur(recSec);
       if (recSec >= MAX_VOICE_SEC) stopVoiceRec(false);
     }, 1000);
-  } catch (e) {
-    toast(T("permMedia"));
-  }
+  } catch (e) { toast(T("permMedia")); }
 };
 function stopVoiceRec(discard) {
+  if (!mr) return;
   discardRec = !!discard;
-  if (mr && mr.state !== "inactive") mr.stop();
+  if (mr.state !== "inactive") mr.stop();
 }
 $("recSend").onclick = () => stopVoiceRec(false);
 $("recCancel").onclick = () => stopVoiceRec(true);
@@ -1090,7 +1140,9 @@ $("recCancel").onclick = () => stopVoiceRec(true);
 let vrStream = null, vrRec = null, vrChunks = [], vrSec = 0, vrTicker = null, vrBlob = null;
 
 $("vidRecBtn").onclick = async () => {
-  if (!me || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
+  if (!me || vrStream) return;
+  if (call) { toast(T("recInCall")); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
     toast(T("noCallSup")); return;
   }
   try {
@@ -1105,31 +1157,28 @@ $("vidRecBtn").onclick = async () => {
     $("vrStop").style.display = "none";
     $("vrSend").style.display = "none";
     $("vidRecModal").classList.add("show");
-  } catch (e) {
-    toast(T("permMedia"));
-  }
+  } catch (e) { toast(T("permMedia")); }
 };
 $("vrStart").onclick = () => {
   if (!vrStream || vrRec) return;
   vrChunks = []; vrSec = 0; vrBlob = null;
-  const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus") ? "video/webm;codecs=vp8,opus"
-    : (MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "");
-  vrRec = mime ? new MediaRecorder(vrStream, { mimeType: mime, videoBitsPerSecond: 300000 })
-               : new MediaRecorder(vrStream, { videoBitsPerSecond: 300000 });
-  vrRec.ondataavailable = e => { if (e.data && e.data.size > 0) vrChunks.push(e.data); };
-  vrRec.onstop = () => {
+  const o = { videoBitsPerSecond: 300000, audioBitsPerSecond: 32000 };
+  if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")) o.mimeType = "video/webm;codecs=vp8,opus";
+  else if (MediaRecorder.isTypeSupported("video/webm")) o.mimeType = "video/webm";
+  const rec = new MediaRecorder(vrStream, o);
+  vrRec = rec;
+  rec.ondataavailable = e => { if (e.data && e.data.size > 0) vrChunks.push(e.data); };
+  rec.onstop = () => {
     clearInterval(vrTicker); vrTicker = null;
-    vrBlob = new Blob(vrChunks, { type: vrRec.mimeType || "video/webm" });
+    vrBlob = new Blob(vrChunks, { type: rec.mimeType || "video/webm" });
     vrRec = null;
+    if (!$("vidRecModal").classList.contains("show")) return;
     $("vrStop").style.display = "none";
     $("vrStart").style.display = "inline-block";
-    if (vrBlob.size > 1100000) {
-      toast(T("vidBig")); vrBlob = null;
-    } else if (vrBlob.size > 0) {
-      $("vrSend").style.display = "inline-block";
-    }
+    if (vrBlob.size > 1100000) { toast(T("vidBig")); vrBlob = null; }
+    else if (vrBlob.size > 0) $("vrSend").style.display = "inline-block";
   };
-  vrRec.start(400);
+  rec.start(400);
   $("vrStart").style.display = "none";
   $("vrStop").style.display = "inline-block";
   $("vrSend").style.display = "none";
@@ -1139,34 +1188,21 @@ $("vrStart").onclick = () => {
     if (vrSec >= MAX_VIDEO_SEC && vrRec && vrRec.state !== "inactive") vrRec.stop();
   }, 1000);
 };
-$("vrStop").onclick = () => {
-  if (vrRec && vrRec.state !== "inactive") vrRec.stop();
-};
+$("vrStop").onclick = () => { if (vrRec && vrRec.state !== "inactive") vrRec.stop(); };
 $("vrSend").onclick = async () => {
   if (!vrBlob || !me) return;
-  const blob = vrBlob;
+  const blob = vrBlob, dur = vrSec || 1;
   closeVidRecModal();
-  toast(T("uploading"));
-  const reader = new FileReader();
-  reader.onload = async () => {
-    try {
-      const mediaId = await saveMediaChunks(String(reader.result));
-      await addDoc(col(), {
-        type: "video", mediaId, duration: vrSec || 1, text: "", senderId: me.uid,
-        createdAt: serverTimestamp(), status: "sent", hiddenFor: []
-      });
-    } catch (e) { errOnce("Video send failed", e); }
-  };
-  reader.readAsDataURL(blob);
+  sendMedia("video", await blobToDataUrl(blob), { duration: dur });
 };
 function closeVidRecModal() {
   clearInterval(vrTicker); vrTicker = null;
-  if (vrRec && vrRec.state !== "inactive") { try { vrRec.stop(); } catch (e) {} }
-  if (vrStream) { vrStream.getTracks().forEach(t => t.stop()); vrStream = null; }
-  $("vidPreview").srcObject = null;
   $("vidRecModal").classList.remove("show");
+  if (vrRec && vrRec.state !== "inactive") { try { vrRec.stop(); } catch (e) {} }
+  if (vrStream) { vrStream.getTracks().forEach(tr => tr.stop()); vrStream = null; }
+  $("vidPreview").srcObject = null;
 }
-$("vrClose").onclick = closeVidRecModal;
+$("vrClose").onclick = () => { vrBlob = null; closeVidRecModal(); };
 
 /* ---------- চ্যাট ---------- */
 const col = () => collection(db, "chats", CHAT_ID, "messages");
@@ -1185,6 +1221,9 @@ function stopChat() {
   stopSettings();
   msgLimit = MSG_PAGE;
   lastDocs = []; $("list").innerHTML = "";
+  mediaEls.clear(); mediaLoading.clear();
+  mediaCache.forEach(u => { if (u) { try { URL.revokeObjectURL(u); } catch (e) {} } });
+  mediaCache.clear();
 }
 function loadOlder() {
   msgLimit += MSG_PAGE; keepAnchor = true;
@@ -1233,7 +1272,7 @@ function stopSettings() {
 }
 function renderAd() {
   $("adBtn").textContent = autoDelete ? T("turnOff") : T("turnOn");
-  if (me) render(false);
+  if (me && unlocked) render(false);
 }
 function eligible(m) { return autoDelete && m.seenAt && m.seenAt.toMillis() >= enabledAtMs; }
 const leftSec = seenMs => Math.max(0, Math.ceil((seenMs + AUTO_DELETE_MS - Date.now()) / 1000));
@@ -1273,7 +1312,7 @@ $("adBtn").onclick = () => {
 $("ver").onclick = () => {
   const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
   const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
-  toast("v9 | Auto: " + (autoDelete ? "ON" : "OFF")
+  toast("v10 | Auto: " + (autoDelete ? "ON" : "OFF")
     + " | Since: " + f(enabledAtMs)
     + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
     + " | Now: " + f(Date.now()), 9000);
@@ -1309,6 +1348,7 @@ function cdSpan(m) {
 }
 
 function render(forceBottom) {
+  if (!me) return;
   const list = $("list");
   const prevH = list.scrollHeight, prevTop = list.scrollTop;
   const nearBottom = prevH - prevTop - list.clientHeight < 140;
@@ -1362,24 +1402,8 @@ function render(forceBottom) {
       b.appendChild(q);
     }
 
-    if (m.type === "image" && m.mediaId) {
-      const img = document.createElement("img"); img.className = "mediaImg";
-      const setImg = url => { img.src = url; img.onclick = () => openMediaViewer("image", url); };
-      if (mediaCache.has(m.mediaId)) setImg(mediaCache.get(m.mediaId));
-      else loadMediaDataUrl(m.mediaId).then(url => { if (url) setImg(url); }).catch(() => {});
-      b.appendChild(img);
-    } else if (m.type === "audio" && m.mediaId) {
-      const aud = document.createElement("audio"); aud.className = "mediaAud"; aud.controls = true; aud.preload = "metadata";
-      if (mediaCache.has(m.mediaId)) aud.src = mediaCache.get(m.mediaId);
-      else loadMediaDataUrl(m.mediaId).then(url => { if (url) aud.src = url; }).catch(() => {});
-      b.appendChild(aud);
-    } else if (m.type === "video" && m.mediaId) {
-      const vid = document.createElement("video"); vid.className = "mediaVid"; vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
-      const obtn = document.createElement("button"); obtn.className = "openMediaBtn"; obtn.type = "button"; obtn.textContent = "⛶ " + T("openBig");
-      const setVid = url => { vid.src = url; obtn.onclick = () => openMediaViewer("video", url); };
-      if (mediaCache.has(m.mediaId)) setVid(mediaCache.get(m.mediaId));
-      else loadMediaDataUrl(m.mediaId).then(url => { if (url) setVid(url); }).catch(() => {});
-      b.append(vid, obtn);
+    if ((m.type === "image" || m.type === "audio" || m.type === "video") && m.mediaId) {
+      b.appendChild(mediaNode(d.id, m));
     }
 
     if (m.text) {
@@ -1415,6 +1439,9 @@ function render(forceBottom) {
     attachLongPress(b, d.id);
     row.appendChild(b); frag.appendChild(row);
   });
+
+  const ids = new Set(lastDocs.map(x => x.id));
+  [...mediaEls.keys()].forEach(k => { if (!ids.has(k)) mediaEls.delete(k); });
 
   list.replaceChildren(frag);
   if (keepAnchor) { keepAnchor = false; list.scrollTop = prevTop + (list.scrollHeight - prevH); }
@@ -1480,15 +1507,12 @@ $("shDel").onclick = () => {
   $("delBoth").style.display = isMine ? "block" : "none";
   $("delSheet").classList.add("show");
 };
-$("delMe").onclick = async () => {
+$("delMe").onclick = () => {
   const s = sheetFor; closeDelSheet();
   if (!s) return;
-  const cur = Array.isArray(s.m.hiddenFor) ? s.m.hiddenFor : [];
-  if (!cur.includes(me.uid)) {
-    updateDoc(s.ref, { hiddenFor: [...cur, me.uid] }).catch(e => errOnce("Delete for me failed", e));
-  }
+  updateDoc(s.ref, { hiddenFor: arrayUnion(me.uid) }).catch(e => errOnce("Delete for me failed", e));
 };
-$("delBoth").onclick = async () => {
+$("delBoth").onclick = () => {
   const s = sheetFor; closeDelSheet();
   if (!s || s.m.senderId !== me.uid) return;
   const mid = s.m.mediaId;
@@ -1507,7 +1531,7 @@ function showReplyBar() {
 }
 $("rbClose").onclick = () => { replyTo = null; showReplyBar(); };
 
-/* ---------- সব মেসেজ মোছা ---------- */
+/* ---------- সব মেসেজ মোছা (মিডিয়াসহ) ---------- */
 let clearing = false;
 async function clearAll() {
   if (clearing || !me) return;
@@ -1524,7 +1548,7 @@ async function clearAll() {
       snap.docs.forEach(d => batch.delete(d.ref));
       await batch.commit();
     }
-    mediaCache.clear();
+    mediaEls.clear();
     toast(T("allCleared"));
   } catch (e) {
     errOnce("Clear failed", e);
@@ -1710,7 +1734,7 @@ async function setupPeer(callRef, type, stream, role) {
               remoteSet: false, gotAnswer: false, docSeen: false, mini: false, logged: false, result: null,
               timer: null, ringTimeout: null, startedAt: 0, wake: null };
   call = c;
-  stream.getTracks().forEach(t => pc.addTrack(t, stream));
+  stream.getTracks().forEach(tr => pc.addTrack(tr, stream));
   pc.ontrack = e => { $("remoteV").srcObject = e.streams[0]; $("remoteV").play().catch(() => {}); };
   pc.onicecandidate = e => {
     if (e.candidate) addDoc(collection(callRef, "candidates"), { from: me.uid, c: e.candidate.toJSON() }).catch(() => {});
@@ -1755,6 +1779,7 @@ function startTimer(c) {
 }
 async function startCall(type) {
   if (call || busy || !me) return;
+  if (mr || vrStream) return;
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast(T("noCallSup")); return; }
   busy = true;
   let stream = null;
@@ -1778,7 +1803,7 @@ async function startCall(type) {
   } catch (e) {
     toast(T("failedConn"));
     if (call) { call.result = "failed"; endCall(false); }
-    else if (stream) stream.getTracks().forEach(t => t.stop());
+    else if (stream) stream.getTracks().forEach(tr => tr.stop());
   } finally { busy = false; }
 }
 async function acceptCall() {
@@ -1802,7 +1827,7 @@ async function acceptCall() {
     await updateDoc(inc.ref, { answer: { type: ans.type, sdp: ans.sdp }, status: "active" });
   } catch (e) {
     toast(T("failedConn"));
-    if (call) endCall(true); else if (stream) stream.getTracks().forEach(t => t.stop());
+    if (call) endCall(true); else if (stream) stream.getTracks().forEach(tr => tr.stop());
   } finally { busy = false; }
 }
 function declineCall() {
@@ -1825,7 +1850,7 @@ async function endCall(notify) {
   clearTimeout(c.ringTimeout); clearInterval(c.timer);
   c.unsubs.forEach(u => u());
   try { c.pc.close(); } catch (e) {}
-  c.stream.getTracks().forEach(t => t.stop());
+  c.stream.getTracks().forEach(tr => tr.stop());
   if (c.wake) { try { c.wake.release(); } catch (e) {} }
   if (c.role === "caller") writeCallLog(c);
   $("remoteV").srcObject = null; $("localV").srcObject = null;
@@ -1855,17 +1880,17 @@ $("hangBtn").onclick = () => endCall(true);
 $("miniHang").onclick = e => { e.stopPropagation(); endCall(true); };
 $("muteBtn").onclick = () => {
   if (!call) return;
-  const t = call.stream.getAudioTracks()[0]; if (!t) return;
-  t.enabled = !t.enabled;
-  $("muteBtn").classList.toggle("off", !t.enabled);
-  $("muteBtn").textContent = t.enabled ? "🎤" : "🔇";
+  const tr = call.stream.getAudioTracks()[0]; if (!tr) return;
+  tr.enabled = !tr.enabled;
+  $("muteBtn").classList.toggle("off", !tr.enabled);
+  $("muteBtn").textContent = tr.enabled ? "🎤" : "🔇";
 };
 $("camBtn").onclick = () => {
   if (!call) return;
-  const t = call.stream.getVideoTracks()[0]; if (!t) return;
-  t.enabled = !t.enabled;
-  $("camBtn").classList.toggle("off", !t.enabled);
-  $("camBtn").textContent = t.enabled ? "📷" : "🚫";
+  const tr = call.stream.getVideoTracks()[0]; if (!tr) return;
+  tr.enabled = !tr.enabled;
+  $("camBtn").classList.toggle("off", !tr.enabled);
+  $("camBtn").textContent = tr.enabled ? "📷" : "🚫";
 };
 
 applyLang();
