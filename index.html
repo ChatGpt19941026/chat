@@ -3,78 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="theme-color" content="#f59e0b">
+<meta name="theme-color" id="themeMeta" content="#f59e0b">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png?v=11">
 <link rel="apple-touch-icon" href="icon-192.png?v=11">
 <title>My Notes</title>
+<script>
+/* ===== v12: থিম আগেভাগে বসানো (ঝলক এড়াতে) ===== */
+try { document.documentElement.setAttribute("data-theme", localStorage.getItem("cc_theme") === "dark" ? "dark" : "light"); } catch (e) {}
+</script>
 <style>
+/* ===== v12: লাইট/ডার্ক থিমের রঙ ===== */
+:root{
+  --bg:#ECE5DD;--txt:#111;--hdr:#075E54;--hdr2:#0b6f63;--card:#fff;--me:#DCF8C6;--muted:#667;
+  --chip:#e1f2fb;--chipTxt:#555;--accent:#075E54;--input:#fff;--line:#e5e7eb;--line2:#f1f1f1;
+  --npBg:#fffdf7;--npHead:#f59e0b;--saveBg:#fff;--saveTxt:#b45309;--sheet:#fff;
+  --soft:#f3f4f6;--soft2:#f1f1f1;--soft3:#ddd;--qbg:rgba(0,0,0,.06);
+  --replyBg:#e9e4dc;--replyBorder:#d6d0c6;--recBg:#fff3e0;--recBorder:#ffcc80;
+  --modalHead:#fef3c7;--modalHeadTxt:#78350f;--item:#fffdf7;--itemBorder:#eee;--hover:#fef3c7;
+  --dangerBg:#fee2e2;--dangerTxt:#b91c1c;--rpBg:rgba(0,0,0,.07);--sel:#dff3e4;--scr:#fff;
+  --inBorder:#ccc;--dot:#ddd;--callTxt:#444;--emptyTxt:#444;--hlBg:#fff3b0;--adBtnBg:#fff;--adBtnTxt:#075E54;
+}
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0b141a;--txt:#e9edef;--hdr:#1f2c34;--hdr2:#17222a;--card:#202c33;--me:#005c4b;--muted:#8696a0;
+  --chip:#182229;--chipTxt:#8696a0;--accent:#00a884;--input:#2a3942;--line:#2f3b43;--line2:#2f3b43;
+  --npBg:#121212;--npHead:#92400e;--saveBg:#fef3c7;--saveTxt:#78350f;--sheet:#1f2c34;
+  --soft:#2a3942;--soft2:#2a3942;--soft3:#374751;--qbg:rgba(255,255,255,.08);
+  --replyBg:#1f2c34;--replyBorder:#2f3b43;--recBg:#3b2a12;--recBorder:#7c5a1a;
+  --modalHead:#3b2a12;--modalHeadTxt:#fde68a;--item:#1b2227;--itemBorder:#2f3b43;--hover:#2a3942;
+  --dangerBg:#4a1d1d;--dangerTxt:#fca5a5;--rpBg:rgba(255,255,255,.12);--sel:#0f3d33;--scr:#0b141a;
+  --inBorder:#3a4850;--dot:#3a4850;--callTxt:#cbd5da;--emptyTxt:#c5ced3;--hlBg:#3d4a2a;--adBtnBg:#2a3942;--adBtnTxt:#e9edef;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overscroll-behavior:none;
-  font-family:system-ui,-apple-system,"Noto Sans Bengali",Roboto,sans-serif;background:#ECE5DD;color:#111}
+  font-family:system-ui,-apple-system,"Noto Sans Bengali",Roboto,sans-serif;background:var(--bg);color:var(--txt)}
 .screen{display:none;height:100dvh;flex-direction:column}
 .screen.active{display:flex}
 button{font:inherit;cursor:pointer}
 
 /* নোটপ্যাড (প্রাথমিক ছদ্মবেশী স্ক্রিন) */
-#notepad{background:#fffdf7}
+#notepad{background:var(--npBg);color:var(--txt)}
 .npHead{display:flex;align-items:center;gap:8px;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top));
-  background:#f59e0b;color:#fff;position:relative}
+  background:var(--npHead);color:#fff;position:relative}
 .npHead .npTitle{flex:1;font-size:19px;font-weight:700}
-.npSaveBtn{border:0;border-radius:16px;padding:6px 14px;background:#fff;color:#b45309;font-size:13.5px;font-weight:700}
+.npSaveBtn{border:0;border-radius:16px;padding:6px 14px;background:var(--saveBg);color:var(--saveTxt);font-size:13.5px;font-weight:700}
 .npMenuBtn{border:0;background:none;color:#fff;font-size:24px;line-height:1;padding:4px 8px}
-.npMenu{position:absolute;right:12px;top:calc(52px + env(safe-area-inset-top));background:#fff;color:#111;
-  border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.22);min-width:190px;display:none;flex-direction:column;overflow:hidden;z-index:48}
+.npMenu{position:absolute;right:12px;top:calc(52px + env(safe-area-inset-top));background:var(--sheet);color:var(--txt);
+  border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);min-width:200px;display:none;flex-direction:column;overflow:hidden;z-index:48}
 .npMenu.show{display:flex}
-.npMenu button{border:0;background:none;text-align:left;padding:13px 16px;font-size:15px;border-bottom:1px solid #f1f1f1}
+.npMenu button{border:0;background:none;color:var(--txt);text-align:left;padding:13px 16px;font-size:15px;border-bottom:1px solid var(--line2)}
 .npMenu button:last-child{border-bottom:0}
-.npMenu button:active{background:#fef3c7}
-.npBody{flex:1;display:flex;flex-direction:column;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
-#noteTitleInput{border:0;border-bottom:1px solid #e5e7eb;padding:8px 4px;font-size:18px;font-weight:600;background:transparent;outline:none;margin-bottom:10px}
-#noteBodyInput{flex:1;border:0;resize:none;font:inherit;font-size:16px;line-height:1.6;background:transparent;outline:none}
+.npMenu button:active{background:var(--hover)}
+.npBody{flex:1;display:flex;flex-direction:column;min-height:0;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+#npSearchBox{display:flex;align-items:center;gap:6px;background:var(--soft);border-radius:20px;padding:4px 12px;margin-bottom:10px}
+#npSearch{flex:1;border:0;background:transparent;outline:none;font:inherit;font-size:15px;color:var(--txt);padding:6px 0;min-width:0}
+#npSearchClear{display:none;border:0;background:none;color:var(--muted);font-size:16px;padding:4px}
+#npResults{display:none;flex:1;overflow-y:auto;flex-direction:column;gap:8px}
+.npBody.searching #npResults{display:flex}
+.npBody.searching #npEditor{display:none}
+#npEditor{flex:1;display:flex;flex-direction:column;min-height:0}
+#noteTitleInput{border:0;border-bottom:1px solid var(--line);padding:8px 4px;font-size:18px;font-weight:600;background:transparent;outline:none;margin-bottom:10px;color:var(--txt)}
+#noteBodyInput{flex:1;border:0;resize:none;font:inherit;font-size:16px;line-height:1.6;background:transparent;outline:none;color:var(--txt)}
+.snip{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.npEmpty{text-align:center;color:var(--muted);padding:16px}
 
 /* পুরোনো নোট ও সেটিংস পপআপ */
 #npOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:49}
 #npOverlay.show{display:flex}
-.npModal{background:#fff;border-radius:14px;width:100%;max-width:380px;max-height:75dvh;display:flex;flex-direction:column;overflow:hidden}
-.npModalHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fef3c7;font-weight:700;color:#78350f}
-.npModalHead button{border:0;background:none;font-size:18px}
+.npModal{background:var(--sheet);color:var(--txt);border-radius:14px;width:100%;max-width:380px;max-height:75dvh;display:flex;flex-direction:column;overflow:hidden}
+.npModalHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--modalHead);font-weight:700;color:var(--modalHeadTxt)}
+.npModalHead button{border:0;background:none;font-size:18px;color:var(--modalHeadTxt)}
 .npModalList{padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.savedItem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid #eee;border-radius:10px;background:#fffdf7}
+.savedItem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--itemBorder);border-radius:10px;background:var(--item)}
 .savedItem .siInfo{flex:1;min-width:0}
 .savedItem .siInfo b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.savedItem .siInfo small{color:#666;font-size:12px}
-.savedItem button{border:0;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:6px 10px;font-size:12.5px}
+.savedItem .siInfo small{color:var(--muted);font-size:12px}
+.savedItem button{border:0;background:var(--dangerBg);color:var(--dangerTxt);border-radius:8px;padding:6px 10px;font-size:12.5px}
+.langOpt{border:1px solid var(--itemBorder);background:var(--item);color:var(--txt);border-radius:10px;padding:12px;font-size:15px;text-align:left}
+.langOpt.sel{border-color:var(--accent);font-weight:700}
 
-/* লগইন ও PIN */
-#login,#pin{align-items:center;justify-content:center;padding:24px;background:#fff;position:relative}
-.backNoteBtn{position:absolute;left:14px;top:calc(14px + env(safe-area-inset-top));border:0;background:#f3f4f6;color:#333;
+/* লগইন ও PIN (ইংরেজি) */
+#login,#pin{align-items:center;justify-content:center;padding:24px;background:var(--scr);color:var(--txt);position:relative}
+.backNoteBtn{position:absolute;left:14px;top:calc(14px + env(safe-area-inset-top));border:0;background:var(--soft);color:var(--txt);
   border-radius:16px;padding:6px 12px;font-size:13px}
 .card{width:100%;max-width:360px;text-align:center}
 .logo{font-size:56px}
-h1{margin:8px 0 24px;font-size:24px;color:#075E54}
-input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid #ccc;border-radius:10px;font-size:16px}
-.btn{width:100%;padding:14px;border:0;border-radius:10px;background:#075E54;color:#fff;font-size:16px}
+h1{margin:8px 0 24px;font-size:24px;color:var(--accent)}
+input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid var(--inBorder);border-radius:10px;font-size:16px;background:var(--input);color:var(--txt)}
+.btn{width:100%;padding:14px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px}
 .btn:disabled{opacity:.6}
-.err{color:#c62828;min-height:20px;margin:6px 0 12px;font-size:14px}
-.link{background:none;border:0;color:#075E54;margin-top:14px;font-size:14px;text-decoration:underline;display:inline-block}
-.bioBtn{margin-top:14px;padding:10px 16px;border-radius:20px;border:1px solid #075E54;background:#f2fbf9;color:#075E54;font-size:14px}
+.err{color:#e53935;min-height:20px;margin:6px 0 12px;font-size:14px}
+.link{background:none;border:0;color:var(--accent);margin-top:14px;font-size:14px;text-decoration:underline;display:inline-block}
 
 #pinMsg{font-size:18px;margin:12px 0 20px}
 .dots{display:flex;justify-content:center;gap:14px;margin-bottom:24px}
-.dot{width:16px;height:16px;border-radius:50%;background:#ddd}
-.dot.on{background:#075E54}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--dot)}
+.dot.on{background:var(--accent)}
 .pad{display:grid;grid-template-columns:repeat(3,76px);gap:14px;justify-content:center}
-.pad button{height:76px;border-radius:50%;border:0;background:#f1f1f1;font-size:28px}
-.pad button:active{background:#ddd}
+.pad button{height:76px;border-radius:50%;border:0;background:var(--soft2);color:var(--txt);font-size:28px}
+.pad button:active{background:var(--soft3)}
 .pad .ghost{background:none;pointer-events:none}
 .shake{animation:sh .3s}
 @keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
+/* ===== v12: PIN ধরন বেছে নেওয়ার পপআপ ===== */
+#pinModeModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:24px;z-index:52}
+#pinModeModal.show{display:flex}
+#pinModeModal .dlg{max-width:340px}
+#pinModeModal .pmTitle{margin:0 0 14px;font-size:18px;font-weight:700}
+#pinModeModal .pmHint{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.45}
+#pinModeModal .pmOpt{display:block;width:100%;margin:0 0 10px;padding:13px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px}
+#pinModeModal .pmGhost{display:block;width:100%;margin:0;padding:11px;border:0;border-radius:10px;background:var(--soft2);color:var(--txt);font-size:15px}
+#pmMinutes{width:100%;padding:12px;border:1px solid var(--inBorder);border-radius:10px;font-size:16px;background:var(--input);color:var(--txt);margin-bottom:6px}
+#pmNow{min-height:20px;font-size:14px;color:var(--accent);margin-bottom:4px}
+#pmErr{min-height:18px;font-size:13px;color:#e53935;margin-bottom:8px}
+
 /* চ্যাট */
-header{display:flex;align-items:center;gap:3px;padding:8px 8px;padding-top:calc(8px + env(safe-area-inset-top));
-  background:#075E54;color:#fff}
+header{display:flex;align-items:center;gap:2px;padding:8px 6px;padding-top:calc(8px + env(safe-area-inset-top));
+  background:var(--hdr);color:#fff}
 header .t{flex:1;min-width:0;padding-left:4px}
 header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #presence{display:flex;align-items:center;font-size:11.5px;opacity:.92;white-space:nowrap;overflow:hidden}
@@ -83,74 +131,75 @@ header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;
 .pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
 #presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
 @keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
-header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
+header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 3px}
+header #clearBtn{margin-right:4px}
 header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 
-#adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
+#adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--hdr2);color:#fff;font-size:13px}
 #adBar .ic{font-size:18px}
 #adBar .spacer{flex:1}
 #adBar small{opacity:.85;font-size:12px;text-decoration:underline;padding:2px 6px}
-#adBar button{border:0;border-radius:14px;padding:4px 12px;background:#fff;color:#075E54;font-size:12.5px;font-weight:600}
+#adBar button{border:0;border-radius:14px;padding:4px 12px;background:var(--adBtnBg);color:var(--adBtnTxt);font-size:12.5px;font-weight:600}
 
 #list{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column}
-.day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:#e1f2fb;font-size:12px;color:#555}
-.older{align-self:center;margin:6px;padding:6px 14px;border:0;border-radius:14px;background:#fff;color:#075E54;font-size:13px}
-.callLog{align-self:center;margin:6px 0;padding:5px 12px;border-radius:12px;background:#fff;font-size:13px;color:#444;
+.day{align-self:center;margin:10px 0;padding:4px 12px;border-radius:8px;background:var(--chip);font-size:12px;color:var(--chipTxt)}
+.older{align-self:center;margin:6px;padding:6px 14px;border:0;border-radius:14px;background:var(--card);color:var(--accent);font-size:13px}
+.callLog{align-self:center;margin:6px 0;padding:5px 12px;border-radius:12px;background:var(--card);font-size:13px;color:var(--callTxt);
   box-shadow:0 1px 1px rgba(0,0,0,.1);display:flex;gap:8px;align-items:center}
-.callLog small{color:#777;font-size:11px}
+.callLog small{color:var(--muted);font-size:11px}
 .row{display:flex;padding:2px 8px}
 .row.me{justify-content:flex-end}
-.b{max-width:80%;padding:6px 10px 4px;border-radius:12px;background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.12);
+.b{max-width:80%;padding:6px 10px 4px;border-radius:12px;background:var(--card);color:var(--txt);box-shadow:0 1px 1px rgba(0,0,0,.12);
   user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.me .b{background:#DCF8C6;border-bottom-right-radius:2px}
+.me .b{background:var(--me);border-bottom-right-radius:2px}
 .row:not(.me) .b{border-bottom-left-radius:2px}
 .hl .b{animation:hl 1.4s}
-@keyframes hl{0%,60%{background:#fff3b0}}
-.q{border-left:3px solid #075E54;background:rgba(0,0,0,.06);border-radius:6px;padding:3px 8px;margin-bottom:4px;
+@keyframes hl{0%,60%{background:var(--hlBg)}}
+.q{border-left:3px solid var(--accent);background:var(--qbg);border-radius:6px;padding:3px 8px;margin-bottom:4px;
   font-size:13px;cursor:pointer;overflow:hidden}
-.q b{display:block;color:#075E54;font-size:12px}
+.q b{display:block;color:var(--accent);font-size:12px}
 .q span{display:block;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tx{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.35}
 .mediaImg{display:block;width:240px;max-width:100%;max-height:280px;border-radius:8px;margin-bottom:4px;object-fit:contain;background:#000;cursor:pointer}
 .mediaVid{display:block;width:240px;max-width:100%;max-height:260px;border-radius:8px;margin-bottom:4px;background:#000}
 .mediaAud{display:block;width:240px;max-width:100%;height:36px;margin-bottom:4px}
-.openMediaBtn{display:inline-block;margin-bottom:4px;padding:4px 10px;border:0;border-radius:12px;background:rgba(0,0,0,.08);color:#075E54;font-size:12px}
-.medPh{padding:16px 24px;font-size:13px;color:#666}
-.meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:#667}
+.openMediaBtn{display:inline-block;margin-bottom:4px;padding:4px 10px;border:0;border-radius:12px;background:var(--qbg);color:var(--accent);font-size:12px}
+.medPh{padding:16px 24px;font-size:13px;color:var(--muted)}
+.meta{display:flex;justify-content:flex-end;gap:4px;margin-top:2px;font-size:11px;color:var(--muted)}
 .tick.seen{color:#34B7F1}
-.cd{color:#c62828;font-weight:600}
+.cd{color:#e53935;font-weight:600}
 .rxs{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
-.rp{background:rgba(0,0,0,.07);border-radius:10px;padding:1px 6px;font-size:13px}
+.rp{background:var(--rpBg);border-radius:10px;padding:1px 6px;font-size:13px}
 .rp small{font-size:11px;margin-left:2px}
-.empty{margin:auto;padding:16px;text-align:center;white-space:pre-line;color:#444;font-size:27px;font-weight:500;line-height:1.55}
+.empty{margin:auto;padding:16px;text-align:center;white-space:pre-line;color:var(--emptyTxt);font-size:27px;font-weight:500;line-height:1.55}
 
-#replyBar{display:none;align-items:center;gap:8px;padding:6px 10px;background:#e9e4dc;border-top:1px solid #d6d0c6}
+#replyBar{display:none;align-items:center;gap:8px;padding:6px 10px;background:var(--replyBg);border-top:1px solid var(--replyBorder)}
 #replyBar.show{display:flex}
-#replyBar .rbBody{flex:1;min-width:0;border-left:3px solid #075E54;padding-left:8px;font-size:13px}
-#replyBar b{display:block;color:#075E54;font-size:12px}
+#replyBar .rbBody{flex:1;min-width:0;border-left:3px solid var(--accent);padding-left:8px;font-size:13px}
+#replyBar b{display:block;color:var(--accent);font-size:12px}
 #rbText{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
-#rbClose{border:0;background:none;font-size:18px;padding:4px 8px}
+#rbClose{border:0;background:none;font-size:18px;padding:4px 8px;color:var(--txt)}
 
-#recBar{display:none;align-items:center;gap:8px;padding:8px 12px;background:#fff3e0;border-top:1px solid #ffcc80;font-size:14px}
+#recBar{display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--recBg);border-top:1px solid var(--recBorder);font-size:14px}
 #recBar.show{display:flex}
-#recTimer{font-weight:700;color:#c62828;min-width:52px}
-#recSend{border:0;border-radius:16px;padding:6px 12px;background:#075E54;color:#fff;font-size:13px}
-#recCancel{border:0;border-radius:16px;padding:6px 12px;background:#ddd;color:#111;font-size:13px}
+#recTimer{font-weight:700;color:#e53935;min-width:52px}
+#recSend{border:0;border-radius:16px;padding:6px 12px;background:var(--accent);color:#fff;font-size:13px}
+#recCancel{border:0;border-radius:16px;padding:6px 12px;background:var(--soft3);color:var(--txt);font-size:13px}
 
-.bar{display:flex;align-items:flex-end;gap:6px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#ECE5DD}
-.ibtn{width:40px;height:40px;border:0;border-radius:50%;background:#fff;color:#075E54;font-size:18px;flex:none}
-.bar textarea{flex:1;max-height:120px;padding:10px 14px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:#fff}
-.send{width:46px;height:46px;border:0;border-radius:50%;background:#075E54;color:#fff;font-size:20px;flex:none}
+.bar{display:flex;align-items:flex-end;gap:6px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:var(--bg)}
+.ibtn{width:40px;height:40px;border:0;border-radius:50%;background:var(--card);color:var(--accent);font-size:18px;flex:none}
+.bar textarea{flex:1;max-height:120px;padding:10px 14px;border:0;border-radius:22px;font:inherit;font-size:16px;resize:none;outline:none;background:var(--input);color:var(--txt)}
+.send{width:46px;height:46px;border:0;border-radius:50%;background:var(--accent);color:#fff;font-size:20px;flex:none}
 
 /* মেসেজ মেনু ও ডিলিট মেনু */
 #sheet,#delSheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:45}
 #sheet.show,#delSheet.show{display:flex}
-.sheetBox{width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
+.sheetBox{width:100%;max-width:480px;background:var(--sheet);color:var(--txt);border-radius:18px 18px 0 0;padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
 #rxRow{display:flex;justify-content:space-around;margin-bottom:10px}
 #rxRow button{border:0;background:none;font-size:30px;padding:4px 6px;border-radius:50%}
-#rxRow button.sel{background:#dff3e4}
-.sheetBox>button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 8px;font-size:16px}
-.sheetBox>button.danger{color:#c62828}
+#rxRow button.sel{background:var(--sel)}
+.sheetBox>button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--txt);padding:12px 8px;font-size:16px}
+.sheetBox>button.danger{color:#e53935}
 
 /* ফুল-স্ক্রিন মিডিয়া ভিউয়ার */
 #mediaViewer{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:58;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px}
@@ -169,15 +218,18 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 #vrStop{background:#ff9800;color:#000;display:none}
 #vrSend{background:#25D366;color:#fff;display:none}
 #vrClose{background:#444;color:#fff}
+/* ===== v12: ভিডিও রেকর্ডিংয়ের সময়ও লগআউট বাটন ===== */
+#vrExit{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top));border:0;border-radius:50%;width:46px;height:46px;
+  background:rgba(255,255,255,.22);color:#fff;font-size:26px;line-height:1}
 
 /* ডায়ালগ ও টোস্ট */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
 #modal.show{display:flex}
-.dlg{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:320px}
+.dlg{background:var(--sheet);color:var(--txt);border-radius:14px;padding:20px;width:100%;max-width:320px}
 .dlg p{margin:0 0 16px;font-size:16px}
 .dlg .acts{display:flex;justify-content:flex-end;gap:8px}
-.dlg button{padding:10px 16px;border:0;border-radius:8px;background:#eee;font-size:15px}
-.dlg button.danger{background:#c62828;color:#fff}
+.dlg .acts button{padding:10px 16px;border:0;border-radius:8px;background:var(--soft2);color:var(--txt);font-size:15px}
+.dlg .acts button.danger{background:#c62828;color:#fff}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;
   border-radius:20px;font-size:14px;display:none;z-index:60;max-width:90%;text-align:center}
 
@@ -225,55 +277,85 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 <!-- নোটপ্যাড (প্রাথমিক স্ক্রিন) -->
 <section id="notepad" class="screen active">
   <div class="npHead">
-    <div class="npTitle">📝 নোটপ্যাড</div>
-    <button class="npSaveBtn" id="npSaveBtn" type="button">সেভ</button>
+    <div class="npTitle" id="npTitleEl"></div>
+    <button class="npSaveBtn" id="npSaveBtn" type="button"></button>
     <button class="npMenuBtn" id="npMenuBtn" type="button" aria-label="Menu">⋮</button>
     <div class="npMenu" id="npMenu">
-      <button id="mNewNote" type="button">নতুন নোট</button>
-      <button id="mOldNotes" type="button">পুরোনো নোট দেখুন</button>
-      <button id="mNpSettings" type="button">সেটিংস</button>
-      <button id="mToolbox" type="button">টুলবক্স</button>
+      <button id="mNewNote" type="button"></button>
+      <button id="mOldNotes" type="button"></button>
+      <button id="mLang" type="button"></button>
+      <button id="mTheme" type="button"></button>
+      <button id="mNpSettings" type="button"></button>
+      <button id="mToolbox" type="button"></button>
     </div>
   </div>
   <div class="npBody">
-    <input id="noteTitleInput" type="text" placeholder="নোটের শিরোনাম লিখুন...">
-    <textarea id="noteBodyInput" placeholder="এখানে আপনার নোট লিখুন..."></textarea>
+    <!-- v12: সার্চ বার -->
+    <div id="npSearchBox">
+      <span>🔍</span>
+      <input id="npSearch" type="text" autocomplete="off">
+      <button id="npSearchClear" type="button">✕</button>
+    </div>
+    <div id="npResults"></div>
+    <div id="npEditor">
+      <input id="noteTitleInput" type="text">
+      <textarea id="noteBodyInput"></textarea>
+    </div>
   </div>
 </section>
 
-<!-- পুরোনো নোট / নোটপ্যাড সেটিংস পপআপ -->
+<!-- পুরোনো নোট / সেটিংস / ভাষা পপআপ -->
 <div id="npOverlay">
   <div class="npModal">
-    <div class="npModalHead"><span id="npModalTitle">পুরোনো নোট</span><button id="npModalClose" type="button">✕</button></div>
+    <div class="npModalHead"><span id="npModalTitle"></span><button id="npModalClose" type="button">✕</button></div>
     <div class="npModalList" id="npModalList"></div>
   </div>
 </div>
 
-<!-- লগইন -->
+<!-- লগইন (ইংরেজি) -->
 <section id="login" class="screen">
-  <button class="backNoteBtn" id="loginToNote" type="button">← নোটপ্যাড</button>
+  <button class="backNoteBtn" id="loginToNote" type="button">← Notepad</button>
   <form class="card" id="loginForm">
     <div class="logo">💬</div>
     <h1>Chat Gpt 2.0</h1>
-    <input class="f" id="email" type="email" autocomplete="username" required>
-    <input class="f" id="password" type="password" autocomplete="current-password" required>
+    <input class="f" id="email" type="email" autocomplete="username" placeholder="Email" required>
+    <input class="f" id="password" type="password" autocomplete="current-password" placeholder="Password" required>
     <div class="err" id="loginErr"></div>
-    <button class="btn" id="loginBtn" type="submit"></button>
+    <button class="btn" id="loginBtn" type="submit">Login</button>
   </form>
 </section>
 
-<!-- PIN / বায়োমেট্রিক -->
+<!-- PIN (ইংরেজি) -->
 <section id="pin" class="screen">
-  <button class="backNoteBtn" id="pinToNote" type="button">← নোটপ্যাড</button>
+  <button class="backNoteBtn" id="pinToNote" type="button">← Notepad</button>
   <div class="card">
     <div class="logo">🔒</div>
     <div id="pinMsg"></div>
     <div class="dots" id="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     <div class="pad" id="pad"></div>
-    <button class="bioBtn" id="bioBtn" type="button" style="display:none"></button><br>
-    <button class="link" id="forgot" type="button"></button>
+    <button class="link" id="forgot" type="button">Forgot PIN? Logout</button>
   </div>
 </section>
+
+<!-- v12: প্রথমবার PIN ধরন বেছে নেওয়ার পপআপ -->
+<div id="pinModeModal"><div class="dlg">
+  <div id="pmMain">
+    <p class="pmTitle">Set up your PIN</p>
+    <button class="pmOpt" id="pmCustom" type="button">Custom PIN</button>
+    <button class="pmOpt" id="pmPhone" type="button">As Your Phone Time</button>
+    <button class="pmOpt" id="pmOwn" type="button">Choice Your Own Time</button>
+    <button class="pmGhost" id="pmCancel" type="button">Cancel</button>
+  </div>
+  <div id="pmOffset" style="display:none">
+    <p class="pmTitle">Choice Your Own Time</p>
+    <p class="pmHint">Enter minutes (1-59). Your PIN will be the current phone time (HHMM) minus these minutes.</p>
+    <input id="pmMinutes" type="number" inputmode="numeric" min="1" max="59" placeholder="Minutes">
+    <div id="pmNow"></div>
+    <div id="pmErr"></div>
+    <button class="pmOpt" id="pmSave" type="button">Save</button>
+    <button class="pmGhost" id="pmBack" type="button">Back</button>
+  </div>
+</div></div>
 
 <!-- চ্যাট -->
 <section id="chat" class="screen">
@@ -282,17 +364,18 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
       <div class="nm">Chat Gpt 2.0</div>
       <div id="presence"><span class="pd"></span><span id="pText"></span></div>
     </div>
+    <button id="themeBtn" type="button" title="Dark / Light">🌙</button>
     <button id="langBtn" type="button" title="Language">🌐</button>
     <button id="callV" type="button" title="Voice Call">📞</button>
     <button id="callVid" type="button" title="Video Call">🎥</button>
-    <button id="clearBtn" type="button" title="Clear All" style="margin-right:10px">🗑️</button>
+    <button id="clearBtn" type="button" title="Clear All">🗑️</button>
     <button id="logoutBtn" type="button" title="Notepad">⎋</button>
   </header>
   <div id="adBar">
     <span class="ic">⏱️</span>
     <button id="adBtn" type="button"></button>
     <span class="spacer"></span>
-    <small id="ver">v11</small>
+    <small id="ver">v12</small>
   </div>
   <div id="list"></div>
   <div id="replyBar">
@@ -339,6 +422,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 
 <!-- ভিডিও রেকর্ডার -->
 <div id="vidRecModal">
+  <button id="vrExit" type="button" title="Notepad">⎋</button>
   <div id="vrStatus">00:00 / 00:15</div>
   <video id="vidPreview" autoplay playsinline muted></video>
   <div class="vrActs">
@@ -407,22 +491,35 @@ const CHUNK_CHARS = 700000;
 const MAX_VOICE_SEC = 120;
 const MAX_VIDEO_SEC = 15;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
-const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", BIO_KEY = "cc_bio_cred", BIO_ASKED = "cc_bio_asked", LANG_KEY = "cc_lang";
+const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", LANG_KEY = "cc_lang";
+/* ===== v12: নতুন কী ===== */
+const PIN_MODE_KEY = "cc_pin_mode", PIN_OFFSET_KEY = "cc_pin_offset";
+const THEME_KEY = "cc_theme", NP_LANG_KEY = "np_lang";
 const NOTES_LIST_KEY = "np_saved_notes", NOTE_DRAFT_KEY = "np_current_draft";
 
+/* ===== v12: ফিঙ্গারপ্রিন্ট সম্পূর্ণ বাদ: পুরোনো সংরক্ষিত তথ্য মুছে ফেলা ===== */
+["cc_bio_cred", "cc_bio_asked"].forEach(k => localStorage.removeItem(k));
+/* ===== v12: PIN-এর ধরন বাছা না থাকলে পুরোনো PIN বাদ, পপআপ আবার আসবে ===== */
+if (!localStorage.getItem(PIN_MODE_KEY)) localStorage.removeItem(PIN_KEY);
+
+/* ===== v12: লগইন ও PIN পেজের বার্তা (সবসময় ইংরেজি) ===== */
+const E = {
+  invCred: "Invalid email or password", netErr: "No internet connection",
+  manyReq: "Too many attempts, try again later", unauthDom: "Domain not in Authorized domains",
+  loginFail: "Login failed: ",
+  enterPin: "Enter PIN", setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
+  mismatchPin: "PIN did not match, try again", waitSec: s => `Wait ${s}s`,
+  fiveWrong: "5 wrong attempts, wait 30s", wrongPin: "Wrong PIN, try again",
+  logoutMsg: "Logout? The PIN setup on this phone will be removed.", logoutBtn: "Logout",
+  yes: "Yes", no: "No",
+  pmBad: "Enter a number from 1 to 59", pmNow: "Right now your PIN would be: ",
+  pmPhoneDone: "PIN mode: phone time. Enter the current time as HHMM.",
+  pmOwnDone: n => `PIN mode: phone time minus ${n} min.`
+};
+
+/* চ্যাটের ভাষা (🌐 বাটন) */
 const I18N = {
   bn: {
-    emailPh: "ইমেইল", passPh: "পাসওয়ার্ড", login: "লগইন",
-    invCred: "ইমেইল বা পাসওয়ার্ড ভুল", netErr: "ইন্টারনেট সংযোগ নেই",
-    manyReq: "অনেকবার ভুল হয়েছে, একটু পরে চেষ্টা করুন", unauthDom: "Authorized domains-এ যোগ করা হয়নি",
-    loginFail: "লগইন ব্যর্থ: ",
-    enterPin: "PIN দিন", setPin: "নতুন ৪ সংখ্যার PIN দিন", confirmPin: "আবার একই PIN দিন",
-    mismatchPin: "মেলেনি, নতুন করে PIN দিন", waitSec: s => `অপেক্ষা করুন ${s} সেকেন্ড`,
-    fiveWrong: "৫ বার ভুল, ৩০ সেকেন্ড অপেক্ষা করুন", wrongPin: "ভুল PIN, আবার চেষ্টা করুন",
-    forgot: "PIN ভুলে গেছেন? লগআউট করুন",
-    logoutMsg: "লগআউট করবেন? এই ফোনের PIN ও ফিঙ্গারপ্রিন্ট মুছে যাবে।", logoutBtn: "লগআউট",
-    bioUse: "👆 ফিঙ্গারপ্রিন্ট দিয়ে আনলক করুন", bioSetupQ: "ফিঙ্গারপ্রিন্ট দিয়ে দ্রুত আনলক চালু করবেন? (PIN থাকবে)",
-    bioDone: "ফিঙ্গারপ্রিন্ট যুক্ত হয়েছে", bioFail: "ফিঙ্গারপ্রিন্ট যাচাই করা যায়নি, PIN দিন",
     turnOn: "চালু করুন", turnOff: "বন্ধ করুন",
     adOnToast: "চালু: সিন হওয়া মেসেজ ও মিডিয়া ৩০ সেকেন্ড পর মুছবে", adOffToast: "স্বয়ংক্রিয় মোছা বন্ধ করা হয়েছে",
     emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can I help you today",
@@ -443,22 +540,11 @@ const I18N = {
     recSend: "পাঠান", recCancel: "বাতিল", vrStart: "রেকর্ড শুরু", vrStop: "থামুন", vrSend: "পাঠান", vrClose: "বন্ধ",
     imgBig: "ছবি অনেক বড়, অন্য ছবি বেছে নিন", audBig: "ভয়েস অনেক বড়, ছোট করে রেকর্ড করুন", vidBig: "ভিডিও অনেক বড় (১৫ সেকেন্ডের মধ্যে রাখুন)",
     uploading: "পাঠানো হচ্ছে…", sentOk: "পাঠানো হয়েছে", upBusy: "আগের ফাইল পাঠানো চলছে, একটু অপেক্ষা করুন",
-    mediaDelErr: "মিডিয়া মোছা ব্যর্থ", yes: "হ্যাঁ", no: "না",
+    mediaDelErr: "মিডিয়া মোছা ব্যর্থ",
     langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন", mLoading: "লোড হচ্ছে…", mMissing: "⚠️ মিডিয়া পাওয়া যায়নি",
     recInCall: "কল চলাকালীন রেকর্ড করা যাবে না"
   },
   en: {
-    emailPh: "Email", passPh: "Password", login: "Login",
-    invCred: "Invalid email or password", netErr: "No internet connection",
-    manyReq: "Too many attempts, try again later", unauthDom: "Domain not in Authorized domains",
-    loginFail: "Login failed: ",
-    enterPin: "Enter PIN", setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
-    mismatchPin: "PIN did not match, try again", waitSec: s => `Wait ${s}s`,
-    fiveWrong: "5 wrong attempts, wait 30s", wrongPin: "Wrong PIN, try again",
-    forgot: "Forgot PIN? Logout",
-    logoutMsg: "Logout? PIN and fingerprint on this phone will be removed.", logoutBtn: "Logout",
-    bioUse: "👆 Unlock with Fingerprint", bioSetupQ: "Enable fingerprint unlock? (PIN stays as fallback)",
-    bioDone: "Fingerprint enabled", bioFail: "Fingerprint failed, use PIN",
     turnOn: "Turn On", turnOff: "Turn Off",
     adOnToast: "On: seen messages & media delete in 30s", adOffToast: "Auto-delete turned off",
     emptyChat: "Hi!\nI'm Chat Gpt 2.0\nHow can I help you today",
@@ -479,7 +565,7 @@ const I18N = {
     recSend: "Send", recCancel: "Cancel", vrStart: "Start Record", vrStop: "Stop", vrSend: "Send", vrClose: "Close",
     imgBig: "Image too large, pick another", audBig: "Voice note too large, record a shorter one", vidBig: "Video too large (keep within 15s)",
     uploading: "Sending…", sentOk: "Sent", upBusy: "Previous file is still sending, please wait",
-    mediaDelErr: "Failed to delete media", yes: "Yes", no: "No",
+    mediaDelErr: "Failed to delete media",
     langSwitched: "Language: English", openBig: "Open full screen", mLoading: "Loading…", mMissing: "⚠️ Media not found",
     recInCall: "Cannot record during a call"
   }
@@ -487,6 +573,36 @@ const I18N = {
 
 let lang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "bn";
 const T = k => I18N[lang][k];
+
+/* ===== v12: নোটপ্যাডের আলাদা ভাষা (বাংলা / ইংরেজি) ===== */
+const NP = {
+  bn: {
+    title: "📝 নোটপ্যাড", save: "সেভ", newNote: "নতুন নোট", oldNotes: "পুরোনো নোট দেখুন",
+    language: "🌐 ভাষা নির্বাচন", settings: "সেটিংস", toolbox: "টুলবক্স",
+    darkMode: "ডার্ক মোড", lightMode: "লাইট মোড",
+    titlePh: "নোটের শিরোনাম লিখুন...", bodyPh: "এখানে আপনার নোট লিখুন...", searchPh: "নোট খুঁজুন...",
+    noResults: "কোনো নোট পাওয়া যায়নি", writeFirst: "আগে কিছু লিখুন",
+    savedToast: "নোট সেভ হয়েছে, নতুন নোট চালু", newToast: "নতুন নোট তৈরি হয়েছে",
+    oldTitle: "পুরোনো নোটসমূহ", noSaved: "কোনো সেভ করা নোট নেই", del: "মুছুন", untitled: "শিরোনামহীন নোট",
+    settingsTitle: "নোটপ্যাড সেটিংস",
+    settingsBody: "• আপনার নোটগুলো শুধুমাত্র এই ফোনের লোকাল স্টোরেজে সংরক্ষিত থাকে।<br>• ভার্সন: 1.0 (Offline Notes)",
+    langTitle: "ভাষা নির্বাচন", locale: "bn-BD"
+  },
+  en: {
+    title: "📝 Notepad", save: "Save", newNote: "New note", oldNotes: "View old notes",
+    language: "🌐 Language", settings: "Settings", toolbox: "Toolbox",
+    darkMode: "Dark mode", lightMode: "Light mode",
+    titlePh: "Note title...", bodyPh: "Write your note here...", searchPh: "Search notes...",
+    noResults: "No notes found", writeFirst: "Write something first",
+    savedToast: "Note saved, new note opened", newToast: "New note created",
+    oldTitle: "Old notes", noSaved: "No saved notes", del: "Delete", untitled: "Untitled note",
+    settingsTitle: "Notepad settings",
+    settingsBody: "• Your notes are stored only in this phone's local storage.<br>• Version: 1.0 (Offline Notes)",
+    langTitle: "Language", locale: "en-US"
+  }
+};
+let npLang = localStorage.getItem(NP_LANG_KEY) === "en" ? "en" : "bn";
+const npT = k => NP[npLang][k];
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -506,7 +622,36 @@ function toast(t, ms = 3800) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
 }
 
+/* ===== v12: লাইট / ডার্ক মোড (নোটপ্যাড ও চ্যাট দুজায়গায়) ===== */
+function isDark() { return localStorage.getItem(THEME_KEY) === "dark"; }
+function applyTheme() {
+  const d = isDark();
+  document.documentElement.setAttribute("data-theme", d ? "dark" : "light");
+  $("themeMeta").setAttribute("content", d ? "#92400e" : "#f59e0b");
+  $("themeBtn").textContent = d ? "☀️" : "🌙";
+  $("mTheme").textContent = (d ? "☀️ " : "🌙 ") + npT(d ? "lightMode" : "darkMode");
+}
+function toggleTheme() {
+  localStorage.setItem(THEME_KEY, isDark() ? "light" : "dark");
+  applyTheme();
+}
+$("mTheme").onclick = () => { $("npMenu").classList.remove("show"); toggleTheme(); };
+$("themeBtn").onclick = toggleTheme;
+
 /* ---------- নোটপ্যাড (প্রাথমিক স্ক্রিন) ---------- */
+function applyNpLang() {
+  $("npTitleEl").textContent = npT("title");
+  $("npSaveBtn").textContent = npT("save");
+  $("mNewNote").textContent = npT("newNote");
+  $("mOldNotes").textContent = npT("oldNotes");
+  $("mLang").textContent = npT("language");
+  $("mNpSettings").textContent = npT("settings");
+  $("mToolbox").textContent = npT("toolbox");
+  $("noteTitleInput").placeholder = npT("titlePh");
+  $("noteBodyInput").placeholder = npT("bodyPh");
+  $("npSearch").placeholder = npT("searchPh");
+  applyTheme();
+}
 function getSavedNotes() {
   try { return JSON.parse(localStorage.getItem(NOTES_LIST_KEY) || "[]"); } catch (e) { return []; }
 }
@@ -532,20 +677,20 @@ $("noteBodyInput").addEventListener("input", saveDraft);
 $("npSaveBtn").onclick = () => {
   const rawTitle = $("noteTitleInput").value.trim();
   const body = $("noteBodyInput").value.trim();
-  if (!rawTitle && !body) { toast("আগে কিছু লিখুন"); return; }
+  if (!rawTitle && !body) { toast(npT("writeFirst")); return; }
   const notes = getSavedNotes();
   notes.unshift({
     id: Date.now(),
-    title: rawTitle || "শিরোনামহীন নোট",
+    title: rawTitle || npT("untitled"),
     body,
-    date: new Date().toLocaleString("bn-BD", { dateStyle: "medium", timeStyle: "short" })
+    date: new Date().toLocaleString(npT("locale"), { dateStyle: "medium", timeStyle: "short" })
   });
   setSavedNotes(notes);
   $("noteTitleInput").value = "";
   $("noteBodyInput").value = "";
   localStorage.removeItem(NOTE_DRAFT_KEY);
   $("noteTitleInput").focus();
-  toast("নোট সেভ হয়েছে, নতুন নোট চালু");
+  toast(npT("savedToast"));
 };
 
 $("npMenuBtn").onclick = e => { e.stopPropagation(); $("npMenu").classList.toggle("show"); };
@@ -556,17 +701,23 @@ $("mNewNote").onclick = () => {
   $("noteTitleInput").value = "";
   $("noteBodyInput").value = "";
   saveDraft();
-  toast("নতুন নোট তৈরি হয়েছে");
+  clearSearch();
+  toast(npT("newToast"));
 };
 
-$("mOldNotes").onclick = () => {
-  $("npMenu").classList.remove("show");
-  $("npModalTitle").textContent = "পুরোনো নোটসমূহ";
+function loadNoteIntoEditor(n) {
+  $("noteTitleInput").value = n.title;
+  $("noteBodyInput").value = n.body;
+  saveDraft();
+}
+function openOldNotes() {
+  $("npModalTitle").textContent = npT("oldTitle");
   const list = $("npModalList");
   list.innerHTML = "";
   const notes = getSavedNotes();
   if (!notes.length) {
-    list.innerHTML = '<div style="text-align:center;color:#666;padding:16px">কোনো সেভ করা নোট নেই</div>';
+    const d = document.createElement("div"); d.className = "npEmpty"; d.textContent = npT("noSaved");
+    list.appendChild(d);
   } else {
     notes.forEach(n => {
       const row = document.createElement("div"); row.className = "savedItem";
@@ -575,34 +726,79 @@ $("mOldNotes").onclick = () => {
       const sm = document.createElement("small"); sm.textContent = n.date;
       info.append(b, sm);
       info.onclick = () => {
-        $("noteTitleInput").value = n.title;
-        $("noteBodyInput").value = n.body;
-        saveDraft();
+        loadNoteIntoEditor(n);
+        clearSearch();
         $("npOverlay").classList.remove("show");
       };
-      const del = document.createElement("button"); del.textContent = "মুছুন";
+      const del = document.createElement("button"); del.textContent = npT("del");
       del.onclick = e => {
         e.stopPropagation();
         setSavedNotes(getSavedNotes().filter(x => x.id !== n.id));
-        $("mOldNotes").click();
+        openOldNotes(); renderSearch();
       };
       row.append(info, del);
       list.appendChild(row);
     });
   }
   $("npOverlay").classList.add("show");
-};
+}
+$("mOldNotes").onclick = () => { $("npMenu").classList.remove("show"); openOldNotes(); };
 
 $("mNpSettings").onclick = () => {
   $("npMenu").classList.remove("show");
-  $("npModalTitle").textContent = "নোটপ্যাড সেটিংস";
-  $("npModalList").innerHTML = `
-    <div style="font-size:14px;color:#444;line-height:1.6">
-      • আপনার নোটগুলো শুধুমাত্র এই ফোনের লোকাল স্টোরেজে সংরক্ষিত থাকে।<br>
-      • ভার্সন: 1.0 (Offline Notes)
-    </div>`;
+  $("npModalTitle").textContent = npT("settingsTitle");
+  $("npModalList").innerHTML = `<div style="font-size:14px;line-height:1.6">${npT("settingsBody")}</div>`;
   $("npOverlay").classList.add("show");
 };
+
+/* ===== v12: নোটপ্যাডের ভাষা নির্বাচন (⋮ মেনু) ===== */
+$("mLang").onclick = () => {
+  $("npMenu").classList.remove("show");
+  $("npModalTitle").textContent = npT("langTitle");
+  const list = $("npModalList"); list.innerHTML = "";
+  [["bn", "বাংলা (Bangla)"], ["en", "English"]].forEach(([code, label]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "langOpt" + (npLang === code ? " sel" : "");
+    b.textContent = (npLang === code ? "✓ " : "") + label;
+    b.onclick = () => {
+      npLang = code; localStorage.setItem(NP_LANG_KEY, code);
+      applyNpLang(); renderSearch();
+      $("npOverlay").classList.remove("show");
+    };
+    list.appendChild(b);
+  });
+  $("npOverlay").classList.add("show");
+};
+
+/* ===== v12: নোটপ্যাডে সার্চ বার ===== */
+function clearSearch() { $("npSearch").value = ""; renderSearch(); }
+function renderSearch() {
+  const q = $("npSearch").value.trim().toLowerCase();
+  const wrap = document.querySelector(".npBody");
+  $("npSearchClear").style.display = q ? "block" : "none";
+  if (!q) { wrap.classList.remove("searching"); return; }
+  wrap.classList.add("searching");
+  const res = $("npResults"); res.innerHTML = "";
+  const hits = getSavedNotes().filter(n =>
+    (n.title || "").toLowerCase().includes(q) || (n.body || "").toLowerCase().includes(q));
+  if (!hits.length) {
+    const d = document.createElement("div"); d.className = "npEmpty"; d.textContent = npT("noResults");
+    res.appendChild(d); return;
+  }
+  hits.forEach(n => {
+    const row = document.createElement("div"); row.className = "savedItem";
+    const info = document.createElement("div"); info.className = "siInfo";
+    const b = document.createElement("b"); b.textContent = n.title;
+    const sm = document.createElement("small"); sm.textContent = n.date;
+    const sn = document.createElement("span"); sn.className = "snip"; sn.textContent = (n.body || "").replace(/\s+/g, " ").slice(0, 80);
+    info.append(b, sm, sn);
+    row.appendChild(info);
+    row.onclick = () => { loadNoteIntoEditor(n); clearSearch(); };
+    res.appendChild(row);
+  });
+}
+$("npSearch").addEventListener("input", renderSearch);
+$("npSearchClear").onclick = clearSearch;
 
 $("mToolbox").onclick = () => {
   $("npMenu").classList.remove("show");
@@ -620,12 +816,12 @@ function closeOverlays() {
   closeVidRecModal();
   $("mediaViewer").classList.remove("show");
 }
-// নোটপ্যাডে ফেরা: কল চললে আগে কল কেটে দেয় (ক্যামেরা-মাইক বন্ধ হয়)
+// নোটপ্যাডে ফেরা: কল চললে আগে কল কেটে দেয়; চলমান রেকর্ডিংও বাতিল হয়
 function returnToNotepad() {
   if (call) endCall(true);
   inToolbox = false;
   unlocked = false;
-  closeSheet(); closeDelSheet(); closeOverlays();
+  closeSheet(); closeDelSheet(); closeOverlays(); closePinChoose();
   show("notepad");
 }
 $("loginToNote").onclick = returnToNotepad;
@@ -633,14 +829,8 @@ $("pinToNote").onclick = returnToNotepad;
 
 loadDraft();
 
-/* ---------- ভাষা ও সাধারণ সহায়ক ---------- */
+/* ---------- চ্যাটের ভাষা ও সাধারণ সহায়ক ---------- */
 function applyLang() {
-  document.documentElement.lang = lang;
-  $("email").placeholder = T("emailPh");
-  $("password").placeholder = T("passPh");
-  $("loginBtn").textContent = T("login");
-  $("forgot").textContent = T("forgot");
-  $("bioBtn").textContent = T("bioUse");
   $("msg").placeholder = T("msgPh");
   $("shReply").textContent = T("reply");
   $("shDel").textContent = T("del");
@@ -674,7 +864,7 @@ function errOnce(prefix, e) {
   toast(prefix + ": " + code + (code.includes("permission-denied") ? " — Rules Publish?" : ""));
 }
 let modalOpen = false;
-function confirmBox(text, yesLabel = T("yes"), noLabel = T("no")) {
+function confirmBox(text, yesLabel = E.yes, noLabel = E.no) {
   return new Promise(res => {
     modalOpen = true;
     $("modalText").textContent = text;
@@ -689,7 +879,7 @@ function confirmBox(text, yesLabel = T("yes"), noLabel = T("no")) {
 }
 const fmtDur = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
 
-/* ---------- লগইন ---------- */
+/* ---------- লগইন (ইংরেজি) ---------- */
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault();
   const email = $("email").value.trim().toLowerCase();
@@ -699,13 +889,13 @@ $("loginForm").addEventListener("submit", async e => {
     await signInWithEmailAndPassword(auth, email, $("password").value);
   } catch (err) {
     const m = {
-      "auth/invalid-credential": T("invCred"),
-      "auth/wrong-password": T("invCred"),
-      "auth/network-request-failed": T("netErr"),
-      "auth/too-many-requests": T("manyReq"),
-      "auth/unauthorized-domain": T("unauthDom")
+      "auth/invalid-credential": E.invCred,
+      "auth/wrong-password": E.invCred,
+      "auth/network-request-failed": E.netErr,
+      "auth/too-many-requests": E.manyReq,
+      "auth/unauthorized-domain": E.unauthDom
     };
-    $("loginErr").textContent = m[err.code] || (T("loginFail") + err.code);
+    $("loginErr").textContent = m[err.code] || (E.loginFail + err.code);
   }
   $("loginBtn").disabled = false;
 });
@@ -725,8 +915,8 @@ onAuthStateChanged(auth, user => {
 
 async function doLogout() {
   localStorage.removeItem(PIN_KEY);
-  localStorage.removeItem(BIO_KEY);
-  localStorage.removeItem(BIO_ASKED);
+  localStorage.removeItem(PIN_MODE_KEY);
+  localStorage.removeItem(PIN_OFFSET_KEY);
   unlocked = false;
   if (me) {
     try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
@@ -735,7 +925,7 @@ async function doLogout() {
   await signOut(auth);
 }
 
-/* ⎋ আইকন: কোনো পপ-আপ ছাড়া সরাসরি নোটপ্যাডে ফেরায় (PIN ও ফিঙ্গারপ্রিন্ট থাকে); কল চললে কল কেটে দেয় */
+/* ⎋ আইকন: কোনো পপ-আপ ছাড়া সরাসরি নোটপ্যাডে ফেরায়; কল বা রেকর্ডিং চললে সেটাও বন্ধ করে */
 $("logoutBtn").onclick = () => {
   if (me) {
     setTyping(false);
@@ -743,17 +933,29 @@ $("logoutBtn").onclick = () => {
   }
   returnToNotepad();
 };
+/* ===== v12: ভিডিও রেকর্ডার স্ক্রিনেও লগআউট ===== */
+$("vrExit").onclick = () => $("logoutBtn").click();
 $("forgot").onclick = async () => {
-  if (await confirmBox(T("logoutMsg"), T("logoutBtn"))) doLogout();
+  if (await confirmBox(E.logoutMsg, E.logoutBtn)) doLogout();
 };
 
-/* ---------- PIN + ফিঙ্গারপ্রিন্ট (WebAuthn) ---------- */
+/* ===== v12: ডায়নামিক PIN সিস্টেম (শুধু PIN, ফিঙ্গারপ্রিন্ট নেই) ===== */
 let pinBuf = "", pinFirst = null, pinMode = "unlock", fails = 0;
 
 async function hashPin(p) {
   const data = new TextEncoder().encode("couple_chat_v1:" + me.uid + ":" + p);
   const buf = await crypto.subtle.digest("SHA-256", data);
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+// ফোনের এখনকার সময় (HH:MM) থেকে minus মিনিট বিয়োগ করে "HHMM"; রাত ১২টা পার হলে ঘুরে যায়
+function timePin(minus) {
+  const d = new Date();
+  let t = (d.getHours() * 60 + d.getMinutes() - minus) % 1440;
+  if (t < 0) t += 1440;
+  return String(Math.floor(t / 60)).padStart(2, "0") + String(t % 60).padStart(2, "0");
+}
+function dynamicMinus() {
+  return localStorage.getItem(PIN_MODE_KEY) === "offset" ? (Number(localStorage.getItem(PIN_OFFSET_KEY)) || 0) : 0;
 }
 function buildPad() {
   const pad = $("pad"); pad.innerHTML = "";
@@ -769,47 +971,64 @@ function buildPad() {
 function renderDots() {
   [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
 }
-function bioSupported() {
-  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && window.isSecureContext);
-}
-let bioBusy = false;
-async function bioCheck() {
-  const hexId = localStorage.getItem(BIO_KEY);
-  if (!hexId || !bioSupported() || bioBusy) return false;
-  bioBusy = true;
-  try {
-    const rawId = new Uint8Array(hexId.match(/.{1,2}/g).map(h => parseInt(h, 16)));
-    const a = await navigator.credentials.get({
-      publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(16)),
-        rpId: location.hostname,
-        allowCredentials: [{ type: "public-key", id: rawId, transports: ["internal"] }],
-        userVerification: "required",
-        timeout: 60000
-      }
-    });
-    return !!a;
-  } catch (e) { return false; }
-  finally { bioBusy = false; }
-}
 function startPin() {
   pinBuf = ""; pinFirst = null; renderDots();
-  const has = !!localStorage.getItem(PIN_KEY);
-  pinMode = has ? "unlock" : "setup";
-  $("pinMsg").textContent = has ? T("enterPin") : T("setPin");
-  const bio = has && bioSupported() && !!localStorage.getItem(BIO_KEY);
-  $("bioBtn").style.display = bio ? "inline-block" : "none";
   show("pin");
-  // ফিঙ্গারপ্রিন্ট চালু থাকলে নিজে থেকেই চাইবে; না পারলে PIN দিন
-  if (bio) setTimeout(async () => {
-    if (!$("pin").classList.contains("active") || pinMode !== "unlock") return;
-    if (await bioCheck() && $("pin").classList.contains("active")) { fails = 0; unlock(); }
-  }, 350);
+  if (!localStorage.getItem(PIN_MODE_KEY)) {
+    pinMode = "choose";
+    $("pinMsg").textContent = "";
+    openPinChoose();
+    return;
+  }
+  pinMode = "unlock";
+  $("pinMsg").textContent = E.enterPin;
 }
+function openPinChoose() {
+  $("pmMain").style.display = "block";
+  $("pmOffset").style.display = "none";
+  $("pinModeModal").classList.add("show");
+}
+function closePinChoose() { $("pinModeModal").classList.remove("show"); }
+
+// ১. Custom PIN: নিজের ৪ সংখ্যা
+$("pmCustom").onclick = () => {
+  closePinChoose();
+  pinMode = "setup"; pinBuf = ""; pinFirst = null; renderDots();
+  $("pinMsg").textContent = E.setPin;
+};
+// ২. As Your Phone Time: ফোনের সময় = PIN
+$("pmPhone").onclick = () => {
+  localStorage.setItem(PIN_MODE_KEY, "phone");
+  localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_OFFSET_KEY);
+  closePinChoose(); toast(E.pmPhoneDone, 5000); unlock();
+};
+// ৩. Choice Your Own Time: ফোনের সময় থেকে N মিনিট বিয়োগ
+$("pmOwn").onclick = () => {
+  $("pmMain").style.display = "none";
+  $("pmOffset").style.display = "block";
+  $("pmMinutes").value = ""; $("pmErr").textContent = ""; $("pmNow").textContent = "";
+};
+$("pmMinutes").addEventListener("input", () => {
+  const n = parseInt($("pmMinutes").value, 10);
+  $("pmErr").textContent = "";
+  $("pmNow").textContent = (n >= 1 && n <= 59) ? E.pmNow + timePin(n) : "";
+});
+$("pmSave").onclick = () => {
+  const n = parseInt($("pmMinutes").value, 10);
+  if (!(n >= 1 && n <= 59)) { $("pmErr").textContent = E.pmBad; return; }
+  localStorage.setItem(PIN_MODE_KEY, "offset");
+  localStorage.setItem(PIN_OFFSET_KEY, String(n));
+  localStorage.removeItem(PIN_KEY);
+  closePinChoose(); toast(E.pmOwnDone(n), 5000); unlock();
+};
+$("pmBack").onclick = openPinChoose;
+$("pmCancel").onclick = () => { closePinChoose(); returnToNotepad(); };
+
 async function pressKey(k) {
+  if (pinMode === "choose") return;
   const until = Number(localStorage.getItem(LOCK_KEY) || 0);
   if (Date.now() < until) {
-    $("pinMsg").textContent = I18N[lang].waitSec(Math.ceil((until - Date.now()) / 1000)); return;
+    $("pinMsg").textContent = E.waitSec(Math.ceil((until - Date.now()) / 1000)); return;
   }
   if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
   if (pinBuf.length >= 4) return;
@@ -820,54 +1039,33 @@ async function pressKey(k) {
   if (pinMode === "setup") {
     if (pinFirst === null) {
       pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = T("confirmPin");
+      $("pinMsg").textContent = E.confirmPin;
     } else if (pinFirst === entered) {
       localStorage.setItem(PIN_KEY, await hashPin(entered));
-      await maybeEnrollBio();
+      localStorage.setItem(PIN_MODE_KEY, "custom");
+      localStorage.removeItem(PIN_OFFSET_KEY);
       unlock();
     } else {
       pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = T("mismatchPin"); shake();
+      $("pinMsg").textContent = E.mismatchPin; shake();
     }
   } else {
-    if ((await hashPin(entered)) === localStorage.getItem(PIN_KEY)) {
+    // লগইনে: Custom মোডে সেভ করা হ্যাশের সাথে, ডায়নামিক মোডে লাইভ হিসাব করা PIN-এর সাথে যাচাই
+    let ok;
+    if (localStorage.getItem(PIN_MODE_KEY) === "custom") ok = (await hashPin(entered)) === localStorage.getItem(PIN_KEY);
+    else ok = entered === timePin(dynamicMinus());
+    if (ok) {
       fails = 0;
-      await maybeEnrollBio();
       unlock();
     } else {
       fails++; pinBuf = ""; setTimeout(renderDots, 120); shake();
       if (fails >= 5) {
         localStorage.setItem(LOCK_KEY, String(Date.now() + 30000)); fails = 0;
-        $("pinMsg").textContent = T("fiveWrong");
-      } else $("pinMsg").textContent = T("wrongPin");
+        $("pinMsg").textContent = E.fiveWrong;
+      } else $("pinMsg").textContent = E.wrongPin;
     }
   }
 }
-// ফিঙ্গারপ্রিন্টের প্রস্তাব শুধু একবার আসে (হ্যাঁ বা না, যা-ই বলুন)
-async function maybeEnrollBio() {
-  if (!bioSupported() || !me || localStorage.getItem(BIO_KEY) || localStorage.getItem(BIO_ASKED)) return;
-  localStorage.setItem(BIO_ASKED, "1");
-  if (!(await confirmBox(T("bioSetupQ"), T("yes"), T("no")))) return;
-  try {
-    const cred = await navigator.credentials.create({
-      publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(16)),
-        rp: { name: "My Notes", id: location.hostname },
-        user: { id: new TextEncoder().encode(me.uid).slice(0, 64), name: me.email || "user", displayName: "User" },
-        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
-        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-        timeout: 60000
-      }
-    });
-    if (cred) {
-      localStorage.setItem(BIO_KEY, [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join(""));
-      toast(T("bioDone"));
-    }
-  } catch (e) { toast(T("bioFail")); }
-}
-$("bioBtn").onclick = async () => {
-  if (await bioCheck()) { fails = 0; unlock(); } else toast(T("bioFail"));
-};
 function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
 function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
 function lockNow() { returnToNotepad(); renderIncoming(); }
@@ -1089,7 +1287,7 @@ $("imgInput").addEventListener("change", async () => {
   sendMedia("image", dataUrl);
 });
 
-// v11 ফিক্স: ব্লবের টাইপ থেকে "codecs=vp8,opus" বাদ দেওয়া হয় (ওই কমা ফাইল নষ্ট করত, ভিডিও চলত না)
+// ব্লবের টাইপ থেকে "codecs=vp8,opus" বাদ (ওই কমা ফাইল নষ্ট করত, ভিডিও চলত না)
 const baseType = (t, fallback) => String(t || fallback).split(";")[0];
 function blobToDataUrl(blob) {
   return new Promise((res, rej) => {
@@ -1323,7 +1521,7 @@ $("adBtn").onclick = () => {
 $("ver").onclick = () => {
   const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
   const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
-  toast("v11 | Auto: " + (autoDelete ? "ON" : "OFF")
+  toast("v12 | Auto: " + (autoDelete ? "ON" : "OFF")
     + " | Since: " + f(enabledAtMs)
     + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
     + " | Now: " + f(Date.now()), 9000);
@@ -1906,6 +2104,7 @@ $("camBtn").onclick = () => {
   $("camBtn").textContent = tr.enabled ? "📷" : "🚫";
 };
 
+applyNpLang();
 applyLang();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
