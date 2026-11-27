@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#f59e0b">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png?v=11">
+<link rel="apple-touch-icon" href="icon-192.png?v=11">
 <title>My Notes</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -84,6 +84,7 @@ header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;
 #presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
 @keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
+header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 
 #adBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0b6f63;color:#fff;font-size:13px}
 #adBar .ic{font-size:18px}
@@ -189,6 +190,8 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 #call.vid #localV{display:block}
 #minBtn{position:absolute;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:4;width:42px;height:42px;border:0;
   border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:22px}
+#callExit{position:absolute;left:62px;top:calc(12px + env(safe-area-inset-top));z-index:4;width:42px;height:42px;border:0;
+  border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:24px;line-height:1}
 .callTop{position:relative;z-index:3;margin-top:calc(40px + env(safe-area-inset-top));text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .callTop .nm{font-size:24px;font-weight:600}
 #callStatus{margin-top:6px;font-size:16px;opacity:.9;min-height:22px}
@@ -204,7 +207,7 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
 #call.mini{inset:auto;right:10px;bottom:96px;width:116px;height:164px;border-radius:14px;overflow:hidden;
   box-shadow:0 4px 16px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.35);touch-action:none}
 #call.mini:not(.vid){width:158px;height:60px}
-#call.mini .callTop,#call.mini .ctrls,#call.mini .voiceAv,#call.mini #localV,#call.mini #minBtn{display:none!important}
+#call.mini .callTop,#call.mini .ctrls,#call.mini .voiceAv,#call.mini #localV,#call.mini #minBtn,#call.mini #callExit{display:none!important}
 #call.mini .miniBar{display:flex;position:absolute;left:0;right:0;bottom:0;z-index:5;align-items:center;
   justify-content:space-between;padding:4px 6px;background:rgba(0,0,0,.55);font-size:12px}
 #call.mini:not(.vid) .miniBar{top:0;padding:0 10px;font-size:14px}
@@ -283,14 +286,13 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
     <button id="callV" type="button" title="Voice Call">📞</button>
     <button id="callVid" type="button" title="Video Call">🎥</button>
     <button id="clearBtn" type="button" title="Clear All" style="margin-right:10px">🗑️</button>
-    <button id="lockBtn" type="button" title="Lock">🔒</button>
     <button id="logoutBtn" type="button" title="Notepad">⎋</button>
   </header>
   <div id="adBar">
     <span class="ic">⏱️</span>
     <button id="adBtn" type="button"></button>
     <span class="spacer"></span>
-    <small id="ver">v10</small>
+    <small id="ver">v11</small>
   </div>
   <div id="list"></div>
   <div id="replyBar">
@@ -352,6 +354,7 @@ header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px
   <video id="remoteV" autoplay playsinline></video>
   <video id="localV" autoplay playsinline muted></video>
   <button id="minBtn" type="button">⌄</button>
+  <button id="callExit" type="button" title="Notepad">⎋</button>
   <div class="callTop"><div class="nm">Chat Gpt 2.0</div><div id="callStatus"></div></div>
   <div class="voiceAv">❤️</div>
   <div class="ctrls">
@@ -617,7 +620,9 @@ function closeOverlays() {
   closeVidRecModal();
   $("mediaViewer").classList.remove("show");
 }
+// নোটপ্যাডে ফেরা: কল চললে আগে কল কেটে দেয় (ক্যামেরা-মাইক বন্ধ হয়)
 function returnToNotepad() {
+  if (call) endCall(true);
   inToolbox = false;
   unlocked = false;
   closeSheet(); closeDelSheet(); closeOverlays();
@@ -730,7 +735,7 @@ async function doLogout() {
   await signOut(auth);
 }
 
-/* ⎋ আইকন: কোনো পপ-আপ ছাড়া সরাসরি নোটপ্যাডে ফেরায় (PIN ও ফিঙ্গারপ্রিন্ট থাকে) */
+/* ⎋ আইকন: কোনো পপ-আপ ছাড়া সরাসরি নোটপ্যাডে ফেরায় (PIN ও ফিঙ্গারপ্রিন্ট থাকে); কল চললে কল কেটে দেয় */
 $("logoutBtn").onclick = () => {
   if (me) {
     setTyping(false);
@@ -866,7 +871,6 @@ $("bioBtn").onclick = async () => {
 function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
 function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
 function lockNow() { returnToNotepad(); renderIncoming(); }
-$("lockBtn").onclick = lockNow;
 buildPad();
 
 document.addEventListener("visibilitychange", () => {
@@ -1085,9 +1089,16 @@ $("imgInput").addEventListener("change", async () => {
   sendMedia("image", dataUrl);
 });
 
+// v11 ফিক্স: ব্লবের টাইপ থেকে "codecs=vp8,opus" বাদ দেওয়া হয় (ওই কমা ফাইল নষ্ট করত, ভিডিও চলত না)
+const baseType = (t, fallback) => String(t || fallback).split(";")[0];
 function blobToDataUrl(blob) {
   return new Promise((res, rej) => {
-    const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = rej; r.readAsDataURL(blob);
+    const r = new FileReader();
+    r.onload = () => {
+      const s = String(r.result);
+      res("data:" + baseType(blob.type, "application/octet-stream") + ";base64," + s.slice(s.lastIndexOf(",") + 1));
+    };
+    r.onerror = rej; r.readAsDataURL(blob);
   });
 }
 
@@ -1114,7 +1125,7 @@ $("micBtn").onclick = async () => {
       $("recBar").classList.remove("show");
       mr = null;
       if (discardRec || !recChunks.length || !me) return;
-      const blob = new Blob(recChunks, { type: rec.mimeType || "audio/webm" });
+      const blob = new Blob(recChunks, { type: baseType(rec.mimeType, "audio/webm") });
       if (blob.size > 700000) { toast(T("audBig")); return; }
       sendMedia("audio", await blobToDataUrl(blob), { duration: recSec });
     };
@@ -1170,7 +1181,7 @@ $("vrStart").onclick = () => {
   rec.ondataavailable = e => { if (e.data && e.data.size > 0) vrChunks.push(e.data); };
   rec.onstop = () => {
     clearInterval(vrTicker); vrTicker = null;
-    vrBlob = new Blob(vrChunks, { type: rec.mimeType || "video/webm" });
+    vrBlob = new Blob(vrChunks, { type: baseType(rec.mimeType, "video/webm") });
     vrRec = null;
     if (!$("vidRecModal").classList.contains("show")) return;
     $("vrStop").style.display = "none";
@@ -1312,7 +1323,7 @@ $("adBtn").onclick = () => {
 $("ver").onclick = () => {
   const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
   const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
-  toast("v10 | Auto: " + (autoDelete ? "ON" : "OFF")
+  toast("v11 | Auto: " + (autoDelete ? "ON" : "OFF")
     + " | Since: " + f(enabledAtMs)
     + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
     + " | Now: " + f(Date.now()), 9000);
@@ -1682,6 +1693,8 @@ window.addEventListener("popstate", () => {
   pushCallState();
 });
 $("minBtn").onclick = () => setMini(true);
+// কল স্ক্রিনের ⎋: এক চাপেই কল কেটে নোটপ্যাডে ফেরে
+$("callExit").onclick = () => $("logoutBtn").click();
 
 (function () {
   const el = $("call");
