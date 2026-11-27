@@ -10,10 +10,11 @@
 <link rel="apple-touch-icon" href="icon-192.png?v=11">
 <title>My Notes</title>
 <script>
-/* থিম আগেভাগে বসানো (ঝলক এড়াতে) */
+/* ===== v12: থিম আগেভাগে বসানো (ঝলক এড়াতে) ===== */
 try { document.documentElement.setAttribute("data-theme", localStorage.getItem("cc_theme") === "dark" ? "dark" : "light"); } catch (e) {}
 </script>
 <style>
+/* ===== v12: লাইট/ডার্ক থিমের রঙ ===== */
 :root{
   --bg:#ECE5DD;--txt:#111;--hdr:#075E54;--hdr2:#0b6f63;--card:#fff;--me:#DCF8C6;--muted:#667;
   --chip:#e1f2fb;--chipTxt:#555;--accent:#075E54;--input:#fff;--line:#e5e7eb;--line2:#f1f1f1;
@@ -68,9 +69,9 @@ button{font:inherit;cursor:pointer}
 .snip{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .npEmpty{text-align:center;color:var(--muted);padding:16px}
 
-/* পপআপ (নোটপ্যাড ও চ্যাট সেটিংস) */
-#npOverlay,#csOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:49}
-#npOverlay.show,#csOverlay.show{display:flex}
+/* পুরোনো নোট ও সেটিংস পপআপ */
+#npOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:49}
+#npOverlay.show{display:flex}
 .npModal{background:var(--sheet);color:var(--txt);border-radius:14px;width:100%;max-width:380px;max-height:75dvh;display:flex;flex-direction:column;overflow:hidden}
 .npModalHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--modalHead);font-weight:700;color:var(--modalHeadTxt)}
 .npModalHead button{border:0;background:none;font-size:18px;color:var(--modalHeadTxt)}
@@ -95,7 +96,7 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid var(--inBord
 .btn:disabled{opacity:.6}
 .err{color:#e53935;min-height:20px;margin:6px 0 12px;font-size:14px}
 .link{background:none;border:0;color:var(--accent);margin-top:14px;font-size:14px;text-decoration:underline;display:inline-block}
-.bioBtn{margin-top:14px;padding:12px 20px;border-radius:24px;border:1px solid var(--accent);background:var(--soft);color:var(--accent);font-size:16px}
+.bioBtn{margin-top:14px;padding:12px 20px;border-radius:22px;border:1px solid var(--accent);background:var(--soft);color:var(--accent);font-size:15px}
 
 #pinMsg{font-size:18px;margin:12px 0 20px;min-height:26px}
 .dots{display:flex;justify-content:center;gap:14px;margin-bottom:24px}
@@ -105,21 +106,27 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid var(--inBord
 .pad button{height:76px;border-radius:50%;border:0;background:var(--soft2);color:var(--txt);font-size:28px}
 .pad button:active{background:var(--soft3)}
 .pad .ghost{background:none;pointer-events:none}
-#pin.noPad .dots,#pin.noPad .pad{display:none}
 .shake{animation:sh .3s}
 @keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
-/* PIN ধরন বেছে নেওয়ার পপআপ */
-#pinModeModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:24px;z-index:52}
-#pinModeModal.show{display:flex}
-#pinModeModal .dlg{max-width:340px}
-#pinModeModal .pmTitle{margin:0 0 14px;font-size:18px;font-weight:700}
-#pinModeModal .pmHint{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.45}
-#pinModeModal .pmOpt{display:block;width:100%;margin:0 0 10px;padding:13px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px}
-#pinModeModal .pmGhost{display:block;width:100%;margin:0;padding:11px;border:0;border-radius:10px;background:var(--soft2);color:var(--txt);font-size:15px}
-#pmMinutes{width:100%;padding:12px;border:1px solid var(--inBorder);border-radius:10px;font-size:16px;background:var(--input);color:var(--txt);margin-bottom:6px}
+/* ===== v12: সাধারণ পপআপ (সেটিংস, অপশন, PIN ধরন/রিসেট) ===== */
+#pinModeModal,#setModal,#optModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:24px}
+#setModal{z-index:51}
+#pinModeModal{z-index:52}
+#optModal{z-index:53}
+#pinModeModal.show,#setModal.show,#optModal.show{display:flex}
+#pinModeModal .dlg,#setModal .dlg,#optModal .dlg{max-width:340px}
+.pmTitle{margin:0 0 14px;font-size:18px;font-weight:700}
+.pmHint{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.45}
+.pmOpt{display:block;width:100%;margin:0 0 10px;padding:13px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px}
+.pmOpt:disabled{opacity:.5}
+.pmGhost{display:block;width:100%;margin:0;padding:11px;border:0;border-radius:10px;background:var(--soft2);color:var(--txt);font-size:15px}
+.optBtn{display:block;width:100%;margin:0 0 8px;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--soft2);color:var(--txt);font-size:16px;text-align:left}
+.optBtn.sel{border-color:var(--accent);font-weight:700}
+.pmInput{width:100%;padding:12px;border:1px solid var(--inBorder);border-radius:10px;font-size:16px;background:var(--input);color:var(--txt);margin-bottom:8px}
+.pmInput:disabled{opacity:.5}
 #pmNow{min-height:20px;font-size:14px;color:var(--accent);margin-bottom:4px}
-#pmErr{min-height:18px;font-size:13px;color:#e53935;margin-bottom:8px}
+.pmErr{min-height:18px;font-size:13px;color:#e53935;margin-bottom:8px}
 
 /* চ্যাট */
 header{display:flex;align-items:center;gap:2px;padding:8px 6px;padding-top:calc(8px + env(safe-area-inset-top));
@@ -132,7 +139,7 @@ header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;
 .pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
 #presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
 @keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
-header button{background:none;border:0;color:#fff;font-size:19px;padding:5px 4px}
+header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
 header #clearBtn{margin-right:4px}
 header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 
@@ -219,6 +226,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 #vrStop{background:#ff9800;color:#000;display:none}
 #vrSend{background:#25D366;color:#fff;display:none}
 #vrClose{background:#444;color:#fff}
+/* ===== v12: ভিডিও রেকর্ডিংয়ের সময়ও লগআউট বাটন ===== */
 #vrExit{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top));border:0;border-radius:50%;width:46px;height:46px;
   background:rgba(255,255,255,.22);color:#fff;font-size:26px;line-height:1}
 
@@ -303,19 +311,11 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
   </div>
 </section>
 
-<!-- নোটপ্যাডের পপআপ -->
+<!-- পুরোনো নোট / সেটিংস / ভাষা পপআপ (নোটপ্যাড) -->
 <div id="npOverlay">
   <div class="npModal">
     <div class="npModalHead"><span id="npModalTitle"></span><button id="npModalClose" type="button">✕</button></div>
     <div class="npModalList" id="npModalList"></div>
-  </div>
-</div>
-
-<!-- v13: চ্যাটের Settings (⚙️) পপআপ -->
-<div id="csOverlay">
-  <div class="npModal">
-    <div class="npModalHead"><span id="csTitle"></span><button id="csClose" type="button">✕</button></div>
-    <div class="npModalList" id="csList"></div>
   </div>
 </div>
 
@@ -332,7 +332,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
   </form>
 </section>
 
-<!-- ফিঙ্গারপ্রিন্ট + PIN (ইংরেজি) -->
+<!-- টু-স্টেপ অথেনটিকেশন স্ক্রিন (ফিঙ্গারপ্রিন্ট, তারপর PIN) — ইংরেজি -->
 <section id="pin" class="screen">
   <button class="backNoteBtn" id="pinToNote" type="button">← Notepad</button>
   <div class="card">
@@ -345,8 +345,16 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
   </div>
 </section>
 
-<!-- PIN ধরন বেছে নেওয়ার পপআপ -->
+<!-- PIN ধরন বাছা / Reset PIN পপআপ -->
 <div id="pinModeModal"><div class="dlg">
+  <div id="pmOld" style="display:none">
+    <p class="pmTitle">Reset PIN</p>
+    <p class="pmHint">Enter your current PIN to continue.</p>
+    <input class="pmInput" id="pmOldPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Current PIN">
+    <div class="pmErr" id="pmOldErr"></div>
+    <button class="pmOpt" id="pmOldOk" type="button">Verify</button>
+    <button class="pmGhost" id="pmOldCancel" type="button">Cancel</button>
+  </div>
   <div id="pmMain">
     <p class="pmTitle">Set up your PIN</p>
     <button class="pmOpt" id="pmCustom" type="button">Custom PIN</button>
@@ -354,15 +362,37 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
     <button class="pmOpt" id="pmOwn" type="button">Choice Your Own Time</button>
     <button class="pmGhost" id="pmCancel" type="button">Cancel</button>
   </div>
+  <div id="pmCustomBox" style="display:none">
+    <p class="pmTitle">Custom PIN</p>
+    <input class="pmInput" id="pmNew1" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="New 4-digit PIN">
+    <input class="pmInput" id="pmNew2" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Re-enter PIN">
+    <div class="pmErr" id="pmCErr"></div>
+    <button class="pmOpt" id="pmCSave" type="button">Save</button>
+    <button class="pmGhost" id="pmCBack" type="button">Back</button>
+  </div>
   <div id="pmOffset" style="display:none">
     <p class="pmTitle">Choice Your Own Time</p>
     <p class="pmHint">Enter minutes (1-59). Your PIN will be the current phone time (HHMM) minus these minutes.</p>
-    <input id="pmMinutes" type="number" inputmode="numeric" min="1" max="59" placeholder="Minutes">
+    <input class="pmInput" id="pmMinutes" type="number" inputmode="numeric" min="1" max="59" placeholder="Minutes">
     <div id="pmNow"></div>
-    <div id="pmErr"></div>
+    <div class="pmErr" id="pmErr"></div>
     <button class="pmOpt" id="pmSave" type="button">Save</button>
     <button class="pmGhost" id="pmBack" type="button">Back</button>
   </div>
+</div></div>
+
+<!-- চ্যাট সেটিংস পপআপ (⚙️) ও অপশন পপআপ -->
+<div id="setModal"><div class="dlg">
+  <p class="pmTitle" id="setTitle"></p>
+  <button class="optBtn" id="setLang" type="button"></button>
+  <button class="optBtn" id="setTheme" type="button"></button>
+  <button class="optBtn" id="setReset" type="button"></button>
+  <button class="pmGhost" id="setClose" type="button"></button>
+</div></div>
+<div id="optModal"><div class="dlg">
+  <p class="pmTitle" id="optTitle"></p>
+  <div id="optList"></div>
+  <button class="pmGhost" id="optClose" type="button"></button>
 </div></div>
 
 <!-- চ্যাট -->
@@ -382,7 +412,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
     <span class="ic">⏱️</span>
     <button id="adBtn" type="button"></button>
     <span class="spacer"></span>
-    <small id="ver">v13</small>
+    <small id="ver">v12</small>
   </div>
   <div id="list"></div>
   <div id="replyBar">
@@ -498,44 +528,36 @@ const CHUNK_CHARS = 700000;
 const MAX_VOICE_SEC = 120;
 const MAX_VIDEO_SEC = 15;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
-const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", LANG_KEY = "cc_lang", BIO_KEY = "cc_bio_cred";
+const PIN_KEY = "cc_pin_hash", BIO_KEY = "cc_bio_cred", LANG_KEY = "cc_lang";
 const PIN_MODE_KEY = "cc_pin_mode", PIN_OFFSET_KEY = "cc_pin_offset";
-/* ===== v13: লকআউটের স্থায়ী কাউন্টার (রিলোডেও থাকে) ===== */
-const FAILS_KEY = "cc_pin_fails", LEVEL_KEY = "cc_lock_level";
+const LOCK_UNTIL_KEY = "cc_lock_until", LOCK_LEVEL_KEY = "cc_lock_level", LOCK_CNT_KEY = "cc_lock_cnt";
 const THEME_KEY = "cc_theme", NP_LANG_KEY = "np_lang";
 const NOTES_LIST_KEY = "np_saved_notes", NOTE_DRAFT_KEY = "np_current_draft";
 
 localStorage.removeItem("cc_bio_asked");
-/* PIN-এর ধরন বাছা না থাকলে পুরোনো PIN ও ফিঙ্গারপ্রিন্ট বাদ; নতুন করে সেটআপ হবে */
-if (!localStorage.getItem(PIN_MODE_KEY)) {
-  localStorage.removeItem(PIN_KEY);
-  localStorage.removeItem(BIO_KEY);
-}
+if (!localStorage.getItem(PIN_MODE_KEY)) localStorage.removeItem(PIN_KEY);
 
-/* লগইন, ফিঙ্গারপ্রিন্ট ও PIN পেজের বার্তা (সবসময় ইংরেজি) */
 const E = {
   invCred: "Invalid email or password", netErr: "No internet connection",
   manyReq: "Too many attempts, try again later", unauthDom: "Domain not in Authorized domains",
   loginFail: "Login failed: ",
-  enterPin: "Enter PIN", enterCurrentPin: "Enter your current PIN",
-  setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
+  enterPin: "Enter PIN", setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
   mismatchPin: "PIN did not match, try again",
-  wrongPin: n => `Wrong PIN. ${n} attempt${n === 1 ? "" : "s"} left before lockout`,
-  lockedIn: t => `Too many wrong attempts. Try again in ${t}`,
-  verifyBio: "Verify your fingerprint", enrollBio: "Fingerprint setup is required",
-  bioVerifyBtn: "👆 Verify fingerprint", bioSetupBtn: "👆 Set up fingerprint",
-  bioFail: "Fingerprint not verified. Tap the button to try again.",
-  bioUnsupported: "Fingerprint is not supported on this phone or browser.",
-  bioEnrollFail: "Fingerprint setup failed. Tap the button to try again.",
-  bioDone: "Fingerprint added", pinUpdated: "PIN updated",
+  wrongPin1: "Wrong PIN. One more wrong attempt will lock for 10 minutes.",
+  lockedIn: t => `Locked. Try again in ${t}`,
+  pin4: "Enter exactly 4 digits",
   logoutMsg: "Logout? The PIN and fingerprint setup on this phone will be removed.", logoutBtn: "Logout",
   yes: "Yes", no: "No",
+  bioVerify: "Verify your fingerprint", bioVerifyBtn: "👆 Verify fingerprint",
+  bioEnroll: "Fingerprint setup is required to continue", bioEnrollBtn: "👆 Set up fingerprint",
+  bioFail: "Fingerprint failed, try again", bioDone: "Fingerprint enabled",
+  bioUnsupported: "This browser/device does not support fingerprint lock, so access is not possible.",
   pmBad: "Enter a number from 1 to 59", pmNow: "Right now your PIN would be: ",
   pmPhoneDone: "PIN mode: phone time. Enter the current time as HHMM.",
-  pmOwnDone: n => `PIN mode: phone time minus ${n} min.`
+  pmOwnDone: n => `PIN mode: phone time minus ${n} min.`,
+  pinChanged: "PIN changed"
 };
 
-/* চ্যাটের ভাষা (⚙️ Settings থেকে বদলায়) */
 const I18N = {
   bn: {
     turnOn: "চালু করুন", turnOff: "বন্ধ করুন",
@@ -561,8 +583,8 @@ const I18N = {
     mediaDelErr: "মিডিয়া মোছা ব্যর্থ",
     langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন", mLoading: "লোড হচ্ছে…", mMissing: "⚠️ মিডিয়া পাওয়া যায়নি",
     recInCall: "কল চলাকালীন রেকর্ড করা যাবে না",
-    settings: "সেটিংস", csLanguage: "ভাষা নির্বাচন", csTheme: "লাইট / ডার্ক মোড", csReset: "PIN রিসেট",
-    lightOpt: "লাইট মোড", darkOpt: "ডার্ক মোড", back: "← ফিরুন", endCallFirst: "আগে কল শেষ করুন"
+    setTitle: "সেটিংস", setLang: "ভাষা নির্বাচন", setTheme: "লাইট / ডার্ক মোড", setReset: "PIN রিসেট", setClose: "বন্ধ",
+    langTitle: "ভাষা নির্বাচন", themeTitle: "লাইট / ডার্ক মোড", setLight: "লাইট মোড", setDark: "ডার্ক মোড"
   },
   en: {
     turnOn: "Turn On", turnOff: "Turn Off",
@@ -588,16 +610,14 @@ const I18N = {
     mediaDelErr: "Failed to delete media",
     langSwitched: "Language: English", openBig: "Open full screen", mLoading: "Loading…", mMissing: "⚠️ Media not found",
     recInCall: "Cannot record during a call",
-    settings: "Settings", csLanguage: "Language Selection", csTheme: "Light / Dark Mode", csReset: "Reset PIN",
-    lightOpt: "Light mode", darkOpt: "Dark mode", back: "← Back", endCallFirst: "End the call first"
+    setTitle: "Settings", setLang: "Language", setTheme: "Light / Dark mode", setReset: "Reset PIN", setClose: "Close",
+    langTitle: "Language", themeTitle: "Light / Dark mode", setLight: "Light mode", setDark: "Dark mode"
   }
 };
 
-/* ===== v13: ডিফল্ট ভাষা ইংরেজি (আগে আলাদা করে বেছে থাকলে সেটাই থাকে) ===== */
 let lang = localStorage.getItem(LANG_KEY) === "bn" ? "bn" : "en";
 const T = k => I18N[lang][k];
 
-/* নোটপ্যাডের আলাদা ভাষা (⋮ মেনু থেকে) */
 const NP = {
   bn: {
     title: "📝 নোটপ্যাড", save: "সেভ", newNote: "নতুন নোট", oldNotes: "পুরোনো নোট দেখুন",
@@ -645,7 +665,7 @@ function toast(t, ms = 3800) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.style.display = "none", ms);
 }
 
-/* ---------- লাইট / ডার্ক মোড (নোটপ্যাড ও চ্যাট দুজায়গায়) ---------- */
+/* ---------- লাইট / ডার্ক মোড ---------- */
 function isDark() { return localStorage.getItem(THEME_KEY) === "dark"; }
 function applyTheme() {
   const d = isDark();
@@ -653,13 +673,13 @@ function applyTheme() {
   $("themeMeta").setAttribute("content", d ? "#92400e" : "#f59e0b");
   $("mTheme").textContent = (d ? "☀️ " : "🌙 ") + npT(d ? "lightMode" : "darkMode");
 }
-function toggleTheme() {
-  localStorage.setItem(THEME_KEY, isDark() ? "light" : "dark");
+function setTheme(dark) {
+  localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
   applyTheme();
 }
-$("mTheme").onclick = () => { $("npMenu").classList.remove("show"); toggleTheme(); };
+$("mTheme").onclick = () => { $("npMenu").classList.remove("show"); setTheme(!isDark()); };
 
-/* ---------- নোটপ্যাড (প্রাথমিক স্ক্রিন) ---------- */
+/* ---------- নোটপ্যাড ---------- */
 function applyNpLang() {
   $("npTitleEl").textContent = npT("title");
   $("npSaveBtn").textContent = npT("save");
@@ -671,13 +691,13 @@ function applyNpLang() {
   $("noteTitleInput").placeholder = npT("titlePh");
   $("noteBodyInput").placeholder = npT("bodyPh");
   $("npSearch").placeholder = npT("searchPh");
+  document.documentElement.lang = npLang;
   applyTheme();
 }
 function getSavedNotes() {
   try { return JSON.parse(localStorage.getItem(NOTES_LIST_KEY) || "[]"); } catch (e) { return []; }
 }
 function setSavedNotes(arr) { localStorage.setItem(NOTES_LIST_KEY, JSON.stringify(arr)); }
-// লেখা চুপচাপ খসড়া হিসেবে ফোনে থাকে (অ্যাপ বন্ধ হলেও হারায় না)
 function saveDraft() {
   localStorage.setItem(NOTE_DRAFT_KEY, JSON.stringify({
     title: $("noteTitleInput").value,
@@ -694,7 +714,6 @@ function loadDraft() {
 $("noteTitleInput").addEventListener("input", saveDraft);
 $("noteBodyInput").addEventListener("input", saveDraft);
 
-// সেভ চাপলে নোট জমা হয় এবং সঙ্গে সঙ্গে নতুন খালি নোট চালু হয়
 $("npSaveBtn").onclick = () => {
   const rawTitle = $("noteTitleInput").value.trim();
   const body = $("noteBodyInput").value.trim();
@@ -772,7 +791,6 @@ $("mNpSettings").onclick = () => {
   $("npOverlay").classList.add("show");
 };
 
-/* নোটপ্যাডের ভাষা নির্বাচন (⋮ মেনু) */
 $("mLang").onclick = () => {
   $("npMenu").classList.remove("show");
   $("npModalTitle").textContent = npT("langTitle");
@@ -791,7 +809,6 @@ $("mLang").onclick = () => {
   $("npOverlay").classList.add("show");
 };
 
-/* নোটপ্যাডে সার্চ বার */
 function clearSearch() { $("npSearch").value = ""; renderSearch(); }
 function renderSearch() {
   const q = $("npSearch").value.trim().toLowerCase();
@@ -836,24 +853,29 @@ function closeOverlays() {
   stopVoiceRec(true);
   closeVidRecModal();
   $("mediaViewer").classList.remove("show");
-  $("csOverlay").classList.remove("show");
 }
-// নোটপ্যাডে ফেরা: কল চললে কল কেটে দেয়; চলমান রেকর্ডিংও বাতিল হয়
+function closeAllModals() {
+  clearInterval(lockTicker); clearInterval(oldTicker);
+  $("setModal").classList.remove("show");
+  $("optModal").classList.remove("show");
+  $("pinModeModal").classList.remove("show");
+}
 function returnToNotepad() {
   if (call) endCall(true);
   inToolbox = false;
   unlocked = false;
-  resetFlow = false; authStage = null; clearLockTick();
-  closeSheet(); closeDelSheet(); closeOverlays(); closePinChoose();
+  pinBuf = ""; pinFirst = null; bioPassed = false;
+  closeSheet(); closeDelSheet(); closeOverlays(); closeAllModals();
   show("notepad");
 }
 $("loginToNote").onclick = returnToNotepad;
+$("pinToNote").onclick = returnToNotepad;
 
 loadDraft();
+applyNpLang();
 
 /* ---------- চ্যাটের ভাষা ও সাধারণ সহায়ক ---------- */
 function applyLang() {
-  document.documentElement.lang = lang;
   $("msg").placeholder = T("msgPh");
   $("shReply").textContent = T("reply");
   $("shDel").textContent = T("del");
@@ -871,45 +893,11 @@ function applyLang() {
   renderIncoming();
   if (me && unlocked) render(false);
 }
-
-/* ===== v13: চ্যাটের ⚙️ Settings পপআপ (ভাষা, লাইট/ডার্ক, Reset PIN) ===== */
-function closeCS() { $("csOverlay").classList.remove("show"); }
-$("csClose").onclick = closeCS;
-$("csOverlay").onclick = e => { if (e.target.id === "csOverlay") closeCS(); };
-$("settingsBtn").onclick = () => openCS("main");
-function csBtn(text, fn, sel) {
-  const b = document.createElement("button");
-  b.type = "button"; b.className = "langOpt" + (sel ? " sel" : "");
-  b.textContent = text; b.onclick = fn;
-  return b;
-}
-function openCS(view) {
-  const list = $("csList"); list.innerHTML = "";
-  if (view === "lang") {
-    $("csTitle").textContent = T("csLanguage");
-    [["bn", "বাংলা (Bangla)"], ["en", "English"]].forEach(([c, label]) => {
-      list.appendChild(csBtn((lang === c ? "✓ " : "") + label, () => {
-        lang = c; localStorage.setItem(LANG_KEY, c);
-        applyLang(); closeCS(); toast(T("langSwitched"));
-      }, lang === c));
-    });
-    list.appendChild(csBtn(T("back"), () => openCS("main")));
-  } else if (view === "theme") {
-    $("csTitle").textContent = T("csTheme");
-    const cur = isDark() ? "dark" : "light";
-    [["light", "☀️ " + T("lightOpt")], ["dark", "🌙 " + T("darkOpt")]].forEach(([c, label]) => {
-      list.appendChild(csBtn((cur === c ? "✓ " : "") + label, () => {
-        localStorage.setItem(THEME_KEY, c); applyTheme(); closeCS();
-      }, cur === c));
-    });
-    list.appendChild(csBtn(T("back"), () => openCS("main")));
-  } else {
-    $("csTitle").textContent = T("settings");
-    list.appendChild(csBtn("🌐 " + T("csLanguage"), () => openCS("lang")));
-    list.appendChild(csBtn("🌗 " + T("csTheme"), () => openCS("theme")));
-    list.appendChild(csBtn("🔑 " + T("csReset"), openReset));
-  }
-  $("csOverlay").classList.add("show");
+function setChatLang(code) {
+  lang = code;
+  localStorage.setItem(LANG_KEY, code);
+  applyLang();
+  toast(T("langSwitched"));
 }
 
 let lastErrAt = 0;
@@ -971,8 +959,9 @@ onAuthStateChanged(auth, user => {
 });
 
 async function doLogout() {
-  [PIN_KEY, PIN_MODE_KEY, PIN_OFFSET_KEY, BIO_KEY, LOCK_KEY, FAILS_KEY, LEVEL_KEY].forEach(k => localStorage.removeItem(k));
-  unlocked = false; resetFlow = false;
+  [PIN_KEY, PIN_MODE_KEY, PIN_OFFSET_KEY, BIO_KEY].forEach(k => localStorage.removeItem(k));
+  resetLock();
+  unlocked = false;
   if (me) {
     try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
     catch (e) {}
@@ -980,7 +969,6 @@ async function doLogout() {
   await signOut(auth);
 }
 
-/* ⎋ আইকন: কোনো পপ-আপ ছাড়া সরাসরি নোটপ্যাডে ফেরায়; কল বা রেকর্ডিং চললে সেটাও বন্ধ করে */
 $("logoutBtn").onclick = () => {
   if (me) {
     setTyping(false);
@@ -993,86 +981,22 @@ $("forgot").onclick = async () => {
   if (await confirmBox(E.logoutMsg, E.logoutBtn)) doLogout();
 };
 
-/* ===== v13: টু-স্টেপ অথেনটিকেশন: ১) ফিঙ্গারপ্রিন্ট ২) PIN (দুটোই বাধ্যতামূলক) ===== */
-let pinBuf = "", pinFirst = null, authStage = null, resetFlow = false, enrollNext = "pin", lockTick = null;
-
-async function hashPin(p) {
-  const data = new TextEncoder().encode("couple_chat_v1:" + me.uid + ":" + p);
-  const buf = await crypto.subtle.digest("SHA-256", data);
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-// ফোনের এখনকার সময় (HH:MM) থেকে minus মিনিট বিয়োগ করে "HHMM"; রাত ১২টা পার হলে ঘুরে যায়
-function timePin(minus) {
-  const d = new Date();
-  let t = (d.getHours() * 60 + d.getMinutes() - minus) % 1440;
-  if (t < 0) t += 1440;
-  return String(Math.floor(t / 60)).padStart(2, "0") + String(t % 60).padStart(2, "0");
-}
-function dynamicMinus() {
-  return localStorage.getItem(PIN_MODE_KEY) === "offset" ? (Number(localStorage.getItem(PIN_OFFSET_KEY)) || 0) : 0;
-}
-async function verifyPin(entered) {
-  if (localStorage.getItem(PIN_MODE_KEY) === "custom") return (await hashPin(entered)) === localStorage.getItem(PIN_KEY);
-  return entered === timePin(dynamicMinus());
-}
-function buildPad() {
-  const pad = $("pad"); pad.innerHTML = "";
-  const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
-  keys.forEach(k => {
-    const b = document.createElement("button");
-    b.type = "button";
-    if (k === "") b.className = "ghost"; else b.textContent = k;
-    if (k !== "") b.onclick = () => pressKey(k);
-    pad.appendChild(b);
-  });
-}
-function renderDots() {
-  [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
-}
-
-/* ---- ভুল PIN লকআউট (লগইন ও Reset PIN একই কাউন্টার; localStorage-এ থাকে) ---- */
-const pad2 = n => String(n).padStart(2, "0");
-function lockLeftMs() { return Math.max(0, Number(localStorage.getItem(LOCK_KEY) || 0) - Date.now()); }
-function fmtLock(ms) {
-  const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-  return h ? `${h}:${pad2(m)}:${pad2(sec)}` : `${pad2(m)}:${pad2(sec)}`;
-}
-function clearLockTick() { if (lockTick) { clearInterval(lockTick); lockTick = null; } }
-function startLockTick() {
-  clearLockTick();
-  const upd = () => {
-    if (authStage !== "pin") { clearLockTick(); return; }
-    const left = lockLeftMs();
-    if (left <= 0) {
-      clearLockTick();
-      $("pinMsg").textContent = resetFlow ? E.enterCurrentPin : E.enterPin;
-      return;
-    }
-    $("pinMsg").textContent = E.lockedIn(fmtLock(left));
-  };
-  upd(); lockTick = setInterval(upd, 1000);
-}
-// ধাপ ১: প্রথম ২ বার ভুল = ১০ মিনিট; ধাপ ২: তারপর ১ বার ভুল = ৩০ মিনিট; ধাপ ৩ ও পরে: ১ বার ভুল = ৬০ মিনিট
+/* ---------- ভুল-PIN লকআউট ---------- */
+const numLS = k => Number(localStorage.getItem(k) || 0);
+const lockRemaining = () => Math.max(0, numLS(LOCK_UNTIL_KEY) - Date.now());
 function registerWrong() {
-  let level = Number(localStorage.getItem(LEVEL_KEY)) || 0;
-  let fails = (Number(localStorage.getItem(FAILS_KEY)) || 0) + 1;
-  let mins = 0;
-  if (level === 0) { if (fails >= 2) { mins = 10; level = 1; } }
-  else if (level === 1) { mins = 30; level = 2; }
-  else { mins = 60; level = 3; }
-  if (mins) {
-    fails = 0;
-    localStorage.setItem(LOCK_KEY, String(Date.now() + mins * 60000));
-  }
-  localStorage.setItem(LEVEL_KEY, String(level));
-  localStorage.setItem(FAILS_KEY, String(fails));
-  return { mins, left: level === 0 ? 2 - fails : 1 };
+  let level = numLS(LOCK_LEVEL_KEY), cnt = numLS(LOCK_CNT_KEY), mins = 0;
+  if (level === 0) { cnt++; if (cnt >= 2) { mins = 10; level = 1; cnt = 0; } }
+  else { mins = level === 1 ? 30 : 60; level = Math.min(level + 1, 3); }
+  localStorage.setItem(LOCK_CNT_KEY, String(cnt));
+  localStorage.setItem(LOCK_LEVEL_KEY, String(level));
+  if (mins) localStorage.setItem(LOCK_UNTIL_KEY, String(Date.now() + mins * 60000));
+  return mins;
 }
-function clearWrongState() {
-  [LOCK_KEY, FAILS_KEY, LEVEL_KEY].forEach(k => localStorage.removeItem(k));
-}
+function resetLock() { [LOCK_UNTIL_KEY, LOCK_LEVEL_KEY, LOCK_CNT_KEY].forEach(k => localStorage.removeItem(k)); }
+const fmtMs = ms => { const s = Math.ceil(ms / 1000); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
 
-/* ---- ফিঙ্গারপ্রিন্ট (WebAuthn) ---- */
+/* ---------- ফিঙ্গারপ্রিন্ট (WebAuthn) ---------- */
 function bioSupported() {
   return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && window.isSecureContext);
 }
@@ -1096,18 +1020,9 @@ async function bioCheck() {
   } catch (e) { return false; }
   finally { bioBusy = false; }
 }
-async function runBio() {
-  if (authStage !== "bio") return;
-  const ok = await bioCheck();
-  if (authStage !== "bio" || !$("pin").classList.contains("active")) return;
-  if (ok) setStage("pin");
-  else $("pinMsg").textContent = E.bioFail;
-}
-async function enrollBio() {
-  if (authStage !== "enroll" || bioBusy) return;
-  if (!bioSupported()) { $("pinMsg").textContent = E.bioUnsupported; return; }
+async function bioEnroll() {
+  if (!bioSupported() || !me || bioBusy) return false;
   bioBusy = true;
-  let done = false;
   try {
     const cred = await navigator.credentials.create({
       publicKey: {
@@ -1121,75 +1036,216 @@ async function enrollBio() {
     });
     if (cred) {
       localStorage.setItem(BIO_KEY, [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join(""));
-      done = true;
+      return true;
     }
-  } catch (e) {}
-  bioBusy = false;
-  if (!done) { $("pinMsg").textContent = E.bioEnrollFail; return; }
-  toast(E.bioDone);
-  if (enrollNext === "unlock") unlock(); else setStage("pin");
+    return false;
+  } catch (e) { return false; }
+  finally { bioBusy = false; }
 }
-$("bioBtn").onclick = () => {
-  if (authStage === "bio") runBio();
-  else if (authStage === "enroll") enrollBio();
-};
 
-/* ---- ধাপ ব্যবস্থাপনা ---- */
-function setStage(s) {
-  authStage = s;
-  $("pin").classList.toggle("noPad", !(s === "setup" || s === "pin"));
-  $("bioBtn").style.display = (s === "bio" || s === "enroll") ? "inline-block" : "none";
-  $("bioBtn").textContent = s === "enroll" ? E.bioSetupBtn : E.bioVerifyBtn;
-  $("forgot").style.display = resetFlow ? "none" : "inline-block";
-  $("pinToNote").textContent = resetFlow ? "← Back" : "← Notepad";
-  if (s !== "pin") clearLockTick();
-  if (s === "bio") $("pinMsg").textContent = E.verifyBio;
-  else if (s === "enroll") $("pinMsg").textContent = E.enrollBio;
-  else if (s === "choose") $("pinMsg").textContent = "";
-  else if (s === "setup") $("pinMsg").textContent = E.setPin;
-  else if (s === "pin") {
-    if (lockLeftMs() > 0) startLockTick();
-    else $("pinMsg").textContent = resetFlow ? E.enterCurrentPin : E.enterPin;
-  }
-  pinBuf = ""; renderDots();
+/* ---------- ডায়নামিক PIN সিস্টেম ---------- */
+let pinBuf = "", pinFirst = null, authStep = "pin", bioPassed = false, lockTicker = null, oldTicker = null;
+
+async function hashPin(p) {
+  const data = new TextEncoder().encode("couple_chat_v1:" + me.uid + ":" + p);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function timePin(minus) {
+  const d = new Date();
+  let t = (d.getHours() * 60 + d.getMinutes() - minus) % 1440;
+  if (t < 0) t += 1440;
+  return String(Math.floor(t / 60)).padStart(2, "0") + String(t % 60).padStart(2, "0");
+}
+function dynamicMinus() {
+  return localStorage.getItem(PIN_MODE_KEY) === "offset" ? (Number(localStorage.getItem(PIN_OFFSET_KEY)) || 0) : 0;
+}
+async function verifyPin(entered) {
+  if (localStorage.getItem(PIN_MODE_KEY) === "custom")
+    return (await hashPin(entered)) === localStorage.getItem(PIN_KEY);
+  return entered === timePin(dynamicMinus());
+}
+function applyMode(mode, off) {
+  localStorage.setItem(PIN_MODE_KEY, mode);
+  if (mode === "offset") localStorage.setItem(PIN_OFFSET_KEY, String(off));
+  else localStorage.removeItem(PIN_OFFSET_KEY);
+  if (mode !== "custom") localStorage.removeItem(PIN_KEY);
+}
+function buildPad() {
+  const pad = $("pad"); pad.innerHTML = "";
+  const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
+  keys.forEach(k => {
+    const b = document.createElement("button");
+    b.type = "button";
+    if (k === "") b.className = "ghost"; else b.textContent = k;
+    if (k !== "") b.onclick = () => pressKey(k);
+    pad.appendChild(b);
+  });
+}
+function renderDots() {
+  [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
+}
+function setPinUi(step) {
+  authStep = step;
+  const showPad = step === "pin" || step === "setup";
+  $("dots").style.display = showPad ? "flex" : "none";
+  $("pad").style.display = showPad ? "grid" : "none";
+  const showBio = step === "bio" || step === "enroll";
+  $("bioBtn").style.display = showBio ? "inline-block" : "none";
+  $("bioBtn").textContent = step === "enroll" ? E.bioEnrollBtn : E.bioVerifyBtn;
+  const msgs = { choose: "", bio: E.bioVerify, pin: E.enterPin, setup: E.setPin, enroll: E.bioEnroll, locked: "" };
+  $("pinMsg").textContent = msgs[step] || "";
+}
+function showUnsupported() {
+  $("pinMsg").textContent = E.bioUnsupported;
+  $("bioBtn").style.display = "none";
+  $("dots").style.display = "none"; $("pad").style.display = "none";
+}
+function showLocked() {
+  setPinUi("locked");
+  const tick = () => {
+    const r = lockRemaining();
+    if (r <= 0) { clearInterval(lockTicker); if ($("pin").classList.contains("active")) startPin(); return; }
+    $("pinMsg").textContent = E.lockedIn(fmtMs(r));
+  };
+  tick(); lockTicker = setInterval(tick, 1000);
 }
 function startPin() {
-  resetFlow = false; enrollNext = "pin";
-  pinFirst = null;
+  clearInterval(lockTicker);
+  pinBuf = ""; pinFirst = null; bioPassed = false; renderDots();
   show("pin");
-  if (!localStorage.getItem(PIN_MODE_KEY)) { setStage("choose"); openPinChoose(); return; }
-  if (!localStorage.getItem(BIO_KEY)) { setStage("enroll"); setTimeout(enrollBio, 350); return; }
-  setStage("bio");
-  setTimeout(runBio, 350);
+  if (!localStorage.getItem(PIN_MODE_KEY)) {
+    localStorage.removeItem(BIO_KEY);
+    setPinUi("choose");
+    openPinChoose("first");
+    return;
+  }
+  if (lockRemaining() > 0) { showLocked(); return; }
+  if (localStorage.getItem(BIO_KEY)) runBioStep();
+  else setPinUi("pin");
 }
-function openPinChoose() {
-  $("pmMain").style.display = "block";
-  $("pmOffset").style.display = "none";
+function runBioStep() {
+  setPinUi("bio");
+  if (!bioSupported()) { showUnsupported(); return; }
+  setTimeout(() => {
+    if ($("pin").classList.contains("active") && authStep === "bio") doBioVerify();
+  }, 350);
+}
+async function doBioVerify() {
+  if (authStep !== "bio") return;
+  const ok = await bioCheck();
+  if (authStep !== "bio" || !$("pin").classList.contains("active")) return;
+  if (ok) { bioPassed = true; pinBuf = ""; renderDots(); setPinUi("pin"); }
+  else toast(E.bioFail);
+}
+function goEnroll() {
+  setPinUi("enroll");
+  if (!bioSupported()) { showUnsupported(); return; }
+  setTimeout(() => {
+    if ($("pin").classList.contains("active") && authStep === "enroll") doEnroll();
+  }, 350);
+}
+async function doEnroll() {
+  if (authStep !== "enroll") return;
+  if (!bioSupported()) { showUnsupported(); return; }
+  const ok = await bioEnroll();
+  if (authStep !== "enroll") return;
+  if (ok) { bioPassed = true; toast(E.bioDone); unlock(); }
+  else toast(E.bioFail);
+}
+$("bioBtn").onclick = () => { if (authStep === "enroll") doEnroll(); else doBioVerify(); };
+
+function afterPinOk() {
+  if (!localStorage.getItem(BIO_KEY)) goEnroll();
+  else if (bioPassed) unlock();
+  else startPin();
+}
+async function pressKey(k) {
+  if (authStep !== "pin" && authStep !== "setup") return;
+  if (authStep === "pin" && lockRemaining() > 0) { startPin(); return; }
+  if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
+  if (pinBuf.length >= 4) return;
+  pinBuf += k; renderDots();
+  if (pinBuf.length < 4) return;
+
+  const entered = pinBuf;
+  if (authStep === "setup") {
+    if (pinFirst === null) {
+      pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
+      $("pinMsg").textContent = E.confirmPin;
+    } else if (pinFirst === entered) {
+      applyMode("custom");
+      localStorage.setItem(PIN_KEY, await hashPin(entered));
+      resetLock();
+      pinBuf = ""; renderDots();
+      goEnroll();
+    } else {
+      pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
+      $("pinMsg").textContent = E.mismatchPin; shake();
+    }
+  } else {
+    if (await verifyPin(entered)) {
+      resetLock();
+      pinBuf = ""; renderDots();
+      afterPinOk();
+    } else {
+      pinBuf = ""; setTimeout(renderDots, 120); shake();
+      const mins = registerWrong();
+      if (mins) startPin();
+      else $("pinMsg").textContent = E.wrongPin1;
+    }
+  }
+}
+function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+function unlock() { clearInterval(lockTicker); unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
+function lockNow() { returnToNotepad(); renderIncoming(); }
+buildPad();
+
+/* ---------- PIN ধরন বাছার পপআপ ---------- */
+let pmCtx = "first";
+function pmShow(id) {
+  ["pmOld", "pmMain", "pmCustomBox", "pmOffset"].forEach(s => $(s).style.display = s === id ? "block" : "none");
+}
+function openPinChoose(ctx) {
+  pmCtx = ctx;
+  pmShow("pmMain");
   $("pinModeModal").classList.add("show");
 }
-function closePinChoose() { $("pinModeModal").classList.remove("show"); }
-
-// PIN সেট হওয়ার পর: Reset হলে চ্যাটে ফেরা, নইলে ফিঙ্গারপ্রিন্ট সেটআপ (না থাকলে) তারপর ঢোকা
-function finishPinSet() {
+function closePinChoose() {
+  clearInterval(oldTicker);
+  $("pinModeModal").classList.remove("show");
+}
+function finishChoose(mode, off) {
+  applyMode(mode, off);
+  const first = pmCtx === "first";
   closePinChoose();
-  clearWrongState();
-  if (resetFlow) { endReset(true); return; }
-  if (!localStorage.getItem(BIO_KEY)) { enrollNext = "unlock"; setStage("enroll"); setTimeout(enrollBio, 200); }
-  else unlock();
+  toast(mode === "phone" ? E.pmPhoneDone : mode === "offset" ? E.pmOwnDone(off) : E.pinChanged, 5000);
+  if (first) { resetLock(); pinBuf = ""; goEnroll(); }
 }
 
-// ১. Custom PIN: নিজের ৪ সংখ্যা
-$("pmCustom").onclick = () => { closePinChoose(); pinFirst = null; setStage("setup"); };
-// ২. As Your Phone Time: ফোনের সময় = PIN
-$("pmPhone").onclick = () => {
-  localStorage.setItem(PIN_MODE_KEY, "phone");
-  localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_OFFSET_KEY);
-  toast(E.pmPhoneDone, 5000); finishPinSet();
+$("pmCustom").onclick = () => {
+  if (pmCtx === "first") {
+    closePinChoose();
+    pinBuf = ""; pinFirst = null; renderDots();
+    setPinUi("setup");
+  } else {
+    pmShow("pmCustomBox");
+    $("pmNew1").value = ""; $("pmNew2").value = ""; $("pmCErr").textContent = "";
+  }
 };
-// ৩. Choice Your Own Time: ফোনের সময় থেকে N মিনিট বিয়োগ
+$("pmCSave").onclick = async () => {
+  const a = $("pmNew1").value.trim(), b = $("pmNew2").value.trim();
+  if (!/^\d{4}$/.test(a)) { $("pmCErr").textContent = E.pin4; return; }
+  if (a !== b) { $("pmCErr").textContent = E.mismatchPin; return; }
+  applyMode("custom");
+  localStorage.setItem(PIN_KEY, await hashPin(a));
+  closePinChoose();
+  toast(E.pinChanged, 4000);
+};
+$("pmCBack").onclick = () => pmShow("pmMain");
+$("pmPhone").onclick = () => finishChoose("phone");
 $("pmOwn").onclick = () => {
-  $("pmMain").style.display = "none";
-  $("pmOffset").style.display = "block";
+  pmShow("pmOffset");
   $("pmMinutes").value = ""; $("pmErr").textContent = ""; $("pmNow").textContent = "";
 };
 $("pmMinutes").addEventListener("input", () => {
@@ -1200,70 +1256,100 @@ $("pmMinutes").addEventListener("input", () => {
 $("pmSave").onclick = () => {
   const n = parseInt($("pmMinutes").value, 10);
   if (!(n >= 1 && n <= 59)) { $("pmErr").textContent = E.pmBad; return; }
-  localStorage.setItem(PIN_MODE_KEY, "offset");
-  localStorage.setItem(PIN_OFFSET_KEY, String(n));
-  localStorage.removeItem(PIN_KEY);
-  toast(E.pmOwnDone(n), 5000); finishPinSet();
+  finishChoose("offset", n);
 };
-$("pmBack").onclick = openPinChoose;
-$("pmCancel").onclick = () => { closePinChoose(); if (resetFlow) endReset(false); else returnToNotepad(); };
+$("pmBack").onclick = () => pmShow("pmMain");
+$("pmCancel").onclick = () => {
+  const first = pmCtx === "first";
+  closePinChoose();
+  if (first) returnToNotepad();
+};
 
-/* ---- PIN রিসেট (⚙️ Settings থেকে): আগে পুরাতন PIN যাচাই, তারপর নতুন PIN ---- */
-function openReset() {
-  closeCS();
-  if (call) { toast(T("endCallFirst")); return; }
-  closeOverlays();
-  resetFlow = true; pinFirst = null;
-  show("pin");
-  setStage("pin");
-}
-function endReset(changed) {
-  resetFlow = false; authStage = null; clearLockTick(); closePinChoose();
-  show("chat");
-  if (changed) toast(E.pinUpdated);
-}
-$("pinToNote").onclick = () => { if (resetFlow) endReset(false); else returnToNotepad(); };
-
-async function pressKey(k) {
-  if (authStage !== "pin" && authStage !== "setup") return;
-  if (authStage === "pin" && lockLeftMs() > 0) { startLockTick(); return; }
-  if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
-  if (pinBuf.length >= 4) return;
-  pinBuf += k; renderDots();
-  if (pinBuf.length < 4) return;
-
-  const entered = pinBuf;
-  if (authStage === "setup") {
-    if (pinFirst === null) {
-      pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = E.confirmPin;
-    } else if (pinFirst === entered) {
-      localStorage.setItem(PIN_KEY, await hashPin(entered));
-      localStorage.setItem(PIN_MODE_KEY, "custom");
-      localStorage.removeItem(PIN_OFFSET_KEY);
-      finishPinSet();
-    } else {
-      pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = E.mismatchPin; shake();
+/* ---------- Reset PIN ---------- */
+function refreshOldLockUi() {
+  clearInterval(oldTicker);
+  const tick = () => {
+    const r = lockRemaining();
+    const locked = r > 0;
+    $("pmOldPin").disabled = locked;
+    $("pmOldOk").disabled = locked;
+    if (locked) $("pmOldErr").textContent = E.lockedIn(fmtMs(r));
+    else {
+      if ($("pmOldErr").textContent.startsWith("Locked")) $("pmOldErr").textContent = "";
+      clearInterval(oldTicker);
     }
-    return;
-  }
-  // authStage === "pin": লগইন বা Reset-এর পুরাতন PIN যাচাই
-  if (await verifyPin(entered)) {
-    clearWrongState();
-    if (resetFlow) { setStage("choose"); openPinChoose(); }
-    else unlock();
-  } else {
-    pinBuf = ""; setTimeout(renderDots, 120); shake();
-    const r = registerWrong();
-    if (r.mins) startLockTick();
-    else $("pinMsg").textContent = E.wrongPin(r.left);
-  }
+  };
+  tick();
+  if (lockRemaining() > 0) oldTicker = setInterval(tick, 1000);
 }
-function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
-function unlock() { unlocked = true; pinBuf = ""; authStage = null; clearLockTick(); enterChat(); renderIncoming(); }
-function lockNow() { returnToNotepad(); renderIncoming(); }
-buildPad();
+function openResetPin() {
+  closeSetModal();
+  pmCtx = "reset";
+  pmShow("pmOld");
+  $("pmOldPin").value = ""; $("pmOldErr").textContent = "";
+  $("pinModeModal").classList.add("show");
+  refreshOldLockUi();
+}
+$("pmOldOk").onclick = async () => {
+  if (lockRemaining() > 0) { refreshOldLockUi(); return; }
+  const v = $("pmOldPin").value.trim();
+  if (!/^\d{4}$/.test(v)) { $("pmOldErr").textContent = E.pin4; return; }
+  if (await verifyPin(v)) {
+    resetLock();
+    pmShow("pmMain");
+  } else {
+    $("pmOldPin").value = "";
+    const mins = registerWrong();
+    if (mins) refreshOldLockUi();
+    else $("pmOldErr").textContent = E.wrongPin1;
+  }
+};
+$("pmOldCancel").onclick = closePinChoose;
+
+/* ---------- চ্যাট সেটিংস (⚙️) ---------- */
+function openSetModal() {
+  $("setTitle").textContent = T("setTitle");
+  $("setLang").textContent = "🌐 " + T("setLang");
+  $("setTheme").textContent = "🌓 " + T("setTheme");
+  $("setReset").textContent = "🔑 " + T("setReset");
+  $("setClose").textContent = T("setClose");
+  $("setModal").classList.add("show");
+}
+function closeSetModal() { $("setModal").classList.remove("show"); }
+function closeOpt() { $("optModal").classList.remove("show"); }
+function showOptions(title, opts) {
+  $("optTitle").textContent = title;
+  const box = $("optList"); box.innerHTML = "";
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "optBtn" + (o.sel ? " sel" : "");
+    b.textContent = (o.sel ? "✓ " : "") + o.label;
+    b.onclick = () => { closeOpt(); o.fn(); };
+    box.appendChild(b);
+  });
+  $("optClose").textContent = T("setClose");
+  $("optModal").classList.add("show");
+}
+$("settingsBtn").onclick = openSetModal;
+$("setClose").onclick = closeSetModal;
+$("optClose").onclick = closeOpt;
+$("setModal").addEventListener("click", e => { if (e.target.id === "setModal") closeSetModal(); });
+$("optModal").addEventListener("click", e => { if (e.target.id === "optModal") closeOpt(); });
+$("setLang").onclick = () => {
+  closeSetModal();
+  showOptions(T("langTitle"), [
+    { label: "বাংলা (Bangla)", sel: lang === "bn", fn: () => setChatLang("bn") },
+    { label: "English", sel: lang === "en", fn: () => setChatLang("en") }
+  ]);
+};
+$("setTheme").onclick = () => {
+  closeSetModal();
+  showOptions(T("themeTitle"), [
+    { label: "☀️ " + T("setLight"), sel: !isDark(), fn: () => setTheme(false) },
+    { label: "🌙 " + T("setDark"), sel: isDark(), fn: () => setTheme(true) }
+  ]);
+};
+$("setReset").onclick = openResetPin;
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
@@ -1330,11 +1416,11 @@ function renderPresence() {
   }
 }
 
-/* ---------- মিডিয়া: Firestore-এ টুকরো করে রাখা, ক্যাশ ও ফুল-স্ক্রিন ভিউ ---------- */
+/* ---------- মিডিয়া ---------- */
 const mediaCol = () => collection(db, "chats", CHAT_ID, "media");
-const mediaCache = new Map();     // mediaId -> blob URL ("" = পাওয়া যায়নি)
+const mediaCache = new Map();
 const mediaLoading = new Set();
-const mediaEls = new Map();       // msgId -> { url, el } (রি-রেন্ডারে প্লেব্যাক না থামাতে)
+const mediaEls = new Map();
 
 async function urlFromData(dataUrl) {
   const blob = await (await fetch(dataUrl)).blob();
@@ -1481,7 +1567,6 @@ $("imgInput").addEventListener("change", async () => {
   sendMedia("image", dataUrl);
 });
 
-// ব্লবের টাইপ থেকে "codecs=vp8,opus" বাদ (ওই কমা ফাইল নষ্ট করত, ভিডিও চলত না)
 const baseType = (t, fallback) => String(t || fallback).split(";")[0];
 function blobToDataUrl(blob) {
   return new Promise((res, rej) => {
@@ -1494,7 +1579,7 @@ function blobToDataUrl(blob) {
   });
 }
 
-/* ভয়েস নোট (সর্বোচ্চ ২ মিনিট) */
+/* ভয়েস নোট */
 let mr = null, recChunks = [], recSec = 0, recTicker = null, discardRec = false;
 
 $("micBtn").onclick = async () => {
@@ -1539,7 +1624,7 @@ function stopVoiceRec(discard) {
 $("recSend").onclick = () => stopVoiceRec(false);
 $("recCancel").onclick = () => stopVoiceRec(true);
 
-/* ভিডিও রেকর্ডার (শুধু ক্যামেরা থেকে, সর্বোচ্চ ১৫ সেকেন্ড) */
+/* ভিডিও রেকর্ডার */
 let vrStream = null, vrRec = null, vrChunks = [], vrSec = 0, vrTicker = null, vrBlob = null;
 
 $("vidRecBtn").onclick = async () => {
@@ -1715,7 +1800,7 @@ $("adBtn").onclick = () => {
 $("ver").onclick = () => {
   const f = ms => ms ? new Date(ms).toLocaleTimeString() : "—";
   const last = lastDocs.length ? lastDocs[lastDocs.length - 1].data({ serverTimestamps: "estimate" }) : null;
-  toast("v13 | Auto: " + (autoDelete ? "ON" : "OFF")
+  toast("v12 | Auto: " + (autoDelete ? "ON" : "OFF")
     + " | Since: " + f(enabledAtMs)
     + " | Last: " + (last ? (last.status || "sent") + ", seenAt=" + (last.seenAt ? f(last.seenAt.toMillis()) : "none") : "—")
     + " | Now: " + f(Date.now()), 9000);
@@ -1934,7 +2019,7 @@ function showReplyBar() {
 }
 $("rbClose").onclick = () => { replyTo = null; showReplyBar(); };
 
-/* ---------- সব মেসেজ মোছা (মিডিয়াসহ) ---------- */
+/* ---------- সব মেসেজ মোছা ---------- */
 let clearing = false;
 async function clearAll() {
   if (clearing || !me) return;
@@ -2085,7 +2170,6 @@ window.addEventListener("popstate", () => {
   pushCallState();
 });
 $("minBtn").onclick = () => setMini(true);
-// কল স্ক্রিনের ⎋: এক চাপেই কল কেটে নোটপ্যাডে ফেরে
 $("callExit").onclick = () => $("logoutBtn").click();
 
 (function () {
@@ -2214,9 +2298,93 @@ async function startCall(type) {
 async function acceptCall() {
   if (!incoming || call || busy) return;
   const inc = incoming; incoming = null;
+  renderIncoming();
   busy = true;
   let stream = null;
   try {
     try { stream = await getMedia(inc.type); }
     catch (e) {
- 
+      toast(T("permMedia"));
+      updateDoc(inc.ref, { status: "declined" }).catch(() => {});
+      return;
+    }
+    const c = await setupPeer(inc.ref, inc.type, stream, "callee");
+    openCallUI(inc.type, T("connecting"));
+    await applyRemote(c, inc.offer);
+    const ans = await c.pc.createAnswer();
+    await c.pc.setLocalDescription(ans);
+    await updateDoc(inc.ref, { status: "accepted", answer: { type: ans.type, sdp: ans.sdp } });
+  } catch (e) {
+    toast(T("failedConn"));
+    if (call) { call.result = "failed"; endCall(false); }
+    else if (stream) stream.getTracks().forEach(tr => tr.stop());
+  } finally { busy = false; }
+}
+async function declineCall() {
+  if (!incoming) return;
+  const inc = incoming; incoming = null;
+  renderIncoming();
+  try { await updateDoc(inc.ref, { status: "declined" }); } catch (e) {}
+  if (me) {
+    addDoc(col(), { type: "call", callType: inc.type, result: "declined", senderId: inc.ref.id ? me.uid : me.uid,
+      createdAt: serverTimestamp(), status: "sent", hiddenFor: [] }).catch(() => {});
+  }
+}
+function endCall(notifyRemote) {
+  const c = call;
+  if (!c) {
+    $("call").classList.remove("show", "vid", "mini");
+    return;
+  }
+  call = null;
+  clearTimeout(c.ringTimeout);
+  clearInterval(c.timer);
+  c.unsubs.forEach(u => { try { u(); } catch (e) {} });
+  if (c.wake) { try { c.wake.release(); } catch (e) {} }
+  if (c.stream) c.stream.getTracks().forEach(tr => { try { tr.stop(); } catch (e) {} });
+  try { c.pc.close(); } catch (e) {}
+  $("remoteV").srcObject = null;
+  $("localV").srcObject = null;
+  $("call").classList.remove("show", "vid", "mini");
+  unwindHistory();
+  if (notifyRemote && c.ref) {
+    const nextStatus = c.startedAt ? "ended" : (c.role === "caller" ? "missed" : "declined");
+    updateDoc(c.ref, { status: nextStatus }).catch(() => {});
+  }
+  if (!c.logged && me) {
+    c.logged = true;
+    const dur = c.startedAt ? Math.max(1, Math.round((Date.now() - c.startedAt) / 1000)) : 0;
+    const res = c.result || (c.startedAt ? "ended" : (c.role === "caller" ? "cancelled" : "declined"));
+    addDoc(col(), { type: "call", callType: c.type, result: res, duration: dur, senderId: me.uid,
+      createdAt: serverTimestamp(), status: "sent", hiddenFor: [] }).catch(() => {});
+  }
+  renderIncoming();
+}
+
+$("callV").onclick = () => startCall("audio");
+$("callVid").onclick = () => startCall("video");
+$("acceptBtn").onclick = acceptCall;
+$("declineBtn").onclick = declineCall;
+$("hangBtn").onclick = () => endCall(true);
+$("miniHang").onclick = e => { e.stopPropagation(); endCall(true); };
+$("muteBtn").onclick = () => {
+  if (!call || !call.stream) return;
+  const tracks = call.stream.getAudioTracks();
+  if (!tracks.length) return;
+  const nextMuted = tracks[0].enabled;
+  tracks.forEach(tr => { tr.enabled = !nextMuted; });
+  $("muteBtn").classList.toggle("off", nextMuted);
+  $("muteBtn").textContent = nextMuted ? "🔇" : "🎤";
+};
+$("camBtn").onclick = () => {
+  if (!call || !call.stream) return;
+  const tracks = call.stream.getVideoTracks();
+  if (!tracks.length) return;
+  const nextOff = tracks[0].enabled;
+  tracks.forEach(tr => { tr.enabled = !nextOff; });
+  $("camBtn").classList.toggle("off", nextOff);
+  $("camBtn").textContent = nextOff ? "🚫" : "📷";
+};
+</script>
+</body>
+</html>
