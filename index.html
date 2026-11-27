@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
@@ -96,8 +96,9 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid var(--inBord
 .btn:disabled{opacity:.6}
 .err{color:#e53935;min-height:20px;margin:6px 0 12px;font-size:14px}
 .link{background:none;border:0;color:var(--accent);margin-top:14px;font-size:14px;text-decoration:underline;display:inline-block}
+.bioBtn{margin-top:14px;padding:12px 20px;border-radius:22px;border:1px solid var(--accent);background:var(--soft);color:var(--accent);font-size:15px}
 
-#pinMsg{font-size:18px;margin:12px 0 20px}
+#pinMsg{font-size:18px;margin:12px 0 20px;min-height:26px}
 .dots{display:flex;justify-content:center;gap:14px;margin-bottom:24px}
 .dot{width:16px;height:16px;border-radius:50%;background:var(--dot)}
 .dot.on{background:var(--accent)}
@@ -108,17 +109,24 @@ input.f{width:100%;padding:14px;margin-bottom:12px;border:1px solid var(--inBord
 .shake{animation:sh .3s}
 @keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
-/* ===== v12: PIN ধরন বেছে নেওয়ার পপআপ ===== */
-#pinModeModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:24px;z-index:52}
-#pinModeModal.show{display:flex}
-#pinModeModal .dlg{max-width:340px}
-#pinModeModal .pmTitle{margin:0 0 14px;font-size:18px;font-weight:700}
-#pinModeModal .pmHint{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.45}
-#pinModeModal .pmOpt{display:block;width:100%;margin:0 0 10px;padding:13px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px}
-#pinModeModal .pmGhost{display:block;width:100%;margin:0;padding:11px;border:0;border-radius:10px;background:var(--soft2);color:var(--txt);font-size:15px}
-#pmMinutes{width:100%;padding:12px;border:1px solid var(--inBorder);border-radius:10px;font-size:16px;background:var(--input);color:var(--txt);margin-bottom:6px}
+/* ===== v12: সাধারণ পপআপ (সেটিংস, অপশন, PIN ধরন/রিসেট) ===== */
+#pinModeModal,#setModal,#optModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:24px}
+#setModal{z-index:51}
+#pinModeModal{z-index:52}
+#optModal{z-index:53}
+#pinModeModal.show,#setModal.show,#optModal.show{display:flex}
+#pinModeModal .dlg,#setModal .dlg,#optModal .dlg{max-width:340px}
+.pmTitle{margin:0 0 14px;font-size:18px;font-weight:700}
+.pmHint{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.45}
+.pmOpt{display:block;width:100%;margin:0 0 10px;padding:13px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px}
+.pmOpt:disabled{opacity:.5}
+.pmGhost{display:block;width:100%;margin:0;padding:11px;border:0;border-radius:10px;background:var(--soft2);color:var(--txt);font-size:15px}
+.optBtn{display:block;width:100%;margin:0 0 8px;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--soft2);color:var(--txt);font-size:16px;text-align:left}
+.optBtn.sel{border-color:var(--accent);font-weight:700}
+.pmInput{width:100%;padding:12px;border:1px solid var(--inBorder);border-radius:10px;font-size:16px;background:var(--input);color:var(--txt);margin-bottom:8px}
+.pmInput:disabled{opacity:.5}
 #pmNow{min-height:20px;font-size:14px;color:var(--accent);margin-bottom:4px}
-#pmErr{min-height:18px;font-size:13px;color:#e53935;margin-bottom:8px}
+.pmErr{min-height:18px;font-size:13px;color:#e53935;margin-bottom:8px}
 
 /* চ্যাট */
 header{display:flex;align-items:center;gap:2px;padding:8px 6px;padding-top:calc(8px + env(safe-area-inset-top));
@@ -131,7 +139,7 @@ header .t .nm{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;
 .pd{flex:none;width:9px;height:9px;border-radius:50%;background:#9e9e9e;margin-right:5px}
 #presence.on .pd{background:#25D366;animation:glow 1.6s infinite}
 @keyframes glow{0%{box-shadow:0 0 0 0 rgba(37,211,102,.8)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
-header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 3px}
+header button{background:none;border:0;color:#fff;font-size:18px;padding:5px 4px}
 header #clearBtn{margin-right:4px}
 header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
 
@@ -304,7 +312,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
   </div>
 </section>
 
-<!-- পুরোনো নোট / সেটিংস / ভাষা পপআপ -->
+<!-- পুরোনো নোট / সেটিংস / ভাষা পপআপ (নোটপ্যাড) -->
 <div id="npOverlay">
   <div class="npModal">
     <div class="npModalHead"><span id="npModalTitle"></span><button id="npModalClose" type="button">✕</button></div>
@@ -325,7 +333,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
   </form>
 </section>
 
-<!-- PIN (ইংরেজি) -->
+<!-- ===== v12: টু-স্টেপ অথেনটিকেশন স্ক্রিন (ফিঙ্গারপ্রিন্ট, তারপর PIN) — ইংরেজি ===== -->
 <section id="pin" class="screen">
   <button class="backNoteBtn" id="pinToNote" type="button">← Notepad</button>
   <div class="card">
@@ -333,12 +341,21 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
     <div id="pinMsg"></div>
     <div class="dots" id="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     <div class="pad" id="pad"></div>
+    <button class="bioBtn" id="bioBtn" type="button" style="display:none"></button><br>
     <button class="link" id="forgot" type="button">Forgot PIN? Logout</button>
   </div>
 </section>
 
-<!-- v12: প্রথমবার PIN ধরন বেছে নেওয়ার পপআপ -->
+<!-- ===== v12: PIN ধরন বাছা / Reset PIN পপআপ ===== -->
 <div id="pinModeModal"><div class="dlg">
+  <div id="pmOld" style="display:none">
+    <p class="pmTitle">Reset PIN</p>
+    <p class="pmHint">Enter your current PIN to continue.</p>
+    <input class="pmInput" id="pmOldPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Current PIN">
+    <div class="pmErr" id="pmOldErr"></div>
+    <button class="pmOpt" id="pmOldOk" type="button">Verify</button>
+    <button class="pmGhost" id="pmOldCancel" type="button">Cancel</button>
+  </div>
   <div id="pmMain">
     <p class="pmTitle">Set up your PIN</p>
     <button class="pmOpt" id="pmCustom" type="button">Custom PIN</button>
@@ -346,15 +363,37 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
     <button class="pmOpt" id="pmOwn" type="button">Choice Your Own Time</button>
     <button class="pmGhost" id="pmCancel" type="button">Cancel</button>
   </div>
+  <div id="pmCustomBox" style="display:none">
+    <p class="pmTitle">Custom PIN</p>
+    <input class="pmInput" id="pmNew1" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="New 4-digit PIN">
+    <input class="pmInput" id="pmNew2" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Re-enter PIN">
+    <div class="pmErr" id="pmCErr"></div>
+    <button class="pmOpt" id="pmCSave" type="button">Save</button>
+    <button class="pmGhost" id="pmCBack" type="button">Back</button>
+  </div>
   <div id="pmOffset" style="display:none">
     <p class="pmTitle">Choice Your Own Time</p>
     <p class="pmHint">Enter minutes (1-59). Your PIN will be the current phone time (HHMM) minus these minutes.</p>
-    <input id="pmMinutes" type="number" inputmode="numeric" min="1" max="59" placeholder="Minutes">
+    <input class="pmInput" id="pmMinutes" type="number" inputmode="numeric" min="1" max="59" placeholder="Minutes">
     <div id="pmNow"></div>
-    <div id="pmErr"></div>
+    <div class="pmErr" id="pmErr"></div>
     <button class="pmOpt" id="pmSave" type="button">Save</button>
     <button class="pmGhost" id="pmBack" type="button">Back</button>
   </div>
+</div></div>
+
+<!-- ===== v12: চ্যাট সেটিংস পপআপ (⚙️) ও অপশন পপআপ ===== -->
+<div id="setModal"><div class="dlg">
+  <p class="pmTitle" id="setTitle"></p>
+  <button class="optBtn" id="setLang" type="button"></button>
+  <button class="optBtn" id="setTheme" type="button"></button>
+  <button class="optBtn" id="setReset" type="button"></button>
+  <button class="pmGhost" id="setClose" type="button"></button>
+</div></div>
+<div id="optModal"><div class="dlg">
+  <p class="pmTitle" id="optTitle"></p>
+  <div id="optList"></div>
+  <button class="pmGhost" id="optClose" type="button"></button>
 </div></div>
 
 <!-- চ্যাট -->
@@ -364,8 +403,7 @@ header #logoutBtn{font-size:30px;line-height:1;padding:2px 8px}
       <div class="nm">Chat Gpt 2.0</div>
       <div id="presence"><span class="pd"></span><span id="pText"></span></div>
     </div>
-    <button id="themeBtn" type="button" title="Dark / Light">🌙</button>
-    <button id="langBtn" type="button" title="Language">🌐</button>
+    <button id="settingsBtn" type="button" title="Settings">⚙️</button>
     <button id="callV" type="button" title="Voice Call">📞</button>
     <button id="callVid" type="button" title="Video Call">🎥</button>
     <button id="clearBtn" type="button" title="Clear All">🗑️</button>
@@ -491,33 +529,40 @@ const CHUNK_CHARS = 700000;
 const MAX_VOICE_SEC = 120;
 const MAX_VIDEO_SEC = 15;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
-const PIN_KEY = "cc_pin_hash", LOCK_KEY = "cc_lock_until", LANG_KEY = "cc_lang";
+const PIN_KEY = "cc_pin_hash", BIO_KEY = "cc_bio_cred", LANG_KEY = "cc_lang";
 /* ===== v12: নতুন কী ===== */
 const PIN_MODE_KEY = "cc_pin_mode", PIN_OFFSET_KEY = "cc_pin_offset";
+const LOCK_UNTIL_KEY = "cc_lock_until", LOCK_LEVEL_KEY = "cc_lock_level", LOCK_CNT_KEY = "cc_lock_cnt";
 const THEME_KEY = "cc_theme", NP_LANG_KEY = "np_lang";
 const NOTES_LIST_KEY = "np_saved_notes", NOTE_DRAFT_KEY = "np_current_draft";
 
-/* ===== v12: ফিঙ্গারপ্রিন্ট সম্পূর্ণ বাদ: পুরোনো সংরক্ষিত তথ্য মুছে ফেলা ===== */
-["cc_bio_cred", "cc_bio_asked"].forEach(k => localStorage.removeItem(k));
+localStorage.removeItem("cc_bio_asked");
 /* ===== v12: PIN-এর ধরন বাছা না থাকলে পুরোনো PIN বাদ, পপআপ আবার আসবে ===== */
 if (!localStorage.getItem(PIN_MODE_KEY)) localStorage.removeItem(PIN_KEY);
 
-/* ===== v12: লগইন ও PIN পেজের বার্তা (সবসময় ইংরেজি) ===== */
+/* ===== v12: লগইন / ফিঙ্গারপ্রিন্ট / PIN পেজের বার্তা (সবসময় ইংরেজি) ===== */
 const E = {
   invCred: "Invalid email or password", netErr: "No internet connection",
   manyReq: "Too many attempts, try again later", unauthDom: "Domain not in Authorized domains",
   loginFail: "Login failed: ",
   enterPin: "Enter PIN", setPin: "Set a new 4-digit PIN", confirmPin: "Re-enter the same PIN",
-  mismatchPin: "PIN did not match, try again", waitSec: s => `Wait ${s}s`,
-  fiveWrong: "5 wrong attempts, wait 30s", wrongPin: "Wrong PIN, try again",
-  logoutMsg: "Logout? The PIN setup on this phone will be removed.", logoutBtn: "Logout",
+  mismatchPin: "PIN did not match, try again",
+  wrongPin1: "Wrong PIN. One more wrong attempt will lock for 10 minutes.",
+  lockedIn: t => `Locked. Try again in ${t}`,
+  pin4: "Enter exactly 4 digits",
+  logoutMsg: "Logout? The PIN and fingerprint setup on this phone will be removed.", logoutBtn: "Logout",
   yes: "Yes", no: "No",
+  bioVerify: "Verify your fingerprint", bioVerifyBtn: "👆 Verify fingerprint",
+  bioEnroll: "Fingerprint setup is required to continue", bioEnrollBtn: "👆 Set up fingerprint",
+  bioFail: "Fingerprint failed, try again", bioDone: "Fingerprint enabled",
+  bioUnsupported: "This browser/device does not support fingerprint lock, so access is not possible.",
   pmBad: "Enter a number from 1 to 59", pmNow: "Right now your PIN would be: ",
   pmPhoneDone: "PIN mode: phone time. Enter the current time as HHMM.",
-  pmOwnDone: n => `PIN mode: phone time minus ${n} min.`
+  pmOwnDone: n => `PIN mode: phone time minus ${n} min.`,
+  pinChanged: "PIN changed"
 };
 
-/* চ্যাটের ভাষা (🌐 বাটন) */
+/* চ্যাটের ভাষা */
 const I18N = {
   bn: {
     turnOn: "চালু করুন", turnOff: "বন্ধ করুন",
@@ -542,7 +587,9 @@ const I18N = {
     uploading: "পাঠানো হচ্ছে…", sentOk: "পাঠানো হয়েছে", upBusy: "আগের ফাইল পাঠানো চলছে, একটু অপেক্ষা করুন",
     mediaDelErr: "মিডিয়া মোছা ব্যর্থ",
     langSwitched: "ভাষা: বাংলা", openBig: "বড় করে দেখুন", mLoading: "লোড হচ্ছে…", mMissing: "⚠️ মিডিয়া পাওয়া যায়নি",
-    recInCall: "কল চলাকালীন রেকর্ড করা যাবে না"
+    recInCall: "কল চলাকালীন রেকর্ড করা যাবে না",
+    setTitle: "সেটিংস", setLang: "ভাষা নির্বাচন", setTheme: "লাইট / ডার্ক মোড", setReset: "PIN রিসেট", setClose: "বন্ধ",
+    langTitle: "ভাষা নির্বাচন", themeTitle: "লাইট / ডার্ক মোড", setLight: "লাইট মোড", setDark: "ডার্ক মোড"
   },
   en: {
     turnOn: "Turn On", turnOff: "Turn Off",
@@ -567,14 +614,17 @@ const I18N = {
     uploading: "Sending…", sentOk: "Sent", upBusy: "Previous file is still sending, please wait",
     mediaDelErr: "Failed to delete media",
     langSwitched: "Language: English", openBig: "Open full screen", mLoading: "Loading…", mMissing: "⚠️ Media not found",
-    recInCall: "Cannot record during a call"
+    recInCall: "Cannot record during a call",
+    setTitle: "Settings", setLang: "Language", setTheme: "Light / Dark mode", setReset: "Reset PIN", setClose: "Close",
+    langTitle: "Language", themeTitle: "Light / Dark mode", setLight: "Light mode", setDark: "Dark mode"
   }
 };
 
-let lang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "bn";
+/* ===== v12: ডিফল্ট ভাষা ইংরেজি (আগে বাংলা বেছে থাকলে সেটাই থাকবে) ===== */
+let lang = localStorage.getItem(LANG_KEY) === "bn" ? "bn" : "en";
 const T = k => I18N[lang][k];
 
-/* ===== v12: নোটপ্যাডের আলাদা ভাষা (বাংলা / ইংরেজি) ===== */
+/* নোটপ্যাডের আলাদা ভাষা (বাংলা / ইংরেজি) */
 const NP = {
   bn: {
     title: "📝 নোটপ্যাড", save: "সেভ", newNote: "নতুন নোট", oldNotes: "পুরোনো নোট দেখুন",
@@ -601,7 +651,7 @@ const NP = {
     langTitle: "Language", locale: "en-US"
   }
 };
-let npLang = localStorage.getItem(NP_LANG_KEY) === "en" ? "en" : "bn";
+let npLang = localStorage.getItem(NP_LANG_KEY) === "bn" ? "bn" : "en";
 const npT = k => NP[npLang][k];
 
 const app = initializeApp(firebaseConfig);
@@ -628,15 +678,13 @@ function applyTheme() {
   const d = isDark();
   document.documentElement.setAttribute("data-theme", d ? "dark" : "light");
   $("themeMeta").setAttribute("content", d ? "#92400e" : "#f59e0b");
-  $("themeBtn").textContent = d ? "☀️" : "🌙";
   $("mTheme").textContent = (d ? "☀️ " : "🌙 ") + npT(d ? "lightMode" : "darkMode");
 }
-function toggleTheme() {
-  localStorage.setItem(THEME_KEY, isDark() ? "light" : "dark");
+function setTheme(dark) {
+  localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
   applyTheme();
 }
-$("mTheme").onclick = () => { $("npMenu").classList.remove("show"); toggleTheme(); };
-$("themeBtn").onclick = toggleTheme;
+$("mTheme").onclick = () => { $("npMenu").classList.remove("show"); setTheme(!isDark()); };
 
 /* ---------- নোটপ্যাড (প্রাথমিক স্ক্রিন) ---------- */
 function applyNpLang() {
@@ -650,6 +698,7 @@ function applyNpLang() {
   $("noteTitleInput").placeholder = npT("titlePh");
   $("noteBodyInput").placeholder = npT("bodyPh");
   $("npSearch").placeholder = npT("searchPh");
+  document.documentElement.lang = npLang;
   applyTheme();
 }
 function getSavedNotes() {
@@ -751,7 +800,7 @@ $("mNpSettings").onclick = () => {
   $("npOverlay").classList.add("show");
 };
 
-/* ===== v12: নোটপ্যাডের ভাষা নির্বাচন (⋮ মেনু) ===== */
+/* নোটপ্যাডের ভাষা নির্বাচন (⋮ মেনু) */
 $("mLang").onclick = () => {
   $("npMenu").classList.remove("show");
   $("npModalTitle").textContent = npT("langTitle");
@@ -770,7 +819,7 @@ $("mLang").onclick = () => {
   $("npOverlay").classList.add("show");
 };
 
-/* ===== v12: নোটপ্যাডে সার্চ বার ===== */
+/* নোটপ্যাডে সার্চ বার */
 function clearSearch() { $("npSearch").value = ""; renderSearch(); }
 function renderSearch() {
   const q = $("npSearch").value.trim().toLowerCase();
@@ -816,12 +865,18 @@ function closeOverlays() {
   closeVidRecModal();
   $("mediaViewer").classList.remove("show");
 }
+function closeAllModals() {
+  clearInterval(lockTicker); clearInterval(oldTicker);
+  $("setModal").classList.remove("show");
+  $("optModal").classList.remove("show");
+  $("pinModeModal").classList.remove("show");
+}
 // নোটপ্যাডে ফেরা: কল চললে আগে কল কেটে দেয়; চলমান রেকর্ডিংও বাতিল হয়
 function returnToNotepad() {
   if (call) endCall(true);
   inToolbox = false;
   unlocked = false;
-  closeSheet(); closeDelSheet(); closeOverlays(); closePinChoose();
+  closeSheet(); closeDelSheet(); closeOverlays(); closeAllModals();
   show("notepad");
 }
 $("loginToNote").onclick = returnToNotepad;
@@ -848,12 +903,12 @@ function applyLang() {
   renderIncoming();
   if (me && unlocked) render(false);
 }
-$("langBtn").onclick = () => {
-  lang = lang === "bn" ? "en" : "bn";
-  localStorage.setItem(LANG_KEY, lang);
+function setChatLang(code) {
+  lang = code;
+  localStorage.setItem(LANG_KEY, code);
   applyLang();
   toast(T("langSwitched"));
-};
+}
 
 let lastErrAt = 0;
 function errOnce(prefix, e) {
@@ -914,9 +969,8 @@ onAuthStateChanged(auth, user => {
 });
 
 async function doLogout() {
-  localStorage.removeItem(PIN_KEY);
-  localStorage.removeItem(PIN_MODE_KEY);
-  localStorage.removeItem(PIN_OFFSET_KEY);
+  [PIN_KEY, PIN_MODE_KEY, PIN_OFFSET_KEY, BIO_KEY].forEach(k => localStorage.removeItem(k));
+  resetLock();
   unlocked = false;
   if (me) {
     try { await setDoc(doc(db, "users", me.uid), { online: false, typingAt: null, lastActive: serverTimestamp() }, { merge: true }); }
@@ -933,14 +987,77 @@ $("logoutBtn").onclick = () => {
   }
   returnToNotepad();
 };
-/* ===== v12: ভিডিও রেকর্ডার স্ক্রিনেও লগআউট ===== */
+/* ভিডিও রেকর্ডার স্ক্রিনেও লগআউট */
 $("vrExit").onclick = () => $("logoutBtn").click();
 $("forgot").onclick = async () => {
   if (await confirmBox(E.logoutMsg, E.logoutBtn)) doLogout();
 };
 
-/* ===== v12: ডায়নামিক PIN সিস্টেম (শুধু PIN, ফিঙ্গারপ্রিন্ট নেই) ===== */
-let pinBuf = "", pinFirst = null, pinMode = "unlock", fails = 0;
+/* ===== v12: কঠোর ভুল-PIN লকআউট (লগইন ও Reset PIN একই কাউন্টার; localStorage-এ থাকে) =====
+   ২ বার ভুল → ১০ মিনিট; এরপর ১ বার ভুল → ৩০ মিনিট; এরপর ১ বার ভুল → ৬০ মিনিট (এবং সবসময় ৬০) */
+const numLS = k => Number(localStorage.getItem(k) || 0);
+const lockRemaining = () => Math.max(0, numLS(LOCK_UNTIL_KEY) - Date.now());
+function registerWrong() {
+  let level = numLS(LOCK_LEVEL_KEY), cnt = numLS(LOCK_CNT_KEY), mins = 0;
+  if (level === 0) { cnt++; if (cnt >= 2) { mins = 10; level = 1; cnt = 0; } }
+  else { mins = level === 1 ? 30 : 60; level = Math.min(level + 1, 3); }
+  localStorage.setItem(LOCK_CNT_KEY, String(cnt));
+  localStorage.setItem(LOCK_LEVEL_KEY, String(level));
+  if (mins) localStorage.setItem(LOCK_UNTIL_KEY, String(Date.now() + mins * 60000));
+  return mins;
+}
+function resetLock() { [LOCK_UNTIL_KEY, LOCK_LEVEL_KEY, LOCK_CNT_KEY].forEach(k => localStorage.removeItem(k)); }
+const fmtMs = ms => { const s = Math.ceil(ms / 1000); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+
+/* ===== v12: ফিঙ্গারপ্রিন্ট (WebAuthn) — বাধ্যতামূলক প্রথম ধাপ ===== */
+function bioSupported() {
+  return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && window.isSecureContext);
+}
+let bioBusy = false;
+async function bioCheck() {
+  const hexId = localStorage.getItem(BIO_KEY);
+  if (!hexId || !bioSupported() || bioBusy) return false;
+  bioBusy = true;
+  try {
+    const rawId = new Uint8Array(hexId.match(/.{1,2}/g).map(h => parseInt(h, 16)));
+    const a = await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(16)),
+        rpId: location.hostname,
+        allowCredentials: [{ type: "public-key", id: rawId, transports: ["internal"] }],
+        userVerification: "required",
+        timeout: 60000
+      }
+    });
+    return !!a;
+  } catch (e) { return false; }
+  finally { bioBusy = false; }
+}
+async function bioEnroll() {
+  if (!bioSupported() || !me || bioBusy) return false;
+  bioBusy = true;
+  try {
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(16)),
+        rp: { name: "My Notes", id: location.hostname },
+        user: { id: new TextEncoder().encode(me.uid).slice(0, 64), name: me.email || "user", displayName: "User" },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+        timeout: 60000
+      }
+    });
+    if (cred) {
+      localStorage.setItem(BIO_KEY, [...new Uint8Array(cred.rawId)].map(b => b.toString(16).padStart(2, "0")).join(""));
+      return true;
+    }
+    return false;
+  } catch (e) { return false; }
+  finally { bioBusy = false; }
+}
+
+/* ===== v12: ডায়নামিক PIN সিস্টেম ===== */
+let pinBuf = "", pinFirst = null, authStep = "pin", bioPassed = false, lockTicker = null, oldTicker = null;
 
 async function hashPin(p) {
   const data = new TextEncoder().encode("couple_chat_v1:" + me.uid + ":" + p);
@@ -957,6 +1074,18 @@ function timePin(minus) {
 function dynamicMinus() {
   return localStorage.getItem(PIN_MODE_KEY) === "offset" ? (Number(localStorage.getItem(PIN_OFFSET_KEY)) || 0) : 0;
 }
+// লগইন ও Reset PIN দুজায়গাতেই একই যাচাই: Custom মোডে সেভ করা হ্যাশ, ডায়নামিক মোডে লাইভ হিসাব
+async function verifyPin(entered) {
+  if (localStorage.getItem(PIN_MODE_KEY) === "custom")
+    return (await hashPin(entered)) === localStorage.getItem(PIN_KEY);
+  return entered === timePin(dynamicMinus());
+}
+function applyMode(mode, off) {
+  localStorage.setItem(PIN_MODE_KEY, mode);
+  if (mode === "offset") localStorage.setItem(PIN_OFFSET_KEY, String(off));
+  else localStorage.removeItem(PIN_OFFSET_KEY);
+  if (mode !== "custom") localStorage.removeItem(PIN_KEY);
+}
 function buildPad() {
   const pad = $("pad"); pad.innerHTML = "";
   const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
@@ -971,41 +1100,172 @@ function buildPad() {
 function renderDots() {
   [...$("dots").children].forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
 }
+// ধাপ অনুযায়ী PIN স্ক্রিনের চেহারা: choose | bio | pin | setup | enroll | locked
+function setPinUi(step) {
+  authStep = step;
+  const showPad = step === "pin" || step === "setup";
+  $("dots").style.display = showPad ? "flex" : "none";
+  $("pad").style.display = showPad ? "grid" : "none";
+  const showBio = step === "bio" || step === "enroll";
+  $("bioBtn").style.display = showBio ? "inline-block" : "none";
+  $("bioBtn").textContent = step === "enroll" ? E.bioEnrollBtn : E.bioVerifyBtn;
+  const msgs = { choose: "", bio: E.bioVerify, pin: E.enterPin, setup: E.setPin, enroll: E.bioEnroll, locked: "" };
+  $("pinMsg").textContent = msgs[step] || "";
+}
+function showUnsupported() {
+  $("pinMsg").textContent = E.bioUnsupported;
+  $("bioBtn").style.display = "none";
+  $("dots").style.display = "none"; $("pad").style.display = "none";
+}
+function showLocked() {
+  setPinUi("locked");
+  const tick = () => {
+    const r = lockRemaining();
+    if (r <= 0) { clearInterval(lockTicker); if ($("pin").classList.contains("active")) startPin(); return; }
+    $("pinMsg").textContent = E.lockedIn(fmtMs(r));
+  };
+  tick(); lockTicker = setInterval(tick, 1000);
+}
 function startPin() {
-  pinBuf = ""; pinFirst = null; renderDots();
+  clearInterval(lockTicker);
+  pinBuf = ""; pinFirst = null; bioPassed = false; renderDots();
   show("pin");
+  // প্রথমবার: নতুন সেটআপ (পুরোনো ফিঙ্গারপ্রিন্টও নতুন করে নেওয়া হবে)
   if (!localStorage.getItem(PIN_MODE_KEY)) {
-    pinMode = "choose";
-    $("pinMsg").textContent = "";
-    openPinChoose();
+    localStorage.removeItem(BIO_KEY);
+    setPinUi("choose");
+    openPinChoose("first");
     return;
   }
-  pinMode = "unlock";
-  $("pinMsg").textContent = E.enterPin;
+  if (lockRemaining() > 0) { showLocked(); return; }
+  if (localStorage.getItem(BIO_KEY)) runBioStep();   // ধাপ ১: ফিঙ্গারপ্রিন্ট
+  else setPinUi("pin");                              // ফিঙ্গারপ্রিন্ট নেই: আগে PIN, তারপর সেটআপ
 }
-function openPinChoose() {
-  $("pmMain").style.display = "block";
-  $("pmOffset").style.display = "none";
+function runBioStep() {
+  setPinUi("bio");
+  if (!bioSupported()) { showUnsupported(); return; }
+  setTimeout(() => {
+    if ($("pin").classList.contains("active") && authStep === "bio") doBioVerify();
+  }, 350);
+}
+async function doBioVerify() {
+  if (authStep !== "bio") return;
+  const ok = await bioCheck();
+  if (authStep !== "bio" || !$("pin").classList.contains("active")) return;
+  if (ok) { bioPassed = true; pinBuf = ""; renderDots(); setPinUi("pin"); }   // ধাপ ২: PIN
+  else toast(E.bioFail);
+}
+function goEnroll() {
+  setPinUi("enroll");
+  if (!bioSupported()) { showUnsupported(); return; }
+  setTimeout(() => {
+    if ($("pin").classList.contains("active") && authStep === "enroll") doEnroll();
+  }, 350);
+}
+async function doEnroll() {
+  if (authStep !== "enroll") return;
+  if (!bioSupported()) { showUnsupported(); return; }
+  const ok = await bioEnroll();
+  if (authStep !== "enroll") return;
+  if (ok) { bioPassed = true; toast(E.bioDone); unlock(); }
+  else toast(E.bioFail);
+}
+$("bioBtn").onclick = () => { if (authStep === "enroll") doEnroll(); else doBioVerify(); };
+
+function afterPinOk() {
+  if (!localStorage.getItem(BIO_KEY)) goEnroll();
+  else if (bioPassed) unlock();
+  else startPin();
+}
+async function pressKey(k) {
+  if (authStep !== "pin" && authStep !== "setup") return;
+  if (authStep === "pin" && lockRemaining() > 0) { startPin(); return; }
+  if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
+  if (pinBuf.length >= 4) return;
+  pinBuf += k; renderDots();
+  if (pinBuf.length < 4) return;
+
+  const entered = pinBuf;
+  if (authStep === "setup") {
+    if (pinFirst === null) {
+      pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
+      $("pinMsg").textContent = E.confirmPin;
+    } else if (pinFirst === entered) {
+      applyMode("custom");
+      localStorage.setItem(PIN_KEY, await hashPin(entered));
+      resetLock();
+      pinBuf = ""; renderDots();
+      goEnroll();
+    } else {
+      pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
+      $("pinMsg").textContent = E.mismatchPin; shake();
+    }
+  } else {
+    if (await verifyPin(entered)) {
+      resetLock();
+      pinBuf = ""; renderDots();
+      afterPinOk();
+    } else {
+      pinBuf = ""; setTimeout(renderDots, 120); shake();
+      const mins = registerWrong();
+      if (mins) startPin();             // লক হয়ে গেছে: কাউন্টডাউন স্ক্রিন
+      else $("pinMsg").textContent = E.wrongPin1;
+    }
+  }
+}
+function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+function unlock() { clearInterval(lockTicker); unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
+function lockNow() { returnToNotepad(); renderIncoming(); }
+buildPad();
+
+/* ===== v12: PIN ধরন বাছার পপআপ (প্রথমবার সেটআপ ও Reset PIN) ===== */
+let pmCtx = "first";
+function pmShow(id) {
+  ["pmOld", "pmMain", "pmCustomBox", "pmOffset"].forEach(s => $(s).style.display = s === id ? "block" : "none");
+}
+function openPinChoose(ctx) {
+  pmCtx = ctx;
+  pmShow("pmMain");
   $("pinModeModal").classList.add("show");
 }
-function closePinChoose() { $("pinModeModal").classList.remove("show"); }
-
-// ১. Custom PIN: নিজের ৪ সংখ্যা
-$("pmCustom").onclick = () => {
+function closePinChoose() {
+  clearInterval(oldTicker);
+  $("pinModeModal").classList.remove("show");
+}
+function finishChoose(mode, off) {
+  applyMode(mode, off);
+  const first = pmCtx === "first";
   closePinChoose();
-  pinMode = "setup"; pinBuf = ""; pinFirst = null; renderDots();
-  $("pinMsg").textContent = E.setPin;
+  toast(mode === "phone" ? E.pmPhoneDone : mode === "offset" ? E.pmOwnDone(off) : E.pinChanged, 5000);
+  if (first) { resetLock(); pinBuf = ""; goEnroll(); }
+}
+
+// ১. Custom PIN
+$("pmCustom").onclick = () => {
+  if (pmCtx === "first") {
+    closePinChoose();
+    pinBuf = ""; pinFirst = null; renderDots();
+    setPinUi("setup");
+  } else {
+    pmShow("pmCustomBox");
+    $("pmNew1").value = ""; $("pmNew2").value = ""; $("pmCErr").textContent = "";
+  }
 };
-// ২. As Your Phone Time: ফোনের সময় = PIN
-$("pmPhone").onclick = () => {
-  localStorage.setItem(PIN_MODE_KEY, "phone");
-  localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_OFFSET_KEY);
-  closePinChoose(); toast(E.pmPhoneDone, 5000); unlock();
+$("pmCSave").onclick = async () => {
+  const a = $("pmNew1").value.trim(), b = $("pmNew2").value.trim();
+  if (!/^\d{4}$/.test(a)) { $("pmCErr").textContent = E.pin4; return; }
+  if (a !== b) { $("pmCErr").textContent = E.mismatchPin; return; }
+  applyMode("custom");
+  localStorage.setItem(PIN_KEY, await hashPin(a));
+  closePinChoose();
+  toast(E.pinChanged, 4000);
 };
-// ৩. Choice Your Own Time: ফোনের সময় থেকে N মিনিট বিয়োগ
+$("pmCBack").onclick = () => pmShow("pmMain");
+// ২. As Your Phone Time
+$("pmPhone").onclick = () => finishChoose("phone");
+// ৩. Choice Your Own Time
 $("pmOwn").onclick = () => {
-  $("pmMain").style.display = "none";
-  $("pmOffset").style.display = "block";
+  pmShow("pmOffset");
   $("pmMinutes").value = ""; $("pmErr").textContent = ""; $("pmNow").textContent = "";
 };
 $("pmMinutes").addEventListener("input", () => {
@@ -1016,60 +1276,100 @@ $("pmMinutes").addEventListener("input", () => {
 $("pmSave").onclick = () => {
   const n = parseInt($("pmMinutes").value, 10);
   if (!(n >= 1 && n <= 59)) { $("pmErr").textContent = E.pmBad; return; }
-  localStorage.setItem(PIN_MODE_KEY, "offset");
-  localStorage.setItem(PIN_OFFSET_KEY, String(n));
-  localStorage.removeItem(PIN_KEY);
-  closePinChoose(); toast(E.pmOwnDone(n), 5000); unlock();
+  finishChoose("offset", n);
 };
-$("pmBack").onclick = openPinChoose;
-$("pmCancel").onclick = () => { closePinChoose(); returnToNotepad(); };
+$("pmBack").onclick = () => pmShow("pmMain");
+$("pmCancel").onclick = () => {
+  const first = pmCtx === "first";
+  closePinChoose();
+  if (first) returnToNotepad();
+};
 
-async function pressKey(k) {
-  if (pinMode === "choose") return;
-  const until = Number(localStorage.getItem(LOCK_KEY) || 0);
-  if (Date.now() < until) {
-    $("pinMsg").textContent = E.waitSec(Math.ceil((until - Date.now()) / 1000)); return;
-  }
-  if (k === "⌫") { pinBuf = pinBuf.slice(0, -1); renderDots(); return; }
-  if (pinBuf.length >= 4) return;
-  pinBuf += k; renderDots();
-  if (pinBuf.length < 4) return;
-
-  const entered = pinBuf;
-  if (pinMode === "setup") {
-    if (pinFirst === null) {
-      pinFirst = entered; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = E.confirmPin;
-    } else if (pinFirst === entered) {
-      localStorage.setItem(PIN_KEY, await hashPin(entered));
-      localStorage.setItem(PIN_MODE_KEY, "custom");
-      localStorage.removeItem(PIN_OFFSET_KEY);
-      unlock();
-    } else {
-      pinFirst = null; pinBuf = ""; setTimeout(renderDots, 120);
-      $("pinMsg").textContent = E.mismatchPin; shake();
+/* ===== v12: Reset PIN (পুরোনো PIN যাচাই, একই লকআউট নিয়ম) ===== */
+function refreshOldLockUi() {
+  clearInterval(oldTicker);
+  const tick = () => {
+    const r = lockRemaining();
+    const locked = r > 0;
+    $("pmOldPin").disabled = locked;
+    $("pmOldOk").disabled = locked;
+    if (locked) $("pmOldErr").textContent = E.lockedIn(fmtMs(r));
+    else {
+      if ($("pmOldErr").textContent.startsWith("Locked")) $("pmOldErr").textContent = "";
+      clearInterval(oldTicker);
     }
-  } else {
-    // লগইনে: Custom মোডে সেভ করা হ্যাশের সাথে, ডায়নামিক মোডে লাইভ হিসাব করা PIN-এর সাথে যাচাই
-    let ok;
-    if (localStorage.getItem(PIN_MODE_KEY) === "custom") ok = (await hashPin(entered)) === localStorage.getItem(PIN_KEY);
-    else ok = entered === timePin(dynamicMinus());
-    if (ok) {
-      fails = 0;
-      unlock();
-    } else {
-      fails++; pinBuf = ""; setTimeout(renderDots, 120); shake();
-      if (fails >= 5) {
-        localStorage.setItem(LOCK_KEY, String(Date.now() + 30000)); fails = 0;
-        $("pinMsg").textContent = E.fiveWrong;
-      } else $("pinMsg").textContent = E.wrongPin;
-    }
-  }
+  };
+  tick();
+  if (lockRemaining() > 0) oldTicker = setInterval(tick, 1000);
 }
-function shake() { const d = $("dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
-function unlock() { unlocked = true; pinBuf = ""; enterChat(); renderIncoming(); }
-function lockNow() { returnToNotepad(); renderIncoming(); }
-buildPad();
+function openResetPin() {
+  closeSetModal();
+  pmCtx = "reset";
+  pmShow("pmOld");
+  $("pmOldPin").value = ""; $("pmOldErr").textContent = "";
+  $("pinModeModal").classList.add("show");
+  refreshOldLockUi();
+}
+$("pmOldOk").onclick = async () => {
+  if (lockRemaining() > 0) { refreshOldLockUi(); return; }
+  const v = $("pmOldPin").value.trim();
+  if (!/^\d{4}$/.test(v)) { $("pmOldErr").textContent = E.pin4; return; }
+  if (await verifyPin(v)) {
+    resetLock();
+    pmShow("pmMain");
+  } else {
+    $("pmOldPin").value = "";
+    const mins = registerWrong();
+    if (mins) refreshOldLockUi();
+    else $("pmOldErr").textContent = E.wrongPin1;
+  }
+};
+$("pmOldCancel").onclick = closePinChoose;
+
+/* ===== v12: চ্যাট সেটিংস (⚙️): ভাষা, লাইট/ডার্ক, Reset PIN ===== */
+function openSetModal() {
+  $("setTitle").textContent = T("setTitle");
+  $("setLang").textContent = "🌐 " + T("setLang");
+  $("setTheme").textContent = "🌓 " + T("setTheme");
+  $("setReset").textContent = "🔑 " + T("setReset");
+  $("setClose").textContent = T("setClose");
+  $("setModal").classList.add("show");
+}
+function closeSetModal() { $("setModal").classList.remove("show"); }
+function closeOpt() { $("optModal").classList.remove("show"); }
+function showOptions(title, opts) {
+  $("optTitle").textContent = title;
+  const box = $("optList"); box.innerHTML = "";
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "optBtn" + (o.sel ? " sel" : "");
+    b.textContent = (o.sel ? "✓ " : "") + o.label;
+    b.onclick = () => { closeOpt(); o.fn(); };
+    box.appendChild(b);
+  });
+  $("optClose").textContent = T("setClose");
+  $("optModal").classList.add("show");
+}
+$("settingsBtn").onclick = openSetModal;
+$("setClose").onclick = closeSetModal;
+$("optClose").onclick = closeOpt;
+$("setModal").addEventListener("click", e => { if (e.target.id === "setModal") closeSetModal(); });
+$("optModal").addEventListener("click", e => { if (e.target.id === "optModal") closeOpt(); });
+$("setLang").onclick = () => {
+  closeSetModal();
+  showOptions(T("langTitle"), [
+    { label: "বাংলা (Bangla)", sel: lang === "bn", fn: () => setChatLang("bn") },
+    { label: "English", sel: lang === "en", fn: () => setChatLang("en") }
+  ]);
+};
+$("setTheme").onclick = () => {
+  closeSetModal();
+  showOptions(T("themeTitle"), [
+    { label: "☀️ " + T("setLight"), sel: !isDark(), fn: () => setTheme(false) },
+    { label: "🌙 " + T("setDark"), sel: isDark(), fn: () => setTheme(true) }
+  ]);
+};
+$("setReset").onclick = openResetPin;
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
@@ -1928,187 +2228,4 @@ async function openCallUI(type, status) {
   setCallStatus(status);
   pushCallState();
   if (type === "video" && call) {
-    $("localV").srcObject = new MediaStream(call.stream.getVideoTracks());
-    $("localV").play().catch(() => {});
-  }
-  try { if (navigator.wakeLock && call) call.wake = await navigator.wakeLock.request("screen"); } catch (e) {}
-}
-async function applyRemote(c, desc) {
-  await c.pc.setRemoteDescription(new RTCSessionDescription(desc));
-  c.remoteSet = true;
-  clearTimeout(c.ringTimeout);
-  c.pending.splice(0).forEach(x => c.pc.addIceCandidate(new RTCIceCandidate(x)).catch(() => {}));
-}
-async function setupPeer(callRef, type, stream, role) {
-  const pc = new RTCPeerConnection({ iceServers: await getIceServers() });
-  const c = { ref: callRef, pc, stream, type, role, unsubs: [], pending: [],
-              remoteSet: false, gotAnswer: false, docSeen: false, mini: false, logged: false, result: null,
-              timer: null, ringTimeout: null, startedAt: 0, wake: null };
-  call = c;
-  stream.getTracks().forEach(tr => pc.addTrack(tr, stream));
-  pc.ontrack = e => { $("remoteV").srcObject = e.streams[0]; $("remoteV").play().catch(() => {}); };
-  pc.onicecandidate = e => {
-    if (e.candidate) addDoc(collection(callRef, "candidates"), { from: me.uid, c: e.candidate.toJSON() }).catch(() => {});
-  };
-  pc.onconnectionstatechange = () => {
-    if (call !== c) return;
-    const s = pc.connectionState;
-    if (s === "connected") { c.startedAt = Date.now(); startTimer(c); }
-    else if (s === "disconnected") setCallStatus(T("weakConn"));
-    else if (s === "failed") { toast(T("turnHint")); c.result = "failed"; endCall(true); }
-  };
-  c.unsubs.push(onSnapshot(collection(callRef, "candidates"), snap => {
-    snap.docChanges().forEach(ch => {
-      if (ch.type !== "added") return;
-      const d = ch.doc.data();
-      if (d.from === me.uid) return;
-      if (c.remoteSet) pc.addIceCandidate(new RTCIceCandidate(d.c)).catch(() => {});
-      else c.pending.push(d.c);
-    });
-  }));
-  c.unsubs.push(onSnapshot(callRef, snap => {
-    if (!snap.exists()) { if (c.docSeen) endCall(false); return; }
-    c.docSeen = true;
-    const m = snap.data();
-    if (m.status === "declined") { toast(T("callDeclined")); c.result = "declined"; endCall(false); }
-    else if (m.status === "ended" || m.status === "missed") {
-      toast(T("callEnded"));
-      if (m.status === "missed") c.result = "missed";
-      endCall(false);
-    } else if (c.role === "caller" && m.answer && !c.gotAnswer) {
-      c.gotAnswer = true;
-      setCallStatus(T("connecting"));
-      applyRemote(c, m.answer).catch(() => {});
-    }
-  }));
-  return c;
-}
-function startTimer(c) {
-  clearInterval(c.timer);
-  const tick = () => setCallStatus(fmtDur(Math.floor((Date.now() - c.startedAt) / 1000)));
-  tick(); c.timer = setInterval(tick, 1000);
-}
-async function startCall(type) {
-  if (call || busy || !me) return;
-  if (mr || vrStream) return;
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast(T("noCallSup")); return; }
-  busy = true;
-  let stream = null;
-  try {
-    try { stream = await getMedia(type); }
-    catch (e) { toast(T("permMedia")); return; }
-    const ref = doc(callsCol());
-    const c = await setupPeer(ref, type, stream, "caller");
-    openCallUI(type, T("calling"));
-    const offer = await c.pc.createOffer();
-    await c.pc.setLocalDescription(offer);
-    await setDoc(ref, { from: me.uid, type, status: "ringing", createdAt: serverTimestamp(),
-                        offer: { type: offer.type, sdp: offer.sdp } });
-    c.ringTimeout = setTimeout(() => {
-      if (call === c && !c.remoteSet) {
-        toast(T("noAnswer")); c.result = "missed";
-        updateDoc(ref, { status: "missed" }).catch(() => {});
-        endCall(false);
-      }
-    }, 45000);
-  } catch (e) {
-    toast(T("failedConn"));
-    if (call) { call.result = "failed"; endCall(false); }
-    else if (stream) stream.getTracks().forEach(tr => tr.stop());
-  } finally { busy = false; }
-}
-async function acceptCall() {
-  if (!incoming || call || busy) return;
-  const inc = incoming; incoming = null;
-  busy = true;
-  let stream = null;
-  try {
-    try { stream = await getMedia(inc.type); }
-    catch (e) {
-      toast(T("permMedia"));
-      updateDoc(inc.ref, { status: "declined" }).catch(() => {});
-      renderIncoming(); return;
-    }
-    const c = await setupPeer(inc.ref, inc.type, stream, "callee");
-    renderIncoming();
-    openCallUI(inc.type, T("connecting"));
-    await applyRemote(c, inc.offer);
-    const ans = await c.pc.createAnswer();
-    await c.pc.setLocalDescription(ans);
-    await updateDoc(inc.ref, { answer: { type: ans.type, sdp: ans.sdp }, status: "active" });
-  } catch (e) {
-    toast(T("failedConn"));
-    if (call) endCall(true); else if (stream) stream.getTracks().forEach(tr => tr.stop());
-  } finally { busy = false; }
-}
-function declineCall() {
-  if (!incoming) return;
-  const r = incoming.ref; incoming = null; renderIncoming();
-  updateDoc(r, { status: "declined" }).catch(() => {});
-  setTimeout(() => cleanupCall(r), 4000);
-}
-function writeCallLog(c) {
-  if (!me || c.logged) return;
-  c.logged = true;
-  const duration = c.startedAt ? Math.round((Date.now() - c.startedAt) / 1000) : 0;
-  const result = c.result || (c.startedAt ? "ended" : "cancelled");
-  addDoc(col(), { type: "call", callType: c.type, result, duration, senderId: me.uid,
-                  createdAt: serverTimestamp(), status: "sent", hiddenFor: [] }).catch(() => {});
-}
-async function endCall(notify) {
-  const c = call; if (!c) return;
-  call = null;
-  clearTimeout(c.ringTimeout); clearInterval(c.timer);
-  c.unsubs.forEach(u => u());
-  try { c.pc.close(); } catch (e) {}
-  c.stream.getTracks().forEach(tr => tr.stop());
-  if (c.wake) { try { c.wake.release(); } catch (e) {} }
-  if (c.role === "caller") writeCallLog(c);
-  $("remoteV").srcObject = null; $("localV").srcObject = null;
-  const el = $("call");
-  el.classList.remove("show", "mini");
-  el.style.left = el.style.top = el.style.right = el.style.bottom = "";
-  if (notify) updateDoc(c.ref, { status: "ended" }).catch(() => {});
-  setTimeout(() => cleanupCall(c.ref), 4000);
-  unwindHistory();
-  renderIncoming();
-}
-async function cleanupCall(ref) {
-  try {
-    const s = await getDocs(collection(ref, "candidates"));
-    const b = writeBatch(db);
-    s.forEach(d => b.delete(d.ref));
-    b.delete(ref);
-    await b.commit();
-  } catch (e) {}
-}
-
-$("callV").onclick = () => startCall("voice");
-$("callVid").onclick = () => startCall("video");
-$("acceptBtn").onclick = acceptCall;
-$("declineBtn").onclick = declineCall;
-$("hangBtn").onclick = () => endCall(true);
-$("miniHang").onclick = e => { e.stopPropagation(); endCall(true); };
-$("muteBtn").onclick = () => {
-  if (!call) return;
-  const tr = call.stream.getAudioTracks()[0]; if (!tr) return;
-  tr.enabled = !tr.enabled;
-  $("muteBtn").classList.toggle("off", !tr.enabled);
-  $("muteBtn").textContent = tr.enabled ? "🎤" : "🔇";
-};
-$("camBtn").onclick = () => {
-  if (!call) return;
-  const tr = call.stream.getVideoTracks()[0]; if (!tr) return;
-  tr.enabled = !tr.enabled;
-  $("camBtn").classList.toggle("off", !tr.enabled);
-  $("camBtn").textContent = tr.enabled ? "📷" : "🚫";
-};
-
-applyNpLang();
-applyLang();
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
-}
-</script>
-</body>
-</html>
+    $("localV").srcObject = new MediaStream(call.stre
